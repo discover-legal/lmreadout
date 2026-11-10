@@ -117,3 +117,7 @@ pip install -e .[dev] && pytest
 
 The tests use synthetic states and check the arithmetic (planted direction recovered; the row edit reproduces
 the offline gap exactly; save/load; patch touches only the two rows). No model download.
+
+## Licence
+
+MIT. See `LICENSE`.
