@@ -341,6 +341,9 @@ def test_sweep_and_twofold_with_auto():
     H, LAB, LSE, gold, _ = synthetic(n=200)
     res = sweep(H, LAB, LSE, gold, sizes=(15, 40), draws=3, auto=True, n_params=int(1e9))
     assert all("bal_auto" in r and "auto_fallback_draws" in r and r["auto_choices"] for r in res)
+    gold2 = gold.copy(); gold2[np.flatnonzero(gold2 == 1)[2:]] = 0              # two items of answer 1 in all
+    r2 = sweep(H, LAB, LSE, gold2, sizes=(15,), draws=3, auto=True)[0]
+    assert r2["auto_fallback_draws"] == 3 and r2["auto_choices"] == "fallback (lean only): 3"
     tf = twofold(H, LAB, LSE, gold, auto=True)
     assert tf["bal_edited"] > tf["bal_shipped"]
 

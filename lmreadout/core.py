@@ -433,8 +433,9 @@ def sweep(H, LAB, LSE, gold, texts: list[str] | None = None, sizes=(15, 30, 60, 
                 ra, t = fit_auto(H[tr], LAB[tr], LSE[tr], gold[tr], n_params=n_params, seed=seed)
                 preds["auto"] = LAB[ev].argmax(1) if ra is None else ra.predict(H[ev], LAB[ev])
                 fallback += bool(t["fallback"])
-                key = "unchanged" if t["unchanged"] else f"lean {t['lean']:g} strength {t['alpha_mult']:g} ridge {t['lam_factor']:g}n"
-                chosen[key] += 1
+                chosen["fallback (lean only)" if t["fallback"] else "unchanged" if t["unchanged"]
+                       else f"lean {t['lean']:g}, no read-out" if t["alpha_mult"] == 0
+                       else f"lean {t['lean']:g} strength {t['alpha_mult']:g} ridge {t['lam_factor']:g}n"] += 1
             if texts is not None:
                 preds["wordcount"] = wordcount_predict([t for t, m in zip(texts, tr) if m], gold[tr],
                                                        [t for t, m in zip(texts, ev) if m], K)

@@ -4,7 +4,9 @@ Pull a classifier out of a causal language model's own hidden state and write it
 No gradient training: a label-bias calibration and one ridge regression per answer, fitted in closed form on a few
 labelled examples and written into the rows of the answer tokens. The plain model then answers the task without a
 wrapper, a prompt trick or a separate classifier. Two answers (Yes / No) or more (World / Sports / Business /
-Science). It helps on some tasks and hurts on others, so measure it on yours (`sweep`, below) before relying on it.
+Science). With fixed settings it helps on some tasks and hurts on others; `--auto` chooses the settings from your
+labelled examples and may leave the model alone, and in our tests it never did more than slight harm (below). Still
+measure it on your task (`sweep`) before relying on it.
 
 Both halves are known tools: calibrating a model's lean towards one answer (Zhao et al. 2021; Zhou et al. 2024) and
 a linear probe on its hidden state (Alain & Bengio 2016; with tens of labels, Buckmann & Hill 2024). What this
@@ -62,6 +64,8 @@ What it shows:
   accuracy 0.48 edited vs 0.47 calibrated, balanced 0.35 vs 0.49). And on BoolQ the answer depends on the question
   and passage together: word counts stay at guessing (0.51) and 120 labels are not enough for the read-out to beat
   the model's own answer.
+  The fixed strength was since checked in part: choosing it per task (`--auto`, next section) removes most of the
+  harm on these tasks, which supports that reading without proving it.
 - **Only `sweep` shows the harm reliably.** On BoolQ the score `fit` prints (fitted on 250, scored on the other 250)
   is level with the model as shipped (0.643 shipped, 0.646 edited, with 0.3.1's split), and so is `eval` on 500 new items (0.652,
   0.661); the drop appears with 15 to 120 labels. `fit` warns when its held-out score falls below the model as
@@ -70,6 +74,51 @@ What it shows:
 The overruling numbers match the Handi run on the same task within 0.03. On AG News, fitted on 1,000 training
 stories and scored on 1,000 test stories, the edit scores 0.88, and the patched copy saved by `lmreadout patch` and
 reloaded with plain `transformers` gives the same 0.876.
+
+## Letting it choose its settings (`--auto`)
+
+Three settings decide how the edit behaves: how much of the model's lean to remove (none, half, all), how hard the
+read-out overrides the model's own answer (strength 0, 0.5, 1, 2 or 4; the fixed default is 2) and how much the
+read-out is smoothed (ridge n/4, n or 4n, with n the number of labelled items). `fit --auto` tries every
+combination, scores each by cross-validation on your labelled items alone (leave one out up to 50 items, ten folds
+above), and keeps the best by balanced accuracy. It leaves the model unchanged unless some edit scores strictly
+higher, and says so. Ties between edits go to a strength that steps down with model size (2 below 3B parameters, 1
+below 7B, 0.5 from 7B), because bigger models' own answers deserve more weight. When some answer has fewer than two
+labelled items nothing can be cross-validated, so it removes the lean only (that needs no labels) and tells you which
+answers to label more of. `sweep --auto` adds an "auto" column, chosen inside each draw from the N items alone.
+
+Why: in the Handi runs the fixed strength was too strong for bigger models. With 15 labels the fixed edit took
+Qwen3.5-9B below the model as shipped on LegalBench's two-answer tasks; at half strength it would have helped.
+
+Tested the same way as the table above (a separate agent, installing from GitHub, 20 draws per size), plus a task
+never used before, chosen with its plan written before any score (Rotten Tomatoes movie reviews), and Qwen3.5-4B on
+two tasks. Balanced accuracy, 15 / 120 labelled items:
+
+| Task, model | As shipped | Calibration only | Fixed edit | `--auto` |
+|---|---|---|---|---|
+| AG News, 0.8B | 0.27 | 0.59 / 0.61 | **0.67** / 0.81 | 0.65 / **0.82** |
+| Overruling, 0.8B | 0.69 | 0.83 / 0.85 | **0.89 / 0.94** | **0.89 / 0.94** |
+| Function of a decision section, 0.8B | 0.19 | **0.28** / 0.28 | 0.27 / 0.40 | **0.28 / 0.41** |
+| Emotion, 0.8B | 0.21 | **0.49 / 0.50** | 0.35 / 0.47 | **0.49 / 0.50** |
+| Tweet sentiment, 0.8B | 0.44 | 0.44 / 0.46 | 0.40 / 0.48 | **0.45 / 0.51** |
+| BoolQ, 0.8B | **0.65** | **0.65 / 0.65** | 0.57 / 0.61 | 0.63 / 0.64 |
+| Rotten Tomatoes (new), 0.8B | 0.82 | **0.86 / 0.88** | 0.85 / 0.86 | 0.85 / 0.87 |
+| Tweet sentiment, 4B | 0.57 | **0.63 / 0.64** | 0.53 / 0.59 | 0.62 / 0.62 |
+| Rotten Tomatoes (new), 4B | 0.82 | **0.88 / 0.89** | 0.87 / 0.88 | 0.87 / **0.89** |
+
+- **It does no real harm.** With 15 labels it is never more than 0.02 below the model as shipped (worst: BoolQ,
+  0.632 against 0.648; the fixed edit lost 0.075 there), and on average it is level with the better of the model as
+  shipped and calibration alone (+0.01), which you would not know in advance.
+- **With 120 labels it matches or beats the fixed edit on every task** (worst: overruling, 0.001 below).
+- **It is not always the best choice.** With 15 labels cross-validation is noisy, so on some tasks it lands a little
+  below calibration alone (Rotten Tomatoes 0.85 against 0.86; tweets on the 4B 0.62 against 0.63, and 0.61 against
+  0.63 at 60 labels).
+- **Balanced, not plain, accuracy.** It optimises balanced accuracy; with uneven answers (tweets, emotion) plain
+  accuracy can fall while balanced accuracy rises.
+
+On LegalBench (the Handi runs' saved states, 98 two-answer tasks, 15 labels), `--auto` gives 0.80 / 0.84 / 0.86 for
+Qwen3.5-2B / 4B / 9B, against 0.81 / 0.82 / 0.83 for the fixed edit and 0.72 / 0.81 / 0.84 as shipped. These are the
+tasks the method was developed on, so they are not a clean test.
 
 ## Does it stay on script?
 
@@ -130,11 +179,12 @@ Clause: {{text}}
 Label:
 ```
 
-Fit (prints the honest two-fold score, then saves a read-out fitted on everything):
+Fit (prints the honest two-fold score, then saves a read-out fitted on everything). `--auto` is the recommended
+way: it chooses the settings, says which, and saves nothing when the model is best left alone:
 
 ```
 lmreadout fit --model Qwen/Qwen3.5-0.8B --data governing_law.jsonl --template governing_law.txt \
-              --labels No Yes --out governing_law.npz --task governing_law
+              --labels No Yes --out governing_law.npz --task governing_law --auto
 ```
 
 More than two answers: leave out `--labels` and every distinct `answer` in the data is used (sorted), or list them.
@@ -227,15 +277,17 @@ only those rows:
    intercept carried along `mu`. The intercepts are centred, so the edit does not lower every answer row together.
 
 For two answers this is a single direction added to one row and subtracted from the other. Everything is closed
-form; the defaults (regularisation = number of items, strength x2) are fixed, not tuned per task.
+form. Without `--auto` the settings are fixed (all the lean, regularisation = number of items, strength x2); with
+`--auto` they are chosen per task as described above.
 
 ## What to check, every time
 
 - **Held-out first.** `fit` prints a two-fold score where every item is scored by a read-out that never saw it; the
   in-sample number is not reported anywhere because it is meaningless (0.89 to 1.00 on all ten of the Handi tasks
   where it was measured).
-- **Run `sweep` at the number of labels you have.** With few labels the edit can score below calibration alone or
-  the model as shipped (see the table above); `fit`'s two-fold score uses half your items and can hide that.
+- **Run `sweep` at the number of labels you have.** With few labels the fixed edit can score below calibration
+  alone or the model as shipped (see the tables above); `fit`'s two-fold score uses half your items and can hide
+  that. Use `--auto`, and `sweep --auto` to see what it would have chosen.
 - **If the held-out score is at the commonest-answer rate, stop.** The model does not know the task in a linearly
   readable form at the answer position. `fit` warns. No output-row edit can create what is not there.
 - **Compare against plain word counts.** Fit any bag-of-words classifier on the same labelled items and score it on
@@ -257,7 +309,9 @@ form; the defaults (regularisation = number of items, strength x2) are fixed, no
   other token (see "Does it stay on script?").
 - Tasks that need the item and the question combined, like BoolQ, can get worse. So can tasks where the model is
   already decent and labels are few (tweets). Check with `sweep`.
-- The read-out's strength is fixed (x2), not tuned to how reliable it is; with few labels that is often too much.
+- Without `--auto` the read-out's strength is fixed (x2), not tuned to how reliable it is; with few labels that is
+  often too much. `--auto` chooses it from the labelled items, which with 15 of them is itself noisy.
+- `--auto`'s size rule was set from Qwen3.5 at 0.8B to 9B; other model families have not been tested with it.
 - Prompts are tokenised without special tokens (no beginning-of-sequence token). Qwen uses none; models that expect
   one (Llama 3, Gemma) may score lower than they should.
 - The read-out sits at the final layer. Linear probes a few layers earlier are usually a little better (0.84 vs
