@@ -1,6 +1,6 @@
 """Command line: fit a read-out, evaluate it on held-out items, patch a model, or predict with side heads.
 
-  lmreadout fit     --model ID --data items.jsonl --template t.txt --labels No Yes --out task.npz [--task NAME]
+  lmreadout fit     --model ID --data items.jsonl --template t.txt --labels No Yes [MORE ...] --out task.npz [--task NAME]
   lmreadout eval    --model ID --readout task.npz --data heldout.jsonl
   lmreadout patch   --model ID --readout task.npz --out edited-model/
   lmreadout predict --model ID --readout a.npz [b.npz ...] --data items.jsonl [--out preds.jsonl]
@@ -17,7 +17,8 @@ from pathlib import Path
 
 import numpy as np
 
-from .core import Readout, collect, fill_template, fit, label_token_ids, load_model, patch, predict_items, twofold
+from .core import (Readout, accuracy, balanced_accuracy, collect, fill_template, fit, label_token_ids, load_model, patch,
+                   predict_items, twofold)
 
 
 def read_jsonl(path: str) -> list[dict]:
@@ -39,11 +40,16 @@ def cmd_fit(a):
     ids, prompts, gold = _prep(a, a.labels, tok, rows, template)
     if gold is None:
         sys.exit("fit needs an 'answer' field on every item")
+    if len(a.labels) < 2:
+        sys.exit("fit needs at least two labels")
     print(f"collecting {len(prompts)} items", flush=True)
     H, LAB, LSE = collect(model, tok, prompts, ids, max_len=a.max_len, progress=True)
     tf = twofold(H, LAB, LSE, gold, lam=a.lam, alpha_mult=a.alpha_mult)
-    print(f"two-fold (every item scored by a read-out that never saw it): n={tf['n']} majority={tf['majority']:.3f} "
-          f"as shipped={tf['shipped']:.3f} calibrated={tf['calibrated']:.3f} edited={tf['edited']:.3f}", flush=True)
+    print(f"two-fold (every item scored by a read-out that never saw it), n={tf['n']}, {len(a.labels)} labels\n"
+          f"  accuracy:          commonest label={tf['majority']:.3f} as shipped={tf['shipped']:.3f} "
+          f"calibrated={tf['calibrated']:.3f} edited={tf['edited']:.3f}\n"
+          f"  balanced accuracy: guessing={1 / len(a.labels):.3f} as shipped={tf['bal_shipped']:.3f} "
+          f"calibrated={tf['bal_calibrated']:.3f} edited={tf['bal_edited']:.3f}", flush=True)
     if tf["edited"] <= tf["majority"] + 0.02:
         print("WARNING: the read-out is at the majority rate on held-out items; the model does not know this task in a "
               "linearly readable form at the answer position. The saved read-out is not useful.", flush=True)
@@ -61,9 +67,14 @@ def cmd_eval(a):
     if ids != r.label_ids:
         sys.exit(f"label tokens differ from the read-out's ({ids} vs {r.label_ids}); same model and tokenizer?")
     H, LAB, _ = collect(model, tok, prompts, ids, max_len=a.max_len, progress=True)
-    p0 = (LAB[:, 1] > LAB[:, 0]).astype(int); p1 = r.predict(H, LAB)
-    print(f"held-out n={len(gold)} majority={max(gold.mean(), 1 - gold.mean()):.3f} as shipped={(p0 == gold).mean():.3f} "
-          f"edited={(p1 == gold).mean():.3f}", flush=True)
+    if gold is None:
+        sys.exit("eval needs an 'answer' field on every item")
+    p0 = LAB.argmax(1); p1 = r.predict(H, LAB)
+    maj = np.bincount(gold, minlength=len(r.labels)).max() / len(gold)
+    print(f"held-out n={len(gold)}, {len(r.labels)} labels\n"
+          f"  accuracy:          commonest label={maj:.3f} as shipped={accuracy(p0, gold):.3f} edited={accuracy(p1, gold):.3f}\n"
+          f"  balanced accuracy: guessing={1 / len(r.labels):.3f} as shipped={balanced_accuracy(p0, gold):.3f} "
+          f"edited={balanced_accuracy(p1, gold):.3f}", flush=True)
 
 
 def cmd_patch(a):
@@ -96,7 +107,7 @@ def main(argv=None):
     common.add_argument("--max-items", type=int, default=0)
     common.add_argument("--label-prefix", default=" ", help="text put before each label when tokenising (default: a space)")
     f = sub.add_parser("fit", parents=[common]); f.add_argument("--data", required=True); f.add_argument("--template", required=True)
-    f.add_argument("--labels", nargs=2, required=True, metavar=("LABEL0", "LABEL1")); f.add_argument("--out", required=True)
+    f.add_argument("--labels", nargs="+", required=True, help="two or more answer labels, each one token after --label-prefix"); f.add_argument("--out", required=True)
     f.add_argument("--task", default=None); f.add_argument("--lam", type=float, default=None, help="ridge strength (default: number of items)")
     f.add_argument("--alpha-mult", type=float, default=2.0); f.set_defaults(fn=cmd_fit)
     e = sub.add_parser("eval", parents=[common]); e.add_argument("--readout", required=True); e.add_argument("--data", required=True); e.set_defaults(fn=cmd_eval)

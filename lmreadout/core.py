@@ -1,13 +1,16 @@
-"""The read-out: calibration plus a ridge classifier on the final hidden state, expressed as an edit of the two
+"""The read-out: calibration plus a ridge classifier on the final hidden state, expressed as an edit of the
 label rows of the output table.
 
 Notation. At the answer position the model holds a final-norm state h (d numbers). The output table U scores
-token t as U[t] . h. For labels (t0, t1) the model answers t1 when gap = U[t1].h - U[t0].h > 0.
-  Calibration:  U[t] += shift_t * mu_hat, mu_hat = unit mean of h, chosen so both labels have equal mean
+token t as U[t] . h. With labels t_0 .. t_{K-1} the model answers the label whose row scores highest.
+  Calibration:  U[t_k] += shift_k * mu_hat, mu_hat = unit mean of h, chosen so every label has the same mean
                 log-probability on the fit set (h . mu_hat is nearly constant = p_mean after the final norm).
-  Read-out:     ridge w, b from h to y in {-1, +1}; U[t1] += alpha w + (alpha b / p_mean) mu_hat, U[t0] -= same.
-  New gap:      gap_calibrated(h) + 2 alpha (w . h + b).
-Every step is closed form. Only the two label rows change.
+  Read-out:     one ridge (w_k, b_k) per label, from h to +1 for that label's items and -1 for the rest;
+                U[t_k] += alpha w_k + (alpha b_k / p_mean) mu_hat.
+  Strength:     alpha = alpha_mult x spread of the calibrated score differences / spread of the read-out's, both as
+                the root mean square over label pairs of sd(score_k - score_j), the read-out's halved.
+For two labels this is exactly the two-row edit of lmreadout 0.1 (w_0 = -w_1, b_0 = -b_1; the new gap is
+gap_calibrated(h) + 2 alpha (w_1 . h + b_1)). Every step is closed form. Only the label rows change.
 """
 from __future__ import annotations
 
@@ -62,7 +65,7 @@ def _final_state_fn(model):
 
 @torch.no_grad()
 def collect(model, tok, prompts: list[str], label_ids: list[int], max_len: int = 1024, progress: bool = False):
-    """For each prompt: final-norm state h [d], the label logits [2] and log-sum-exp of all logits (so label
+    """For each prompt: final-norm state h [d], the label logits [K] and log-sum-exp of all logits (so label
     log-probabilities are lab - lse). Returns (H [n, d], LAB [n, 2], LSE [n]) as float64 numpy arrays."""
     device = next(model.parameters()).device
     H, LAB, LSE = [], [], []
@@ -91,12 +94,27 @@ def collect(model, tok, prompts: list[str], label_ids: list[int], max_len: int =
 # ----------------------------------------------------------------------------------------------- the read-out
 
 def ridge(X: np.ndarray, y: np.ndarray, lam: float):
-    """Standardised ridge with intercept; returns (w in raw feature units, b)."""
+    """Standardised ridge with intercept; returns (w in raw feature units, b). Solved in the n x n form when there are
+    more features than items (the same solution: (Z'Z + lam I)^-1 Z' = Z' (ZZ' + lam I)^-1)."""
     mu, sd = X.mean(0), X.std(0) + 1e-6
     Z = (X - mu) / sd
-    w_z = np.linalg.solve(Z.T @ Z + lam * np.eye(Z.shape[1]), Z.T @ (y - y.mean()))
+    yc = y - y.mean()
+    if Z.shape[1] <= Z.shape[0]:
+        w_z = np.linalg.solve(Z.T @ Z + lam * np.eye(Z.shape[1]), Z.T @ yc)
+    else:
+        w_z = Z.T @ np.linalg.solve(Z @ Z.T + lam * np.eye(Z.shape[0]), yc)
     w = w_z / sd
     return w, float(y.mean() - mu @ w)
+
+
+def accuracy(pred: np.ndarray, gold: np.ndarray) -> float:
+    return float((pred == gold).mean())
+
+
+def balanced_accuracy(pred: np.ndarray, gold: np.ndarray) -> float:
+    """Mean over the labels present in gold of the share of that label's items answered correctly. Always answering
+    one label scores 1/K, however lopsided the data."""
+    return float(np.mean([(pred[gold == c] == c).mean() for c in np.unique(gold)]))
 
 
 @dataclass
@@ -107,77 +125,104 @@ class Readout:
     template: str
     mu_hat: np.ndarray
     p_mean: float
-    shift: np.ndarray            # [2] per-label calibration along mu_hat
-    w: np.ndarray                # [d]
-    b: float
+    shift: np.ndarray            # [K] per-label calibration along mu_hat
+    W: np.ndarray                # [K, d] one ridge direction per label
+    B: np.ndarray                # [K] one intercept per label
     alpha: float
     meta: dict = field(default_factory=dict)
 
     # --- arithmetic
-    def gap(self, H: np.ndarray, LAB: np.ndarray) -> np.ndarray:
-        """Edited logit gap (label 1 minus label 0). Exactly what the patched model computes."""
-        proj = H @ self.mu_hat
-        g = (LAB[:, 1] - LAB[:, 0]) + (self.shift[1] - self.shift[0]) * proj
-        # the intercept rides along mu_hat in the rows, so it scales with proj / p_mean (nearly 1 after the final norm)
-        return g + 2.0 * self.alpha * (H @ self.w + self.b * proj / self.p_mean)
+    def deltas(self) -> np.ndarray:
+        """[K, d]: what is added to each label row of lm_head.weight."""
+        return (self.shift[:, None] * self.mu_hat[None, :] + self.alpha * self.W
+                + (self.alpha * self.B / self.p_mean)[:, None] * self.mu_hat[None, :])
+
+    def scores(self, H: np.ndarray, LAB: np.ndarray) -> np.ndarray:
+        """[n, K] edited label logits. Exactly what the patched model computes for the label tokens."""
+        return LAB + H @ self.deltas().T
+
+    def calibrated(self, H: np.ndarray, LAB: np.ndarray) -> np.ndarray:
+        """[n, K] label logits after the calibration step alone."""
+        return LAB + (H @ self.mu_hat)[:, None] * self.shift[None, :]
 
     def predict(self, H: np.ndarray, LAB: np.ndarray) -> np.ndarray:
-        return (self.gap(H, LAB) > 0).astype(int)
+        return self.scores(H, LAB).argmax(1)
+
+    def gap(self, H: np.ndarray, LAB: np.ndarray) -> np.ndarray:
+        """Two labels only: edited logit gap (label 1 minus label 0)."""
+        if len(self.labels) != 2:
+            raise ValueError("gap() is for two-label read-outs; use scores()")
+        S = self.scores(H, LAB)
+        return S[:, 1] - S[:, 0]
 
     def row_deltas(self) -> dict[int, np.ndarray]:
-        """What to add to each label row of lm_head.weight."""
-        out = {}
-        for j, t in enumerate(self.label_ids):
-            sgn = (-1.0, 1.0)[j]
-            out[t] = self.shift[j] * self.mu_hat + sgn * self.alpha * self.w + sgn * self.alpha * self.b / self.p_mean * self.mu_hat
-        return out
+        return {t: d for t, d in zip(self.label_ids, self.deltas())}
 
     # --- io
     def save(self, path: str | Path) -> None:
         path = Path(path)
         meta = dict(model_id=self.model_id, labels=self.labels, label_ids=self.label_ids, template=self.template,
-                    p_mean=self.p_mean, b=self.b, alpha=self.alpha, meta=self.meta, format="lmreadout-1")
-        np.savez(path, mu_hat=self.mu_hat, shift=self.shift, w=self.w, meta=json.dumps(meta))
+                    p_mean=self.p_mean, alpha=self.alpha, meta=self.meta, format="lmreadout-2")
+        np.savez(path, mu_hat=self.mu_hat, shift=self.shift, W=self.W, B=self.B, meta=json.dumps(meta))
 
     @classmethod
     def load(cls, path: str | Path) -> "Readout":
         z = np.load(path, allow_pickle=False)
         m = json.loads(str(z["meta"]))
+        if m.get("format") == "lmreadout-1":       # two-label file of 0.1: one direction w and intercept b
+            W = np.stack([-z["w"], z["w"]]); B = np.array([-m["b"], m["b"]])
+        else:
+            W, B = z["W"], z["B"]
         return cls(model_id=m["model_id"], labels=m["labels"], label_ids=m["label_ids"], template=m["template"],
-                   mu_hat=z["mu_hat"], p_mean=m["p_mean"], shift=z["shift"], w=z["w"], b=m["b"], alpha=m["alpha"], meta=m.get("meta", {}))
+                   mu_hat=z["mu_hat"], p_mean=m["p_mean"], shift=z["shift"], W=W, B=B, alpha=m["alpha"],
+                   meta=m.get("meta", {}))
 
 
-def fit(H: np.ndarray, LAB: np.ndarray, LSE: np.ndarray, gold: np.ndarray, *, model_id: str = "", labels=("0", "1"),
-        label_ids=(0, 1), template: str = "", lam: float | None = None, alpha_mult: float = 2.0, meta: dict | None = None) -> Readout:
-    """Calibration + ridge read-out from (H, LAB, LSE, gold). gold in {0, 1} indexes `labels`."""
+def fit(H: np.ndarray, LAB: np.ndarray, LSE: np.ndarray, gold: np.ndarray, *, model_id: str = "", labels=None,
+        label_ids=None, template: str = "", lam: float | None = None, alpha_mult: float = 2.0, meta: dict | None = None) -> Readout:
+    """Calibration + ridge read-out from (H [n, d], LAB [n, K], LSE [n], gold [n] in 0..K-1 indexing `labels`)."""
     n, d = H.shape
+    K = LAB.shape[1]
+    labels = list(labels) if labels is not None else [str(k) for k in range(K)]
+    label_ids = list(label_ids) if label_ids is not None else list(range(K))
+    if len(labels) != K or len(label_ids) != K:
+        raise ValueError(f"{K} label columns but {len(labels)} labels / {len(label_ids)} label ids")
+    lam = float(n) if lam is None else float(lam)
     mu_hat = H.mean(0); mu_hat = mu_hat / (np.linalg.norm(mu_hat) + 1e-12)
     proj = H @ mu_hat
     p_mean = float(proj.mean())
     mean_lp = (LAB - LSE[:, None]).mean(0)                      # mean log-prob of each label
     shift = -(mean_lp - mean_lp.mean()) / p_mean
-    gap1 = (LAB[:, 1] - LAB[:, 0]) + (shift[1] - shift[0]) * proj
-    w, b = ridge(H, 2.0 * gold - 1.0, lam=float(n) if lam is None else lam)
-    alpha = float(alpha_mult * gap1.std() / ((H @ w + b).std() + 1e-9))
-    return Readout(model_id=model_id, labels=list(labels), label_ids=list(label_ids), template=template, mu_hat=mu_hat,
-                   p_mean=p_mean, shift=shift, w=w, b=b, alpha=alpha, meta=dict(n_fit=int(n), d=int(d), lam=float(n) if lam is None else lam,
-                   alpha_mult=alpha_mult, **(meta or {})))
+    cal = LAB + proj[:, None] * shift[None, :]
+    W, B = np.zeros((K, d)), np.zeros(K)
+    for k in range(K):
+        W[k], B[k] = ridge(H, 2.0 * (gold == k) - 1.0, lam=lam)
+    R = H @ W.T + B
+    pairs = [(j, k) for j in range(K) for k in range(j + 1, K)]
+    s_cal = np.sqrt(np.mean([(cal[:, k] - cal[:, j]).std() ** 2 for j, k in pairs]))
+    s_read = np.sqrt(np.mean([((R[:, k] - R[:, j]).std() / 2.0) ** 2 for j, k in pairs]))
+    alpha = float(alpha_mult * s_cal / (s_read + 1e-9))
+    return Readout(model_id=model_id, labels=labels, label_ids=label_ids, template=template, mu_hat=mu_hat,
+                   p_mean=p_mean, shift=shift, W=W, B=B, alpha=alpha,
+                   meta=dict(n_fit=int(n), d=int(d), lam=lam, alpha_mult=alpha_mult, **(meta or {})))
 
 
 def twofold(H, LAB, LSE, gold, **kw) -> dict:
-    """Fit on one half (by item parity), score the other, both ways. Returns majority / shipped / calibrated / edited
-    accuracies, every item scored by a read-out that never saw it."""
+    """Fit on one half (by item parity), score the other, both ways. Returns accuracy and balanced accuracy for always
+    giving the commonest label, the model as shipped, calibrated only, and edited; every item scored by a read-out
+    that never saw it."""
     n = len(gold); fold = np.arange(n) % 2
-    p0 = (LAB[:, 1] > LAB[:, 0]).astype(int)
+    p0 = LAB.argmax(1)
     p1, p2 = np.zeros(n, int), np.zeros(n, int)
     for f in (0, 1):
         fit_m, ev = fold != f, fold == f
         r = fit(H[fit_m], LAB[fit_m], LSE[fit_m], gold[fit_m], **kw)
-        proj = H[ev] @ r.mu_hat
-        p1[ev] = (((LAB[ev, 1] - LAB[ev, 0]) + (r.shift[1] - r.shift[0]) * proj) > 0).astype(int)
+        p1[ev] = r.calibrated(H[ev], LAB[ev]).argmax(1)
         p2[ev] = r.predict(H[ev], LAB[ev])
-    return dict(n=int(n), majority=float(max(gold.mean(), 1 - gold.mean())), shipped=float((p0 == gold).mean()),
-                calibrated=float((p1 == gold).mean()), edited=float((p2 == gold).mean()))
+    out = dict(n=int(n), majority=float(np.bincount(gold).max() / n))
+    for name, p in (("shipped", p0), ("calibrated", p1), ("edited", p2)):
+        out[name] = accuracy(p, gold); out["bal_" + name] = balanced_accuracy(p, gold)
+    return out
 
 
 # ----------------------------------------------------------------------------------------------- applying it
@@ -201,8 +246,9 @@ def predict_items(model, tok, readouts: list[Readout], rows: list[dict], max_len
     for r in readouts:
         prompts = [fill_template(r.template, row) for row in rows]
         H, LAB, _ = collect(model, tok, prompts, r.label_ids, max_len=max_len)
-        g = r.gap(H, LAB)
+        S = np.sort(r.scores(H, LAB), axis=1)
+        pred = r.predict(H, LAB)
         name = r.meta.get("task", "readout")
-        for o, gi in zip(out, g):
-            o[name] = r.labels[int(gi > 0)]; o[name + "_margin"] = float(gi)
+        for o, k, s in zip(out, pred, S):
+            o[name] = r.labels[int(k)]; o[name + "_margin"] = float(s[-1] - s[-2])
     return out

@@ -60,3 +60,71 @@ def test_patch_changes_only_label_rows():
     assert changed == [0, 1]
     g = (torch.as_tensor(H, dtype=torch.float32) @ (W1[1] - W1[0])).numpy()
     assert ((g > 0).astype(int) == r.predict(H, LAB)).mean() > 0.99
+
+
+# ------------------------------------------------------------------------------------------- more than two labels
+
+def synthetic_k(K=4, n=600, d=64, seed=1):
+    rng = np.random.default_rng(seed)
+    gold = rng.choice(K, size=n, p=np.array([0.4, 0.3, 0.2, 0.1])[:K] / np.array([0.4, 0.3, 0.2, 0.1])[:K].sum())
+    common = rng.normal(size=d); common /= np.linalg.norm(common)
+    C = rng.normal(size=(K, d)); C -= (C @ common)[:, None] * common[None, :]
+    C /= np.linalg.norm(C, axis=1, keepdims=True)
+    H = 8.0 * common[None, :] + rng.normal(size=(n, d)) + 3.0 * C[gold]
+    H = H / np.linalg.norm(H, axis=1, keepdims=True) * np.sqrt(d)
+    V = 50
+    U = rng.normal(size=(V, d)) * 0.3
+    U[0] += 0.5 * common                                                     # the model leans to label 0
+    LOG = H @ U.T
+    return H, LOG[:, :K], np.logaddexp.reduce(LOG, axis=1), gold, U
+
+
+def test_k_labels_recover_planted_directions():
+    H, LAB, LSE, gold, _ = synthetic_k()
+    tf = twofold(H, LAB, LSE, gold)
+    # guessing is 0.25; with the fixed defaults (lam = n, alpha x2) the read-out lands near 0.8 here
+    assert tf["bal_edited"] > 0.7 and tf["bal_edited"] > tf["bal_shipped"] + 0.3
+
+
+def test_k_row_edit_matches_offline_scores():
+    H, LAB, LSE, gold, U = synthetic_k()
+    r = fit(H, LAB, LSE, gold, labels=list("abcd"), label_ids=[0, 1, 2, 3])
+    U2 = U.copy()
+    for t, dr in r.row_deltas().items():
+        U2[t] += dr
+    assert np.allclose(H @ U2[:4].T, r.scores(H, LAB), atol=1e-6)
+    m = _Head(U); W0 = m.lm_head.weight.detach().clone(); patch(m, r)
+    assert (m.lm_head.weight.detach() != W0).any(1).nonzero().flatten().tolist() == [0, 1, 2, 3]
+
+
+def _fit_v01(H, LAB, LSE, gold, lam=None, alpha_mult=2.0):
+    """The two-label formula exactly as lmreadout 0.1 shipped it; returns the row deltas for labels 0 and 1."""
+    from lmreadout.core import ridge
+    n = len(gold)
+    mu_hat = H.mean(0); mu_hat = mu_hat / np.linalg.norm(mu_hat)
+    proj = H @ mu_hat; p_mean = proj.mean()
+    mean_lp = (LAB - LSE[:, None]).mean(0)
+    shift = -(mean_lp - mean_lp.mean()) / p_mean
+    gap1 = (LAB[:, 1] - LAB[:, 0]) + (shift[1] - shift[0]) * proj
+    w, b = ridge(H, 2.0 * gold - 1.0, lam=float(n) if lam is None else lam)
+    alpha = alpha_mult * gap1.std() / ((H @ w + b).std() + 1e-9)
+    return [shift[j] * mu_hat + s * alpha * w + s * alpha * b / p_mean * mu_hat for j, s in ((0, -1.0), (1, 1.0))]
+
+
+def test_two_labels_identical_to_v01():
+    H, LAB, LSE, gold, _ = synthetic()
+    old = _fit_v01(H, LAB, LSE, gold)
+    new = fit(H, LAB, LSE, gold, labels=("a", "b"), label_ids=(0, 1)).deltas()
+    for j in (0, 1):
+        assert np.allclose(new[j], old[j], rtol=1e-9, atol=1e-12)
+
+
+def test_loads_v01_file(tmp_path):
+    import json
+    H, LAB, LSE, gold, _ = synthetic()
+    r = fit(H, LAB, LSE, gold, model_id="m", labels=("a", "b"), label_ids=(0, 1), template="t")
+    meta = dict(model_id="m", labels=["a", "b"], label_ids=[0, 1], template="t", p_mean=r.p_mean, b=float(r.B[1]),
+                alpha=r.alpha, meta={}, format="lmreadout-1")
+    np.savez(tmp_path / "old.npz", mu_hat=r.mu_hat, shift=r.shift, w=r.W[1], meta=json.dumps(meta))
+    r1 = Readout.load(tmp_path / "old.npz")
+    assert np.allclose(r1.deltas(), r.deltas()) and np.array_equal(r1.predict(H, LAB), r.predict(H, LAB))
