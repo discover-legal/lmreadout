@@ -25,23 +25,55 @@ The method was developed in the Handi experiment (https://github.com/discover-le
   non-merger tasks at every number of examples tried, and is no better than word counts on the 15 merger-agreement
   (MAUD) tasks.
 
-## Tried outside law: news topics
+## Tried on five tasks, two of them legal
 
-AG News (fancyzhx/ag_news), four answers: World, Sports, Business, Science (the dataset's Sci/Tech). Qwen3.5-0.8B,
-installed from this repository into a clean environment and run through the commands below. Fitted on 1,000 random
-training stories (or the first 60 of them), scored on 1,000 random test stories it never saw. Prompt: "Classify the
-topic of this news story as World, Sports, Business or Science." then the story and "Topic:".
+Qwen3.5-0.8B, installed from this repository into a clean environment, run through `lmreadout sweep`: for 15 and 120
+labelled items, 20 random draws each, every other item scored. Balanced accuracy (each answer weighted equally;
+guessing = 1 / number of answers), mean over the draws. Up to 1,000 items per task.
 
-| Held-out stories, accuracy | 60 labels | 1,000 labels |
+| Task | Answers | Guessing | As shipped | Word counts, 15 / 120 | Edited, 15 / 120 |
+|---|---|---|---|---|---|
+| News topic (AG News) | 4 | 0.25 | 0.27 | 0.31 / 0.59 | **0.67 / 0.81** |
+| Overruling (LegalBench) | 2 | 0.50 | 0.69 | 0.69 / 0.87 | **0.89 / 0.94** |
+| Function of a decision section (LegalBench) | 7 | 0.14 | 0.19 | 0.19 / 0.36 | **0.27 / 0.40** |
+| Emotion in a message (dair-ai/emotion) | 6 | 0.17 | 0.21 | 0.17 / 0.20 | 0.35 / 0.47 |
+| Yes/no question on a passage (BoolQ) | 2 | 0.50 | 0.65 | 0.51 / 0.51 | 0.57 / 0.61 |
+
+What it shows:
+
+- **Strong where the answer is a kind of text:** a topic, or whether a sentence overrules a case. On news topics the
+  edit with 15 labels beats word counts with 120.
+- **Weak on the seven-way legal task**, as in the Handi runs: above word counts, far from solved.
+- **Emotion:** the calibration step alone does better on balanced accuracy (0.49 with 15 labels, 0.50 with 120) than
+  the full edit, which leans towards the common emotions (accuracy 0.48 / 0.59, against 0.47 / 0.48 calibrated).
+- **It hurts on BoolQ.** Whether a passage answers yes depends on the question and the passage together, and the
+  final state does not carry that in a form this edit can read: below the model as shipped at every size. The fit
+  command's held-out score shows this before you rely on it.
+
+The overruling numbers match the Handi run on the same task within 0.03. On AG News, fitted on 1,000 training
+stories and scored on 1,000 test stories, the edit scores 0.88, and the patched copy saved by `lmreadout patch` and
+reloaded with plain `transformers` gives the same 0.876.
+
+## Does it stay on script?
+
+The edit decides between the answer tokens. Whether the model, left to write freely, says one of the answers at all
+is a separate question; `eval` reports it ("free next token is one of the answers"):
+
+| Task | As shipped | Edited |
 |---|---|---|
-| Commonest answer | 0.26 | 0.26 |
-| Qwen as shipped (best of the four answers) | 0.27 | 0.27 |
-| Same formula on word counts | 0.41 | 0.81 |
-| Qwen after the edit | **0.78** | **0.88** |
+| Overruling (worked examples in the prompt) | 100% | 100% |
+| AG News, four worked examples in the prompt | 100% | 99.8% |
+| AG News, no examples | 56.5% | 66.5% |
+| BoolQ, no examples | 19.0% | 58.6% |
+| Emotion, no examples | 92.6% | 35.6% |
+| Function of a decision section (worked examples) | 100% | 59.2% |
 
-Balanced accuracy is within 0.01 of each number (the four topics are close to even). The patched copy saved by
-`lmreadout patch` and reloaded with plain `transformers` gives the same 0.876. As on LegalBench, the model's state is
-worth most when labels are few: 37 points over word counts with 60 labels, 7 with 1,000.
+Two things decide it. **Worked examples in the prompt** keep the model answering in the expected words; LegalBench's
+prompts all have them, which is why the Handi runs never went off script. And **with more than two answers the
+edit lowers every answer row together**: each answer's read-out is fitted as that answer against all the others, so
+the intercepts sum to 2 minus the number of answers, which does not change which answer wins but lets other tokens
+overtake all of them. With two answers the intercepts cancel. Either way, read the answer tokens' scores, as `eval`
+and `predict` do, or restrict generation to the answers.
 
 ## Install
 
@@ -77,12 +109,23 @@ lmreadout fit --model Qwen/Qwen3.5-0.8B --data governing_law.jsonl --template go
               --labels No Yes --out governing_law.npz --task governing_law
 ```
 
-More than two answers: list them all. Each must be one token after the prefix (a space by default), and the
-`answer` field must equal one of them:
+More than two answers: leave out `--labels` and every distinct `answer` in the data is used (sorted), or list them.
+Each answer is read from the row of its first token after the prefix (a space by default), so answers of several
+words work as long as their first tokens differ ("Procedural History" and "Rule" do; "Unilateral change" and
+"Unilateral termination" do not, and `fit` says so). When every answer is a lone space token plus one more, as Qwen
+writes the digits " 0" to " 9", the space goes at the end of the prompt and the digits are the rows.
 
 ```
-lmreadout fit --model Qwen/Qwen3.5-0.8B --data news.jsonl --template news.txt \
-              --labels World Sports Business Science --out news.npz --task topic
+lmreadout fit --model Qwen/Qwen3.5-0.8B --data news.jsonl --template news.txt --out news.npz --task topic
+```
+
+How many labelled items do you need? `sweep` fits on N items drawn at random, scores every other item, repeats for
+several draws and prints the mean beside the model as shipped, calibration alone, and word counts fitted on the same
+N items:
+
+```
+lmreadout sweep --model Qwen/Qwen3.5-0.8B --data news.jsonl --template news.txt --sizes 15 30 60 120 --draws 20 \
+                --csv news_sweep.csv
 ```
 
 Score on items the fit never saw:
@@ -91,7 +134,8 @@ Score on items the fit never saw:
 lmreadout eval --model Qwen/Qwen3.5-0.8B --readout governing_law.npz --data heldout.jsonl
 ```
 
-Both commands print accuracy beside the share of the commonest answer, and balanced accuracy beside guessing.
+Both commands print accuracy beside the share of the commonest answer, and balanced accuracy beside guessing;
+`eval` also prints how often the free next token is one of the answers.
 Balanced accuracy is the mean, over the answers, of the share of that answer's items answered correctly, so a model
 that always gives one answer scores 1/K however lopsided the data.
 
@@ -151,12 +195,12 @@ form; the defaults (regularisation = number of items, strength x2) are fixed, no
 
 ## Limits
 
-- Each answer must be one token after the prefix (default a space), and the answer tokens must differ. Answers that
-  share their first token (for example "Unilateral change" and "Unilateral termination") cannot be told apart.
+- Answers are read by their first token, so answers that share it (for example "Unilateral change" and
+  "Unilateral termination") cannot be told apart.
 - Fixed answer sets only: not free text copied from the item, not sets of answers.
-- The edit decides between the answer tokens; it does not stop the model preferring some other token. On the news
-  task, left to write freely, the patched model's next token was one of the four answers on 66.5% of stories (56.5%
-  before the edit). Read the answer tokens' scores, as `eval` and `predict` do, or restrict generation to them.
+- The edit decides between the answer tokens; it does not stop the model preferring some other token (see "Does it
+  stay on script?").
+- Tasks that need the item and the question combined, like BoolQ, can get worse. Check the held-out score.
 - The read-out sits at the final layer. Linear probes a few layers earlier are usually a little better (0.84 vs
   0.78 mean in our runs); reaching them needs an edit inside the network, which this tool does not do.
 - It adds no knowledge.
@@ -167,7 +211,8 @@ form; the defaults (regularisation = number of items, strength x2) are fixed, no
 pip install -e .[dev] && pytest
 ```
 
-The tests use synthetic states and check the arithmetic: a planted direction recovered for two and for four
+The tests use synthetic states and a toy tokenizer and check: answers read by first token, digits after a space,
+clashing first tokens refused; the sweep and the word-count control; a planted direction recovered for two and four
 answers; the row edit reproduces the offline scores exactly; the two-answer edit is identical to version 0.1's;
 save/load, including 0.1 files; patch touches only the answer rows. No model download.
 

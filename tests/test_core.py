@@ -128,3 +128,59 @@ def test_loads_v01_file(tmp_path):
     np.savez(tmp_path / "old.npz", mu_hat=r.mu_hat, shift=r.shift, w=r.W[1], meta=json.dumps(meta))
     r1 = Readout.load(tmp_path / "old.npz")
     assert np.allclose(r1.deltas(), r.deltas()) and np.array_equal(r1.predict(H, LAB), r.predict(H, LAB))
+
+
+# ------------------------------------------------------------------------------------------- answers, sweeps, word counts
+
+class _Tok:
+    """A toy tokenizer: a space is its own token before a digit, words are one token each, ids from a table."""
+    def __init__(self):
+        self.vocab = {}
+
+    def _id(self, piece):
+        return self.vocab.setdefault(piece, len(self.vocab))
+
+    def __call__(self, text, add_special_tokens=False):
+        import re as _re
+        pieces = _re.findall(r" \d| ?[A-Za-z]+", text)
+        ids = []
+        for p in pieces:
+            if p.startswith(" ") and p[1:].isdigit():
+                ids += [self._id(" "), self._id(p[1:])]
+            else:
+                ids.append(self._id(p))
+        return {"input_ids": ids}
+
+    def decode(self, ids):
+        inv = {v: k for k, v in self.vocab.items()}
+        return "".join(inv[i] for i in ids)
+
+
+def test_answer_tokens_first_token_and_digits():
+    import pytest
+    from lmreadout.core import answer_tokens
+    tok = _Tok()
+    ids, suffix = answer_tokens(tok, ["Unilateral change", "Other"])
+    assert suffix == "" and ids == [tok(" Unilateral")["input_ids"][0], tok(" Other")["input_ids"][0]]
+    ids, suffix = answer_tokens(tok, ["0", "1", "2"])
+    assert suffix == " " and ids == [tok(" 0")["input_ids"][1],
+                                      tok(" 1")["input_ids"][1], tok(" 2")["input_ids"][1]]
+    with pytest.raises(ValueError, match="share their first token"):
+        answer_tokens(tok, ["Unilateral change", "Unilateral termination"])
+
+
+def test_sweep_scores_held_out_and_beats_shipped():
+    from lmreadout.core import sweep
+    H, LAB, LSE, gold, _ = synthetic_k()
+    texts = [f"topic{g} filler word{i % 7}" for i, g in enumerate(gold)]
+    res = sweep(H, LAB, LSE, gold, texts=texts, sizes=(15, 60), draws=5, seed=0)
+    assert [r["n_fit"] for r in res] == [15, 60] and res[0]["n_scored"] == len(gold) - 15
+    assert res[1]["bal_edited"] > res[1]["bal_shipped"] + 0.2
+    assert res[1]["bal_wordcount"] > 0.9                       # the texts name the topic outright
+
+
+def test_wordcount_predict_learns_a_marker_word():
+    from lmreadout.core import wordcount_predict
+    tr = ["the cat sat", "a cat ran", "the dog sat", "a dog ran"] * 3
+    g = np.array([0, 0, 1, 1] * 3)
+    assert wordcount_predict(tr, g, ["my cat", "my dog"], 2).tolist() == [0, 1]

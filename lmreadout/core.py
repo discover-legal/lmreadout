@@ -46,6 +46,31 @@ def label_token_ids(tok, labels: list[str], prefix: str = " ") -> list[int]:
     return ids
 
 
+def answer_tokens(tok, labels: list[str], prefix: str = " ") -> tuple[list[int], str]:
+    """The row each answer is read from, as on LegalBench: the first token of prefix + answer. Answers of several
+    tokens are allowed as long as their first tokens differ. When every answer is a shared lone prefix token plus one
+    more token (Qwen writes " 3" as " " then "3"), the prefix goes at the end of the prompt and the second tokens are
+    the rows. Returns (token ids, text to append to the prompt)."""
+    toks = [tok(prefix + str(lab), add_special_tokens=False)["input_ids"] for lab in labels]
+    if any(len(t) == 0 for t in toks):
+        raise ValueError("an answer tokenises to nothing")
+    ft, suffix = [t[0] for t in toks], ""
+    if (len(labels) > 1 and len(set(ft)) == 1 and all(len(t) == 2 for t in toks) and prefix
+            and tok.decode([ft[0]]) == prefix):
+        ft, suffix = [t[1] for t in toks], prefix
+    if len(set(ft)) != len(ft):
+        clash = {}
+        for lab, t in zip(labels, ft):
+            clash.setdefault(t, []).append(lab)
+        raise ValueError("answers share their first token, so the read-out cannot tell them apart: "
+                         + "; ".join(" / ".join(map(repr, v)) for v in clash.values() if len(v) > 1))
+    return ft, suffix
+
+
+def template_fields(template: str) -> list[str]:
+    return list(dict.fromkeys(re.findall(r"\{\{(\w+)\}\}", template)))
+
+
 def fill_template(template: str, row: dict) -> str:
     return re.sub(r"\{\{(\w+)\}\}", lambda m: str(row.get(m.group(1), "")), template)
 
@@ -64,12 +89,16 @@ def _final_state_fn(model):
 
 
 @torch.no_grad()
-def collect(model, tok, prompts: list[str], label_ids: list[int], max_len: int = 1024, progress: bool = False):
+def collect(model, tok, prompts: list[str], label_ids: list[int], max_len: int = 1024, progress: bool = False,
+            other_max: bool = False):
     """For each prompt: final-norm state h [d], the label logits [K] and log-sum-exp of all logits (so label
-    log-probabilities are lab - lse). Returns (H [n, d], LAB [n, 2], LSE [n]) as float64 numpy arrays."""
+    log-probabilities are lab - lse). Returns (H [n, d], LAB [n, K], LSE [n]) as float64 numpy arrays; with
+    other_max=True also OM [n], the highest logit of any token that is not an answer (the model's free next token is
+    an answer when LAB.max(1) >= OM)."""
     device = next(model.parameters()).device
-    H, LAB, LSE = [], [], []
+    H, LAB, LSE, OM = [], [], [], []
     picker = None
+    mask = None
     for i, p in enumerate(prompts):
         ids = tok(p, add_special_tokens=False)["input_ids"][-max_len:]
         x = torch.tensor([ids], device=device)
@@ -86,9 +115,14 @@ def collect(model, tok, prompts: list[str], label_ids: list[int], max_len: int =
                                    "something between the last hidden state and lm_head that lmreadout does not know")
         h = picker(out.hidden_states).float()
         H.append(h[0].cpu()); LAB.append(logits[0, label_ids].cpu()); LSE.append(torch.logsumexp(logits[0], -1).cpu())
+        if other_max:
+            if mask is None:
+                mask = torch.zeros(logits.shape[-1], dtype=torch.bool, device=logits.device); mask[label_ids] = True
+            OM.append(logits[0].masked_fill(mask, float("-inf")).max().cpu())
         if progress and (i + 1) % 50 == 0:
             print(f"  {i + 1}/{len(prompts)}", flush=True)
-    return (torch.stack(H).double().numpy(), torch.stack(LAB).double().numpy(), torch.stack(LSE).double().numpy())
+    out = (torch.stack(H).double().numpy(), torch.stack(LAB).double().numpy(), torch.stack(LSE).double().numpy())
+    return out + (torch.stack(OM).double().numpy(),) if other_max else out
 
 
 # ----------------------------------------------------------------------------------------------- the read-out
@@ -222,6 +256,69 @@ def twofold(H, LAB, LSE, gold, **kw) -> dict:
     out = dict(n=int(n), majority=float(np.bincount(gold).max() / n))
     for name, p in (("shipped", p0), ("calibrated", p1), ("edited", p2)):
         out[name] = accuracy(p, gold); out["bal_" + name] = balanced_accuracy(p, gold)
+    return out
+
+
+# ----------------------------------------------------------------------------------------------- baselines and sweeps
+
+def words(text: str) -> list[str]:
+    return re.findall(r"\w+", text.lower())
+
+
+def wordcount_predict(train_texts: list[str], train_gold: np.ndarray, test_texts: list[str], K: int,
+                      lam: float | None = None) -> np.ndarray:
+    """The control: the same per-answer ridge fed word counts instead of the model's state. Vocabulary = words in at
+    least two training items. Returns predicted answer indices for test_texts."""
+    seen: dict[str, int] = {}
+    for t in train_texts:
+        for x in set(words(t)):
+            seen[x] = seen.get(x, 0) + 1
+    vocab = {x: i for i, x in enumerate(sorted(x for x, c in seen.items() if c >= 2))}
+    if not vocab or len(set(train_gold.tolist())) < 2:
+        return np.full(len(test_texts), int(np.bincount(train_gold, minlength=K).argmax()), dtype=int)
+
+    def counts(ts):
+        X = np.zeros((len(ts), len(vocab)))
+        for i, t in enumerate(ts):
+            for x in words(t):
+                j = vocab.get(x)
+                if j is not None:
+                    X[i, j] += 1
+        return X
+    X, Xe = counts(train_texts), counts(test_texts)
+    lam = float(len(train_gold)) if lam is None else lam
+    S = np.column_stack([Xe @ w + b for w, b in (ridge(X, 2.0 * (train_gold == k) - 1.0, lam) for k in range(K))])
+    return S.argmax(1)
+
+
+def sweep(H, LAB, LSE, gold, texts: list[str] | None = None, sizes=(15, 30, 60, 120), draws: int = 20, seed: int = 0,
+          **kw) -> list[dict]:
+    """For each size N: `draws` times, fit on N items drawn at random (not balanced by answer) and score every other
+    item. Returns one dict per size with the mean (and sd over draws) of accuracy and balanced accuracy for the
+    model as shipped, calibrated only, edited, and, when texts are given, word counts fitted on the same N items."""
+    n, K = len(gold), LAB.shape[1]
+    rng = np.random.default_rng(seed)
+    out = []
+    for N in sizes:
+        if N >= n:
+            continue
+        acc_: dict[str, list] = {}
+        for _ in range(draws):
+            tr = np.zeros(n, bool); tr[rng.choice(n, N, replace=False)] = True
+            ev = ~tr
+            r = fit(H[tr], LAB[tr], LSE[tr], gold[tr], **kw)
+            preds = dict(shipped=LAB[ev].argmax(1), calibrated=r.calibrated(H[ev], LAB[ev]).argmax(1),
+                         edited=r.predict(H[ev], LAB[ev]))
+            if texts is not None:
+                preds["wordcount"] = wordcount_predict([t for t, m in zip(texts, tr) if m], gold[tr],
+                                                       [t for t, m in zip(texts, ev) if m], K)
+            for name, p in preds.items():
+                acc_.setdefault(name, []).append(accuracy(p, gold[ev]))
+                acc_.setdefault("bal_" + name, []).append(balanced_accuracy(p, gold[ev]))
+        row = dict(n_fit=int(N), n_scored=int(n - N), draws=int(draws))
+        for k, v in acc_.items():
+            row[k] = float(np.mean(v)); row[k + "_sd"] = float(np.std(v))
+        out.append(row)
     return out
 
 

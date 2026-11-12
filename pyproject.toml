@@ -1,6 +1,6 @@
 [project]
 name = "lmreadout"
-version = "0.2.0"
+version = "0.3.0"
 description = "Pull a classifier out of a causal language model's own hidden state and write it into the model's output rows. No training."
 readme = "README.md"
 requires-python = ">=3.10"

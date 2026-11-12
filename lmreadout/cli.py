@@ -1,24 +1,29 @@
-"""Command line: fit a read-out, evaluate it on held-out items, patch a model, or predict with side heads.
+"""Command line: fit a read-out, sweep the number of labelled examples, evaluate on held-out items, patch a model, or
+predict with side heads.
 
-  lmreadout fit     --model ID --data items.jsonl --template t.txt --labels No Yes [MORE ...] --out task.npz [--task NAME]
+  lmreadout fit     --model ID --data items.jsonl --template t.txt [--labels A B ...] --out task.npz [--task NAME]
+  lmreadout sweep   --model ID --data items.jsonl --template t.txt [--labels A B ...] [--sizes 15 30 60 120] [--draws 20]
   lmreadout eval    --model ID --readout task.npz --data heldout.jsonl
   lmreadout patch   --model ID --readout task.npz --out edited-model/
   lmreadout predict --model ID --readout a.npz [b.npz ...] --data items.jsonl [--out preds.jsonl]
 
-items.jsonl: one JSON object per line with the template's fields and, for fit/eval, an "answer" field equal to
-one of the labels. The template is a text file ending where the answer goes, with {{field}} placeholders.
+items.jsonl: one JSON object per line with the template's fields and, for fit/sweep/eval, an "answer" field. The
+template is a text file ending where the answer goes, with {{field}} placeholders. Without --labels the answers are
+read from the data (every distinct "answer", sorted). Each answer is read from the row of its first token after
+--label-prefix, so answers of several words work as long as their first tokens differ.
 """
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 import sys
 from pathlib import Path
 
 import numpy as np
 
-from .core import (Readout, accuracy, balanced_accuracy, collect, fill_template, fit, label_token_ids, load_model, patch,
-                   predict_items, twofold)
+from .core import (Readout, accuracy, answer_tokens, balanced_accuracy, collect, fill_template, fit, load_model, patch,
+                   predict_items, sweep, template_fields, twofold)
 
 
 def read_jsonl(path: str) -> list[dict]:
@@ -26,55 +31,104 @@ def read_jsonl(path: str) -> list[dict]:
         return [json.loads(line) for line in fh if line.strip()]
 
 
-def _prep(a, labels, tok, rows, template):
-    ids = label_token_ids(tok, labels, a.label_prefix)
-    prompts = [fill_template(template, r) for r in rows]
-    gold = np.array([labels.index(str(r["answer"])) for r in rows]) if all("answer" in r for r in rows) else None
-    return ids, prompts, gold
+def _task_inputs(a, tok, rows, template):
+    """Answers, their rows, the prompt template as used, prompts, gold indices and the item texts (for word counts)."""
+    if not all("answer" in r for r in rows):
+        sys.exit("every item needs an 'answer' field")
+    labels = [str(x) for x in a.labels] if a.labels else sorted({str(r["answer"]) for r in rows})
+    missing = sorted({str(r["answer"]) for r in rows} - set(labels))
+    if missing:
+        sys.exit(f"answers in the data that are not in --labels: {missing}")
+    if len(labels) < 2:
+        sys.exit("need at least two answers")
+    try:
+        ids, suffix = answer_tokens(tok, labels, a.label_prefix)
+    except ValueError as e:
+        sys.exit(str(e))
+    whole = 2 if suffix else 1
+    multi = [lab for lab in labels if len(tok(a.label_prefix + lab, add_special_tokens=False)["input_ids"]) > whole]
+    print(f"{len(labels)} answers: {labels}" + (f"; read by their first token: {multi}" if multi else "")
+          + (f"; the prompt ends with {suffix!r}" if suffix else ""), flush=True)
+    used = template + suffix
+    prompts = [fill_template(used, r) for r in rows]
+    gold = np.array([labels.index(str(r["answer"])) for r in rows])
+    fields = template_fields(template)
+    texts = [" ".join(str(r.get(f, "")) for f in fields) for r in rows]
+    return labels, ids, used, prompts, gold, texts
+
+
+def _scores_lines(d, K):
+    return (f"  accuracy:          commonest answer={d['majority']:.3f} as shipped={d['shipped']:.3f} "
+            f"calibrated={d['calibrated']:.3f} edited={d['edited']:.3f}\n"
+            f"  balanced accuracy: guessing={1 / K:.3f} as shipped={d['bal_shipped']:.3f} "
+            f"calibrated={d['bal_calibrated']:.3f} edited={d['bal_edited']:.3f}")
 
 
 def cmd_fit(a):
     model, tok = load_model(a.model, a.device)
     rows = read_jsonl(a.data)[: a.max_items or None]
-    template = Path(a.template).read_text()
-    ids, prompts, gold = _prep(a, a.labels, tok, rows, template)
-    if gold is None:
-        sys.exit("fit needs an 'answer' field on every item")
-    if len(a.labels) < 2:
-        sys.exit("fit needs at least two labels")
+    labels, ids, used, prompts, gold, _ = _task_inputs(a, tok, rows, Path(a.template).read_text())
     print(f"collecting {len(prompts)} items", flush=True)
     H, LAB, LSE = collect(model, tok, prompts, ids, max_len=a.max_len, progress=True)
     tf = twofold(H, LAB, LSE, gold, lam=a.lam, alpha_mult=a.alpha_mult)
-    print(f"two-fold (every item scored by a read-out that never saw it), n={tf['n']}, {len(a.labels)} labels\n"
-          f"  accuracy:          commonest label={tf['majority']:.3f} as shipped={tf['shipped']:.3f} "
-          f"calibrated={tf['calibrated']:.3f} edited={tf['edited']:.3f}\n"
-          f"  balanced accuracy: guessing={1 / len(a.labels):.3f} as shipped={tf['bal_shipped']:.3f} "
-          f"calibrated={tf['bal_calibrated']:.3f} edited={tf['bal_edited']:.3f}", flush=True)
+    print(f"two-fold (every item scored by a read-out that never saw it), n={tf['n']}\n" + _scores_lines(tf, len(labels)),
+          flush=True)
     if tf["edited"] <= tf["majority"] + 0.02:
-        print("WARNING: the read-out is at the majority rate on held-out items; the model does not know this task in a "
-              "linearly readable form at the answer position. The saved read-out is not useful.", flush=True)
-    r = fit(H, LAB, LSE, gold, model_id=a.model, labels=a.labels, label_ids=ids, template=template, lam=a.lam,
-            alpha_mult=a.alpha_mult, meta=dict(task=a.task or Path(a.out).stem, twofold=tf))
+        print("WARNING: the read-out is at the commonest-answer rate on held-out items; the model does not know this "
+              "task in a linearly readable form at the answer position. The saved read-out is not useful.", flush=True)
+    r = fit(H, LAB, LSE, gold, model_id=a.model, labels=labels, label_ids=ids, template=used, lam=a.lam,
+            alpha_mult=a.alpha_mult, meta=dict(task=a.task or Path(a.out).stem, twofold=tf, label_prefix=a.label_prefix))
     r.save(a.out)
     print(f"saved {a.out}", flush=True)
+
+
+def cmd_sweep(a):
+    model, tok = load_model(a.model, a.device)
+    rows = read_jsonl(a.data)[: a.max_items or None]
+    labels, ids, used, prompts, gold, texts = _task_inputs(a, tok, rows, Path(a.template).read_text())
+    print(f"collecting {len(prompts)} items", flush=True)
+    H, LAB, LSE = collect(model, tok, prompts, ids, max_len=a.max_len, progress=True)
+    res = sweep(H, LAB, LSE, gold, texts=texts, sizes=a.sizes, draws=a.draws, seed=a.seed, lam=a.lam,
+                alpha_mult=a.alpha_mult)
+    K = len(labels)
+    print(f"each size N: {a.draws} random draws of N labelled items, every other item scored, mean over draws\n"
+          f"balanced accuracy (guessing = {1 / K:.3f}), accuracy in brackets", flush=True)
+    print(f"{'N':>6} {'as shipped':>16} {'calibrated':>16} {'word counts':>16} {'edited':>16}")
+    for r in res:
+        cell = lambda k: f"{r['bal_' + k]:.3f} ({r[k]:.3f})"
+        print(f"{r['n_fit']:>6} {cell('shipped'):>16} {cell('calibrated'):>16} {cell('wordcount'):>16} {cell('edited'):>16}")
+    if a.csv and res:
+        with open(a.csv, "w", newline="") as fh:
+            w = csv.DictWriter(fh, fieldnames=list(res[0]))
+            w.writeheader(); w.writerows(res)
+        print(f"wrote {a.csv}", flush=True)
 
 
 def cmd_eval(a):
     model, tok = load_model(a.model, a.device)
     r = Readout.load(a.readout)
     rows = read_jsonl(a.data)[: a.max_items or None]
-    ids, prompts, gold = _prep(a, r.labels, tok, rows, r.template)
-    if ids != r.label_ids:
-        sys.exit(f"label tokens differ from the read-out's ({ids} vs {r.label_ids}); same model and tokenizer?")
-    H, LAB, _ = collect(model, tok, prompts, ids, max_len=a.max_len, progress=True)
-    if gold is None:
+    if not all("answer" in x for x in rows):
         sys.exit("eval needs an 'answer' field on every item")
-    p0 = LAB.argmax(1); p1 = r.predict(H, LAB)
-    maj = np.bincount(gold, minlength=len(r.labels)).max() / len(gold)
-    print(f"held-out n={len(gold)}, {len(r.labels)} labels\n"
-          f"  accuracy:          commonest label={maj:.3f} as shipped={accuracy(p0, gold):.3f} edited={accuracy(p1, gold):.3f}\n"
-          f"  balanced accuracy: guessing={1 / len(r.labels):.3f} as shipped={balanced_accuracy(p0, gold):.3f} "
-          f"edited={balanced_accuracy(p1, gold):.3f}", flush=True)
+    ids, _ = answer_tokens(tok, r.labels, r.meta.get("label_prefix", " "))
+    if ids != r.label_ids:
+        sys.exit(f"answer tokens differ from the read-out's ({ids} vs {r.label_ids}); same model and tokenizer?")
+    unknown = sorted({str(x["answer"]) for x in rows} - set(r.labels))
+    if unknown:
+        sys.exit(f"answers in the data that the read-out does not know: {unknown}")
+    gold = np.array([r.labels.index(str(x["answer"])) for x in rows])
+    prompts = [fill_template(r.template, x) for x in rows]
+    H, LAB, _, OM = collect(model, tok, prompts, r.label_ids, max_len=a.max_len, progress=True, other_max=True)
+    S = r.scores(H, LAB)
+    p0, p1 = LAB.argmax(1), S.argmax(1)
+    K = len(r.labels)
+    maj = np.bincount(gold, minlength=K).max() / len(gold)
+    print(f"held-out n={len(gold)}, {K} answers\n"
+          f"  accuracy:          commonest answer={maj:.3f} as shipped={accuracy(p0, gold):.3f} edited={accuracy(p1, gold):.3f}\n"
+          f"  balanced accuracy: guessing={1 / K:.3f} as shipped={balanced_accuracy(p0, gold):.3f} "
+          f"edited={balanced_accuracy(p1, gold):.3f}\n"
+          f"  free next token is one of the answers: as shipped {(LAB.max(1) >= OM).mean():.1%}, "
+          f"edited {(S.max(1) >= OM).mean():.1%}", flush=True)
 
 
 def cmd_patch(a):
@@ -105,11 +159,18 @@ def main(argv=None):
     common.add_argument("--device", default=None)
     common.add_argument("--max-len", type=int, default=1024, help="prompts are left-truncated to this many tokens")
     common.add_argument("--max-items", type=int, default=0)
-    common.add_argument("--label-prefix", default=" ", help="text put before each label when tokenising (default: a space)")
-    f = sub.add_parser("fit", parents=[common]); f.add_argument("--data", required=True); f.add_argument("--template", required=True)
-    f.add_argument("--labels", nargs="+", required=True, help="two or more answer labels, each one token after --label-prefix"); f.add_argument("--out", required=True)
-    f.add_argument("--task", default=None); f.add_argument("--lam", type=float, default=None, help="ridge strength (default: number of items)")
-    f.add_argument("--alpha-mult", type=float, default=2.0); f.set_defaults(fn=cmd_fit)
+    common.add_argument("--label-prefix", default=" ", help="text put before each answer when tokenising (default: a space)")
+    task = argparse.ArgumentParser(add_help=False)
+    task.add_argument("--data", required=True); task.add_argument("--template", required=True)
+    task.add_argument("--labels", nargs="+", default=None, help="the answers (default: every distinct answer in the data)")
+    task.add_argument("--lam", type=float, default=None, help="ridge strength (default: number of fit items)")
+    task.add_argument("--alpha-mult", type=float, default=2.0)
+    f = sub.add_parser("fit", parents=[common, task]); f.add_argument("--out", required=True)
+    f.add_argument("--task", default=None); f.set_defaults(fn=cmd_fit)
+    s = sub.add_parser("sweep", parents=[common, task])
+    s.add_argument("--sizes", nargs="+", type=int, default=[15, 30, 60, 120], help="numbers of labelled items to fit on")
+    s.add_argument("--draws", type=int, default=20, help="random draws per size")
+    s.add_argument("--seed", type=int, default=0); s.add_argument("--csv", default=None); s.set_defaults(fn=cmd_sweep)
     e = sub.add_parser("eval", parents=[common]); e.add_argument("--readout", required=True); e.add_argument("--data", required=True); e.set_defaults(fn=cmd_eval)
     p = sub.add_parser("patch", parents=[common]); p.add_argument("--readout", required=True); p.add_argument("--out", required=True); p.set_defaults(fn=cmd_patch)
     q = sub.add_parser("predict", parents=[common]); q.add_argument("--readout", nargs="+", required=True); q.add_argument("--data", required=True)
