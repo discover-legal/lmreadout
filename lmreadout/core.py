@@ -15,6 +15,7 @@ gap_calibrated(h) + 2 alpha (w_1 . h + b_1)). Every step is closed form. Only th
 from __future__ import annotations
 
 import json
+import warnings
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -96,18 +97,22 @@ def collect(model, tok, prompts: list[str], label_ids: list[int], max_len: int =
     other_max=True also OM [n], the highest logit of any token that is not an answer (the model's free next token is
     an answer when LAB.max(1) >= OM)."""
     device = next(model.parameters()).device
+    head = model.get_output_embeddings()
     H, LAB, LSE, OM = [], [], [], []
+    cut = 0
     picker = None
     mask = None
     for i, p in enumerate(prompts):
-        ids = tok(p, add_special_tokens=False)["input_ids"][-max_len:]
+        ids = tok(p, add_special_tokens=False)["input_ids"]
+        if len(ids) > max_len:
+            cut += 1; ids = ids[-max_len:]
         x = torch.tensor([ids], device=device)
         out = model(x, output_hidden_states=True)
         logits = out.logits[:, -1].float()
         if picker is None:
             for cand in _final_state_fn(model):
                 h = cand(out.hidden_states).float()
-                test = model.lm_head(h).float()
+                test = head(h.to(head.weight.dtype)).float()
                 if torch.allclose(test, logits, atol=1e-2 * logits.abs().max().item()):
                     picker = cand; break
             if picker is None:
@@ -121,6 +126,9 @@ def collect(model, tok, prompts: list[str], label_ids: list[int], max_len: int =
             OM.append(logits[0].masked_fill(mask, float("-inf")).max().cpu())
         if progress and (i + 1) % 50 == 0:
             print(f"  {i + 1}/{len(prompts)}", flush=True)
+    if cut:
+        warnings.warn(f"{cut} of {len(prompts)} prompts were longer than {max_len} tokens and lost their start "
+                      f"(instructions, worked examples); raise max_len if the model can take more", stacklevel=2)
     out = (torch.stack(H).double().numpy(), torch.stack(LAB).double().numpy(), torch.stack(LSE).double().numpy())
     return out + (torch.stack(OM).double().numpy(),) if other_max else out
 
@@ -195,8 +203,9 @@ class Readout:
     # --- io
     def save(self, path: str | Path) -> None:
         path = Path(path)
-        meta = dict(model_id=self.model_id, labels=self.labels, label_ids=self.label_ids, template=self.template,
-                    p_mean=self.p_mean, alpha=self.alpha, meta=self.meta, format="lmreadout-2")
+        meta = dict(model_id=self.model_id, labels=[str(x) for x in self.labels],
+                    label_ids=[int(x) for x in self.label_ids], template=self.template,
+                    p_mean=float(self.p_mean), alpha=float(self.alpha), meta=self.meta, format="lmreadout-2")
         np.savez(path, mu_hat=self.mu_hat, shift=self.shift, W=self.W, B=self.B, meta=json.dumps(meta))
 
     @classmethod
@@ -221,6 +230,8 @@ def fit(H: np.ndarray, LAB: np.ndarray, LSE: np.ndarray, gold: np.ndarray, *, mo
     label_ids = list(label_ids) if label_ids is not None else list(range(K))
     if len(labels) != K or len(label_ids) != K:
         raise ValueError(f"{K} label columns but {len(labels)} labels / {len(label_ids)} label ids")
+    if len(np.unique(gold)) < 2:
+        raise ValueError("the fit items hold only one answer; a read-out needs examples of at least two")
     lam = float(n) if lam is None else float(lam)
     mu_hat = H.mean(0); mu_hat = mu_hat / (np.linalg.norm(mu_hat) + 1e-12)
     proj = H @ mu_hat
@@ -239,17 +250,19 @@ def fit(H: np.ndarray, LAB: np.ndarray, LSE: np.ndarray, gold: np.ndarray, *, mo
     pairs = [(j, k) for j in range(K) for k in range(j + 1, K)]
     s_cal = np.sqrt(np.mean([(cal[:, k] - cal[:, j]).std() ** 2 for j, k in pairs]))
     s_read = np.sqrt(np.mean([((R[:, k] - R[:, j]).std() / 2.0) ** 2 for j, k in pairs]))
+    if s_read < 1e-9 * (1.0 + s_cal):
+        raise ValueError("the read-out does not separate the answers on the fit items (zero spread); nothing to write")
     alpha = float(alpha_mult * s_cal / (s_read + 1e-9))
     return Readout(model_id=model_id, labels=labels, label_ids=label_ids, template=template, mu_hat=mu_hat,
                    p_mean=p_mean, shift=shift, W=W, B=B, alpha=alpha,
                    meta=dict(n_fit=int(n), d=int(d), lam=lam, alpha_mult=alpha_mult, **(meta or {})))
 
 
-def twofold(H, LAB, LSE, gold, **kw) -> dict:
-    """Fit on one half (by item parity), score the other, both ways. Returns accuracy and balanced accuracy for always
+def twofold(H, LAB, LSE, gold, seed: int = 0, **kw) -> dict:
+    """Fit on one random half (fixed seed), score the other, both ways. Returns accuracy and balanced accuracy for always
     giving the commonest label, the model as shipped, calibrated only, and edited; every item scored by a read-out
     that never saw it."""
-    n = len(gold); fold = np.arange(n) % 2
+    n = len(gold); fold = np.random.default_rng(seed).permutation(n) % 2
     p0 = LAB.argmax(1)
     p1, p2 = np.zeros(n, int), np.zeros(n, int)
     for f in (0, 1):
@@ -309,6 +322,8 @@ def sweep(H, LAB, LSE, gold, texts: list[str] | None = None, sizes=(15, 30, 60, 
         acc_: dict[str, list] = {}
         for _ in range(draws):
             tr = np.zeros(n, bool); tr[rng.choice(n, N, replace=False)] = True
+            while len(np.unique(gold[tr])) < 2:                  # a fit set needs two answers; rare, redraw
+                tr[:] = False; tr[rng.choice(n, N, replace=False)] = True
             ev = ~tr
             r = fit(H[tr], LAB[tr], LSE[tr], gold[tr], **kw)
             preds = dict(shipped=LAB[ev].argmax(1), calibrated=r.calibrated(H[ev], LAB[ev]).argmax(1),
@@ -331,10 +346,11 @@ def sweep(H, LAB, LSE, gold, texts: list[str] | None = None, sizes=(15, 30, 60, 
 @torch.no_grad()
 def patch(model, readout: Readout):
     """Write the read-out into lm_head.weight (unties the embedding first if it is shared). Returns the model."""
+    head = model.get_output_embeddings()
     if getattr(model.config, "tie_word_embeddings", False):
-        model.lm_head.weight = torch.nn.Parameter(model.lm_head.weight.detach().clone())
+        head.weight = torch.nn.Parameter(head.weight.detach().clone())
         model.config.tie_word_embeddings = False
-    W = model.lm_head.weight
+    W = head.weight
     for t, dr in readout.row_deltas().items():
         W[t] += torch.as_tensor(dr, dtype=W.dtype, device=W.device)
     return model

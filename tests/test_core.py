@@ -49,6 +49,9 @@ class _Head(torch.nn.Module):
         super().__init__(); self.lm_head = torch.nn.Linear(U.shape[1], U.shape[0], bias=False)
         self.lm_head.weight.data.copy_(torch.as_tensor(U, dtype=torch.float32)); self.config = type("C", (), dict(tie_word_embeddings=False))()
 
+    def get_output_embeddings(self):
+        return self.lm_head
+
 
 def test_patch_changes_only_label_rows():
     H, LAB, LSE, gold, U = synthetic()
@@ -193,3 +196,57 @@ def test_wordcount_predict_learns_a_marker_word():
     tr = ["the cat sat", "a cat ran", "the dog sat", "a dog ran"] * 3
     g = np.array([0, 0, 1, 1] * 3)
     assert wordcount_predict(tr, g, ["my cat", "my dog"], 2).tolist() == [0, 1]
+
+
+# ------------------------------------------------------------------------------------------- 0.3.2 fixes
+
+def _tiny_llama(dtype):
+    from transformers import LlamaConfig, LlamaForCausalLM
+    torch.manual_seed(0)
+    cfg = LlamaConfig(vocab_size=64, hidden_size=32, intermediate_size=64, num_hidden_layers=2, num_attention_heads=4,
+                      num_key_value_heads=4, max_position_embeddings=64)
+    return LlamaForCausalLM(cfg).to(dtype).eval()
+
+
+class _IdTok:
+    def __call__(self, text, add_special_tokens=False):
+        return {"input_ids": [ord(c) % 64 for c in text]}
+
+
+def test_collect_and_patch_half_precision():
+    from lmreadout.core import collect
+    for dt in (torch.float32, torch.bfloat16):
+        m = _tiny_llama(dt)
+        H, LAB, LSE = collect(m, _IdTok(), ["abc", "hello there", "xy"], [3, 5])
+        assert H.shape == (3, 32) and LAB.shape == (3, 2) and np.isfinite(H).all()
+
+
+def test_collect_warns_when_prompts_are_cut():
+    import pytest
+    from lmreadout.core import collect
+    with pytest.warns(UserWarning, match="1 of 2 prompts"):
+        collect(_tiny_llama(torch.float32), _IdTok(), ["a" * 40, "b"], [3, 5], max_len=10)
+
+
+def test_fit_refuses_single_answer_and_twofold_survives_alternating_order():
+    import pytest
+    H, LAB, LSE, gold, _ = synthetic()
+    with pytest.raises(ValueError):
+        fit(H[gold == 1], LAB[gold == 1], LSE[gold == 1], gold[gold == 1])
+    alt = np.concatenate([np.flatnonzero(gold == 0)[:120], np.flatnonzero(gold == 1)[:120]])
+    alt = alt.reshape(2, 120).T.flatten()                                                 # No, Yes, No, Yes, ...
+    tf = twofold(H[alt], LAB[alt], LSE[alt], gold[alt])
+    assert tf["bal_edited"] > 0.9
+
+
+def test_save_accepts_numpy_ids(tmp_path):
+    H, LAB, LSE, gold, _ = synthetic()
+    r = fit(H, LAB, LSE, gold, labels=np.array(["a", "b"]), label_ids=np.array([0, 1]))
+    r.save(tmp_path / "r.npz")
+    assert Readout.load(tmp_path / "r.npz").label_ids == [0, 1]
+
+
+def test_template_trailing_newline_removed(tmp_path):
+    from lmreadout.cli import read_template
+    (tmp_path / "t.txt").write_text("Clause: {{text}}\nLabel:\n")
+    assert read_template(str(tmp_path / "t.txt")) == "Clause: {{text}}\nLabel:"

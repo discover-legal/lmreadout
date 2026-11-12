@@ -1,11 +1,11 @@
 [project]
 name = "lmreadout"
-version = "0.3.1"
-description = "Pull a classifier out of a causal language model's own hidden state and write it into the model's output rows. No training."
+version = "0.3.2"
+description = "Pull a classifier out of a causal language model's own hidden state and write it into the model's output rows. No gradient training: closed form, from a few labelled examples."
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
-dependencies = ["numpy>=1.24", "torch>=2.1", "transformers>=4.40"]
+dependencies = ["numpy>=1.24", "torch>=2.1", "transformers>=5.2"]
 
 [project.scripts]
 lmreadout = "lmreadout.cli:main"

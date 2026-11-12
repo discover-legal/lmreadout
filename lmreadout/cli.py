@@ -31,6 +31,27 @@ def read_jsonl(path: str) -> list[dict]:
         return [json.loads(line) for line in fh if line.strip()]
 
 
+def read_template(path: str) -> str:
+    """The template file, without the line break(s) most editors add at the end: the answer goes right after the
+    last character, so a trailing newline would move it to a new line."""
+    t = Path(path).read_text()
+    s = t.rstrip("\r\n")
+    if s != t:
+        print("note: removed the line break at the end of the template; the answer goes right after "
+              f"{s[-20:]!r}", flush=True)
+    return s
+
+
+def check_model(model, r: Readout, model_id: str):
+    d = model.get_output_embeddings().weight.shape[1]
+    if r.mu_hat.shape[0] != d:
+        sys.exit(f"the read-out was fitted on a model with hidden size {r.mu_hat.shape[0]}, this one has {d} "
+                 f"(read-out fitted on {r.model_id!r})")
+    if r.model_id and r.model_id != model_id:
+        print(f"WARNING: the read-out was fitted on {r.model_id!r}, not {model_id!r}; it is only meaningful on the "
+              "same weights", flush=True)
+
+
 def _task_inputs(a, tok, rows, template):
     """Answers, their rows, the prompt template as used, prompts, gold indices and the item texts (for word counts)."""
     if not all("answer" in r for r in rows):
@@ -67,12 +88,15 @@ def _scores_lines(d, K):
 def cmd_fit(a):
     model, tok = load_model(a.model, a.device)
     rows = read_jsonl(a.data)[: a.max_items or None]
-    labels, ids, used, prompts, gold, _ = _task_inputs(a, tok, rows, Path(a.template).read_text())
+    labels, ids, used, prompts, gold, _ = _task_inputs(a, tok, rows, read_template(a.template))
     print(f"collecting {len(prompts)} items", flush=True)
     H, LAB, LSE = collect(model, tok, prompts, ids, max_len=a.max_len, progress=True)
     tf = twofold(H, LAB, LSE, gold, lam=a.lam, alpha_mult=a.alpha_mult)
     print(f"two-fold (every item scored by a read-out that never saw it), n={tf['n']}\n" + _scores_lines(tf, len(labels)),
           flush=True)
+    if tf["bal_edited"] < tf["bal_shipped"]:
+        print("WARNING: on held-out items the edit scores below the model as shipped (balanced accuracy); check with "
+              "`sweep` and more labelled items before using it.", flush=True)
     if tf["edited"] <= tf["majority"] + 0.02:
         print("WARNING: the read-out is at the commonest-answer rate on held-out items; the model does not know this "
               "task in a linearly readable form at the answer position. The saved read-out is not useful.", flush=True)
@@ -85,7 +109,7 @@ def cmd_fit(a):
 def cmd_sweep(a):
     model, tok = load_model(a.model, a.device)
     rows = read_jsonl(a.data)[: a.max_items or None]
-    labels, ids, used, prompts, gold, texts = _task_inputs(a, tok, rows, Path(a.template).read_text())
+    labels, ids, used, prompts, gold, texts = _task_inputs(a, tok, rows, read_template(a.template))
     print(f"collecting {len(prompts)} items", flush=True)
     H, LAB, LSE = collect(model, tok, prompts, ids, max_len=a.max_len, progress=True)
     res = sweep(H, LAB, LSE, gold, texts=texts, sizes=a.sizes, draws=a.draws, seed=a.seed, lam=a.lam,
@@ -107,6 +131,7 @@ def cmd_sweep(a):
 def cmd_eval(a):
     model, tok = load_model(a.model, a.device)
     r = Readout.load(a.readout)
+    check_model(model, r, a.model)
     rows = read_jsonl(a.data)[: a.max_items or None]
     if not all("answer" in x for x in rows):
         sys.exit("eval needs an 'answer' field on every item")
@@ -120,13 +145,14 @@ def cmd_eval(a):
     prompts = [fill_template(r.template, x) for x in rows]
     H, LAB, _, OM = collect(model, tok, prompts, r.label_ids, max_len=a.max_len, progress=True, other_max=True)
     S = r.scores(H, LAB)
-    p0, p1 = LAB.argmax(1), S.argmax(1)
+    p0, pc, p1 = LAB.argmax(1), r.calibrated(H, LAB).argmax(1), S.argmax(1)
     K = len(r.labels)
     maj = np.bincount(gold, minlength=K).max() / len(gold)
     print(f"held-out n={len(gold)}, {K} answers\n"
-          f"  accuracy:          commonest answer={maj:.3f} as shipped={accuracy(p0, gold):.3f} edited={accuracy(p1, gold):.3f}\n"
+          f"  accuracy:          commonest answer={maj:.3f} as shipped={accuracy(p0, gold):.3f} "
+          f"calibrated={accuracy(pc, gold):.3f} edited={accuracy(p1, gold):.3f}\n"
           f"  balanced accuracy: guessing={1 / K:.3f} as shipped={balanced_accuracy(p0, gold):.3f} "
-          f"edited={balanced_accuracy(p1, gold):.3f}\n"
+          f"calibrated={balanced_accuracy(pc, gold):.3f} edited={balanced_accuracy(p1, gold):.3f}\n"
           f"  free next token is one of the answers: as shipped {(LAB.max(1) >= OM).mean():.1%}, "
           f"edited {(S.max(1) >= OM).mean():.1%}", flush=True)
 
@@ -134,14 +160,18 @@ def cmd_eval(a):
 def cmd_patch(a):
     model, tok = load_model(a.model, a.device)
     r = Readout.load(a.readout)
+    check_model(model, r, a.model)
     patch(model, r)
     model.save_pretrained(a.out); tok.save_pretrained(a.out)
-    print(f"saved patched model to {a.out} (rows {r.label_ids} of lm_head changed; everything else identical)", flush=True)
+    print(f"saved patched model to {a.out} (rows {r.label_ids} of the output table changed; everything else "
+          "identical; saved in float32 with the output table untied)", flush=True)
 
 
 def cmd_predict(a):
     model, tok = load_model(a.model, a.device)
     readouts = [Readout.load(p) for p in a.readout]
+    for r in readouts:
+        check_model(model, r, a.model)
     rows = read_jsonl(a.data)[: a.max_items or None]
     out = predict_items(model, tok, readouts, rows, max_len=a.max_len)
     fh = open(a.out, "w") if a.out else sys.stdout
@@ -156,7 +186,7 @@ def main(argv=None):
     sub = ap.add_subparsers(dest="cmd", required=True)
     common = argparse.ArgumentParser(add_help=False)
     common.add_argument("--model", required=True, help="Hugging Face model id or local path")
-    common.add_argument("--device", default=None)
+    common.add_argument("--device", default=None, help="cuda or cpu (default: cuda when available)")
     common.add_argument("--max-len", type=int, default=1024, help="prompts are left-truncated to this many tokens")
     common.add_argument("--max-items", type=int, default=0)
     common.add_argument("--label-prefix", default=" ", help="text put before each answer when tokenising (default: a space)")
