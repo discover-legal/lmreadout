@@ -311,15 +311,14 @@ def test_tune_leaves_a_model_that_is_already_right():
     assert r is None and t["unchanged"] and t["cv_unchanged"] == 1.0
 
 
-def test_tune_refuses_an_answer_with_one_item():
+def test_tune_falls_back_to_the_lean_when_an_answer_is_short():
     H, LAB, LSE, gold, _ = synthetic(n=30)
     gold = np.zeros(30, int); gold[0] = 1
-    try:
-        tune(H, LAB, LSE, gold)
-    except ValueError as e:
-        assert "two labelled items" in str(e)
-    else:
-        raise AssertionError("tune accepted an answer with a single item")
+    r, t = fit_auto(H, LAB, LSE, gold)
+    assert t["fallback"] == [1] and t["lean"] == 1.0 and t["alpha_mult"] == 0.0 and not t["unchanged"]
+    assert np.allclose(r.scores(H, LAB), r.calibrated(H, LAB))   # lean removed, no read-out
+    r1, t1 = fit_auto(H, LAB, LSE, np.zeros(30, int))              # one answer only: still the lean, no read-out
+    assert t1["fallback"] == [1] and np.allclose(r1.scores(H, LAB), r1.calibrated(H, LAB))
 
 
 def test_tune_uses_folds_above_fifty_items():
@@ -330,6 +329,6 @@ def test_tune_uses_folds_above_fifty_items():
 def test_sweep_and_twofold_with_auto():
     H, LAB, LSE, gold, _ = synthetic(n=200)
     res = sweep(H, LAB, LSE, gold, sizes=(15, 40), draws=3, auto=True, n_params=int(1e9))
-    assert all("bal_auto" in r and "auto_untunable_draws" in r for r in res)
+    assert all("bal_auto" in r and "auto_fallback_draws" in r and r["auto_choices"] for r in res)
     tf = twofold(H, LAB, LSE, gold, auto=True)
     assert tf["bal_edited"] > tf["bal_shipped"]

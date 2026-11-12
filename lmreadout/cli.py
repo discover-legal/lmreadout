@@ -14,7 +14,8 @@ read from the data (every distinct "answer", sorted). Each answer is read from t
 
 --auto chooses how much of the lean to remove (0, 0.5, 1), the read-out's strength (0, 0.5, 1, 2, 4) and the ridge
 (n/4, n, 4n) from the labelled items by cross-validation, and may choose to leave the model unchanged. Ties go to
-a strength that steps down with model size: 2 below 3B parameters, 1 below 7B, 0.5 from 7B.
+a strength that steps down with model size: 2 below 3B parameters, 1 below 7B, 0.5 from 7B. When some answer has
+fewer than two labelled items nothing can be cross-validated: the lean is removed (no labels needed), no read-out.
 """
 from __future__ import annotations
 
@@ -112,8 +113,7 @@ def cmd_fit(a):
     try:
         tf = twofold(H, LAB, LSE, gold, auto=a.auto, n_params=npar, **kw)
     except ValueError as e:
-        need = "four (two in each half, for choosing settings inside each half)" if a.auto else "two"
-        sys.exit(f"cannot score on held-out halves: {e}. Each answer needs at least {need} labelled items.")
+        sys.exit(f"cannot score on held-out halves: {e}. Each answer needs at least two labelled items.")
     if a.auto:
         print("two-fold with --auto: in each half the settings are chosen from that half alone", flush=True)
     print(f"two-fold (every item scored by a read-out that never saw it), n={tf['n']}\n" + _scores_lines(tf, len(labels)),
@@ -128,6 +128,13 @@ def cmd_fit(a):
     common = dict(model_id=a.model, labels=labels, label_ids=ids, template=used, meta=meta)
     if a.auto:
         r, t = fit_auto(H, LAB, LSE, gold, n_params=npar, **common)
+        if t["fallback"]:
+            short = [labels[k] for k in t["fallback"]]
+            print(f"--auto: fewer than two labelled items of {short}, so no settings can be chosen: removing the lean "
+                  "only (needs no labels), no read-out. Label more items of those answers to let --auto choose.",
+                  flush=True)
+            r.save(a.out); print(f"saved {a.out}", flush=True)
+            return
         print(f"--auto on all {len(gold)} items ({t['folds']} folds; model {npar / 1e9:.2f}B parameters, ties go to "
               f"strength {t['preferred_strength']}): lean {t['lean']}, strength {t['alpha_mult']}, ridge "
               f"{t['lam_factor']} x n; cross-validated balanced accuracy {t['cv_bal']:.3f} "
@@ -158,15 +165,17 @@ def cmd_sweep(a):
     print(f"each size N: {a.draws} random draws of N labelled items, every other item scored, mean over draws\n"
           f"balanced accuracy (guessing = {1 / K:.3f}), accuracy in brackets", flush=True)
     head = f"{'N':>6} {'as shipped':>16} {'calibrated':>16} {'word counts':>16} {'edited':>16}"
-    print(head + (f" {'auto':>16}  untunable draws" if a.auto else ""))
+    print(head + (f" {'auto':>16}  fallback draws" if a.auto else ""))
     for r in res:
         cell = lambda k: f"{r['bal_' + k]:.3f} ({r[k]:.3f})"
         line = f"{r['n_fit']:>6} {cell('shipped'):>16} {cell('calibrated'):>16} {cell('wordcount'):>16} {cell('edited'):>16}"
-        print(line + (f" {cell('auto'):>16}  {r['auto_untunable_draws']}" if a.auto else ""))
+        print(line + (f" {cell('auto'):>16}  {r['auto_fallback_draws']}" if a.auto else ""))
     if a.auto:
         print("edited = the fixed settings (all the lean, strength --alpha-mult, ridge --lam); auto = settings chosen "
-              "from the N items alone. Untunable draws (an answer with under two of the N items) keep the model "
-              "unchanged.", flush=True)
+              "from the N items alone. Fallback draws (an answer with under two of the N items): lean removed only, "
+              "no read-out.\nsettings auto chose (lean / strength / ridge), count over the draws:", flush=True)
+        for r in res:
+            print(f"{r['n_fit']:>6}  {r['auto_choices']}")
     if a.csv and res:
         with open(a.csv, "w", newline="") as fh:
             w = csv.DictWriter(fh, fieldnames=list(res[0]))

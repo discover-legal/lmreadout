@@ -259,7 +259,7 @@ def fit(H: np.ndarray, LAB: np.ndarray, LSE: np.ndarray, gold: np.ndarray, *, mo
     label_ids = list(label_ids) if label_ids is not None else list(range(K))
     if len(labels) != K or len(label_ids) != K:
         raise ValueError(f"{K} label columns but {len(labels)} labels / {len(label_ids)} label ids")
-    if len(np.unique(gold)) < 2:
+    if alpha_mult > 0 and len(np.unique(gold)) < 2:
         raise ValueError("the fit items hold only one answer; a read-out needs examples of at least two")
     lam = float(n) if lam is None else float(lam)
     P = _parts(H, LAB, LSE, gold, lam)
@@ -314,11 +314,16 @@ def tune(H, LAB, LSE, gold, *, n_params: int | None = None, seed: int = 0) -> di
     those items (leave one out up to 50 items, ten folds split within each answer above that), by balanced accuracy.
     The model is left unchanged unless some edit scores strictly above it; among edits the best wins and ties go to
     the setting nearest the preferred one (see candidates). Returns the chosen setting
-    (lean, alpha_mult, lam for all n items), whether that is the model unchanged, and every setting's score."""
+    (lean, alpha_mult, lam for all n items), whether that is the model unchanged, and every setting's score.
+    Fallback: when some answer has fewer than two labelled items nothing can be cross-validated, so the lean is
+    removed (it needs no labels) and no read-out is added; fallback names the answers short of items."""
     n, K = len(gold), LAB.shape[1]
     present, counts = np.unique(gold, return_counts=True)
-    if len(present) < 2 or counts.min() < 2:
-        raise ValueError("choosing settings needs at least two answers, each with at least two labelled items")
+    short = [k for k in range(K) if np.sum(gold == k) < 2]
+    if short:
+        return dict(lean=1.0, alpha_mult=0.0, lam=float(n), lam_factor=1.0, unchanged=False, cv_bal=None,
+                    cv_unchanged=None, preferred_strength=preferred_strength(n_params), folds=0, table=[],
+                    fallback=short)
     cands = candidates(n_params)
     if n <= 50:
         fold = np.arange(n)
@@ -346,7 +351,8 @@ def tune(H, LAB, LSE, gold, *, n_params: int | None = None, seed: int = 0) -> di
     return dict(lean=c["lean"], alpha_mult=c["strength"], lam=float(c["lam_factor"] * n), lam_factor=c["lam_factor"],
                 unchanged=bool(c["lean"] == 0 and c["strength"] == 0), cv_bal=float(cv[best]),
                 cv_unchanged=float(next(t["cv_bal"] for t in table if t["lean"] == 0 and t["strength"] == 0)),
-                preferred_strength=preferred_strength(n_params), folds=int(len(np.unique(fold))), table=table)
+                preferred_strength=preferred_strength(n_params), folds=int(len(np.unique(fold))), table=table,
+                fallback=[])
 
 
 def fit_auto(H, LAB, LSE, gold, *, n_params: int | None = None, seed: int = 0, **kw):
@@ -426,8 +432,8 @@ def sweep(H, LAB, LSE, gold, texts: list[str] | None = None, sizes=(15, 30, 60, 
     item. Returns one dict per size with the mean (and sd over draws) of accuracy and balanced accuracy for the
     model as shipped, calibrated only, edited, and, when texts are given, word counts fitted on the same N items.
     auto=True adds "auto": lean, strength and ridge chosen by tune from the N items alone (n_params sets the tie
-    preference); a draw where some answer has fewer than two of the N items cannot be tuned and keeps the model
-    unchanged (counted in auto_untunable_draws)."""
+    preference); a draw where some answer has fewer than two of the N items cannot be tuned, so only the lean is
+    removed (counted in auto_fallback_draws). auto_choices counts the settings chosen over the draws."""
     n, K = len(gold), LAB.shape[1]
     if len(np.unique(gold)) < 2:
         raise ValueError("the items hold only one answer; a read-out needs examples of at least two")
@@ -437,7 +443,7 @@ def sweep(H, LAB, LSE, gold, texts: list[str] | None = None, sizes=(15, 30, 60, 
         if N >= n:
             continue
         acc_: dict[str, list] = {}
-        untunable = 0
+        fallback, chosen = 0, {}
         for _ in range(draws):
             tr = np.zeros(n, bool); tr[rng.choice(n, N, replace=False)] = True
             while len(np.unique(gold[tr])) < 2:                  # a fit set needs two answers; rare, redraw
@@ -446,12 +452,12 @@ def sweep(H, LAB, LSE, gold, texts: list[str] | None = None, sizes=(15, 30, 60, 
             r = fit(H[tr], LAB[tr], LSE[tr], gold[tr], **kw)
             preds = dict(shipped=LAB[ev].argmax(1), calibrated=r.calibrated(H[ev], LAB[ev]).argmax(1),
                          edited=r.predict(H[ev], LAB[ev]))
-            if auto:                                             # settings chosen from the N items alone; when an
-                try:                                             # answer has under two of them nothing can be
-                    ra, _ = fit_auto(H[tr], LAB[tr], LSE[tr], gold[tr], n_params=n_params, seed=seed)  # chosen
-                except ValueError:
-                    ra = None; untunable += 1
+            if auto:                                             # settings chosen from the N items alone
+                ra, t = fit_auto(H[tr], LAB[tr], LSE[tr], gold[tr], n_params=n_params, seed=seed)
                 preds["auto"] = LAB[ev].argmax(1) if ra is None else ra.predict(H[ev], LAB[ev])
+                fallback += bool(t["fallback"])
+                key = "unchanged" if t["unchanged"] else f"lean {t['lean']:g} strength {t['alpha_mult']:g} ridge {t['lam_factor']:g}n"
+                chosen[key] = chosen.get(key, 0) + 1
             if texts is not None:
                 preds["wordcount"] = wordcount_predict([t for t, m in zip(texts, tr) if m], gold[tr],
                                                        [t for t, m in zip(texts, ev) if m], K)
@@ -459,8 +465,9 @@ def sweep(H, LAB, LSE, gold, texts: list[str] | None = None, sizes=(15, 30, 60, 
                 acc_.setdefault(name, []).append(accuracy(p, gold[ev]))
                 acc_.setdefault("bal_" + name, []).append(balanced_accuracy(p, gold[ev]))
         row = dict(n_fit=int(N), n_scored=int(n - N), draws=int(draws))
-        if auto:
-            row["auto_untunable_draws"] = int(untunable)        # these draws keep the model unchanged
+        if auto:                                                 # draws where an answer had under two of the N
+            row["auto_fallback_draws"] = int(fallback)           # items: lean removed, no read-out
+            row["auto_choices"] = "; ".join(f"{k}: {v}" for k, v in sorted(chosen.items(), key=lambda x: -x[1]))
         for k, v in acc_.items():
             row[k] = float(np.mean(v)); row[k + "_sd"] = float(np.std(v))
         out.append(row)
