@@ -59,26 +59,28 @@ reloaded with plain `transformers` gives the same 0.876.
 The edit decides between the answer tokens. Whether the model, left to write freely, says one of the answers at all
 is a separate question; `eval` reports it ("free next token is one of the answers"):
 
-| Task | As shipped | Edited |
-|---|---|---|
-| Overruling (worked examples in the prompt) | 100% | 100% |
-| AG News, four worked examples in the prompt | 100% | 99.8% |
-| AG News, no examples | 56.5% | 66.5% |
-| BoolQ, no examples | 19.0% | 58.6% |
-| Emotion, no examples | 92.6% | 35.6% |
-| Function of a decision section (worked examples) | 100% | 59.2% |
+| Task | As shipped | Edited, 0.3.0 | Edited, 0.3.1 |
+|---|---|---|---|
+| Overruling (worked examples in the prompt) | 100% | 100% | 100% |
+| AG News, four worked examples in the prompt | 100% | 99.8% | 100% |
+| AG News, no examples | 56.5% | 66.5% | 91.9% |
+| BoolQ, no examples | 19.0% | 58.6% | 58.6% |
+| Emotion, no examples | 92.6% | 35.6% | 92.8% |
+| Function of a decision section (worked examples) | 100% | 59.2% | 100% |
 
 Two things decide it. **Worked examples in the prompt** keep the model answering in the expected words; LegalBench's
-prompts all have them, which is why the Handi runs never went off script. And **with more than two answers the
-edit lowers every answer row together**: each answer's read-out is fitted as that answer against all the others, so
-the intercepts sum to 2 minus the number of answers, which does not change which answer wins but lets other tokens
-overtake all of them. With two answers the intercepts cancel. Either way, read the answer tokens' scores, as `eval`
-and `predict` do, or restrict generation to the answers.
+prompts all have them, which is why the Handi runs never went off script. And **the intercepts**: each answer's
+read-out is fitted as that answer against all the others, so up to 0.3.0 the intercepts summed to 2 minus the number
+of answers and lowered every answer row together, letting other tokens overtake all of them. Since 0.3.1 they are
+centred (their mean removed). That changes no difference between answers, so every chosen answer and every score
+above is the same as in 0.3.0; with two answers they already cancelled, so two-answer read-outs are unchanged.
+Read-outs saved by 0.2 or 0.3.0 are centred when loaded. Without worked examples the model can still wander (BoolQ
+above), so read the answer tokens' scores, as `eval` and `predict` do, or restrict generation to the answers.
 
 ## Install
 
 ```
-pip install git+https://github.com/hordruma/lmreadout
+pip install git+https://github.com/discover-legal/lmreadout
 ```
 
 Needs `torch`, `transformers`, `numpy`. Any Hugging Face causal LM whose weights you can load; an 8 GB GPU is
@@ -198,8 +200,8 @@ form; the defaults (regularisation = number of items, strength x2) are fixed, no
 - Answers are read by their first token, so answers that share it (for example "Unilateral change" and
   "Unilateral termination") cannot be told apart.
 - Fixed answer sets only: not free text copied from the item, not sets of answers.
-- The edit decides between the answer tokens; it does not stop the model preferring some other token (see "Does it
-  stay on script?").
+- The edit decides between the answer tokens; without worked examples in the prompt the model can still prefer some
+  other token (see "Does it stay on script?").
 - Tasks that need the item and the question combined, like BoolQ, can get worse. Check the held-out score.
 - The read-out sits at the final layer. Linear probes a few layers earlier are usually a little better (0.84 vs
   0.78 mean in our runs); reaching them needs an edit inside the network, which this tool does not do.
@@ -213,8 +215,9 @@ pip install -e .[dev] && pytest
 
 The tests use synthetic states and a toy tokenizer and check: answers read by first token, digits after a space,
 clashing first tokens refused; the sweep and the word-count control; a planted direction recovered for two and four
-answers; the row edit reproduces the offline scores exactly; the two-answer edit is identical to version 0.1's;
-save/load, including 0.1 files; patch touches only the answer rows. No model download.
+answers; the row edit reproduces the offline scores exactly; the intercepts are centred without changing any answer;
+the two-answer edit is identical to version 0.1's; save/load, including 0.1 files; patch touches only the answer
+rows. No model download.
 
 ## Licence
 

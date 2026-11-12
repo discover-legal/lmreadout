@@ -97,6 +97,15 @@ def test_k_row_edit_matches_offline_scores():
     assert (m.lm_head.weight.detach() != W0).any(1).nonzero().flatten().tolist() == [0, 1, 2, 3]
 
 
+def test_k_intercepts_centred_same_answers():
+    H, LAB, LSE, gold, _ = synthetic_k()
+    r = fit(H, LAB, LSE, gold, labels=list("abcd"), label_ids=[0, 1, 2, 3])
+    assert abs(r.B.sum()) < 1e-9
+    off = Readout(**{**r.__dict__, "B": r.B - 0.5})            # the 0.3.0 intercepts sat lower by a common amount
+    assert np.array_equal(off.predict(H, LAB), r.predict(H, LAB))
+    assert (r.scores(H, LAB) > off.scores(H, LAB)).all()       # centred: every answer row higher, none reordered
+
+
 def _fit_v01(H, LAB, LSE, gold, lam=None, alpha_mult=2.0):
     """The two-label formula exactly as lmreadout 0.1 shipped it; returns the row deltas for labels 0 and 1."""
     from lmreadout.core import ridge

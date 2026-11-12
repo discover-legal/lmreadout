@@ -206,7 +206,7 @@ class Readout:
         if m.get("format") == "lmreadout-1":       # two-label file of 0.1: one direction w and intercept b
             W = np.stack([-z["w"], z["w"]]); B = np.array([-m["b"], m["b"]])
         else:
-            W, B = z["W"], z["B"]
+            W, B = z["W"], z["B"] - z["B"].mean()   # 0.3.0 files kept uncentred intercepts; same answers, centred
         return cls(model_id=m["model_id"], labels=m["labels"], label_ids=m["label_ids"], template=m["template"],
                    mu_hat=z["mu_hat"], p_mean=m["p_mean"], shift=z["shift"], W=W, B=B, alpha=m["alpha"],
                    meta=m.get("meta", {}))
@@ -231,6 +231,10 @@ def fit(H: np.ndarray, LAB: np.ndarray, LSE: np.ndarray, gold: np.ndarray, *, mo
     W, B = np.zeros((K, d)), np.zeros(K)
     for k in range(K):
         W[k], B[k] = ridge(H, 2.0 * (gold == k) - 1.0, lam=lam)
+    # Each one-vs-rest intercept is about 2 * share - 1, so they sum to about 2 - K: every answer row lowered together,
+    # letting other tokens overtake all the answers. Removing the mean changes no difference between answers (so no
+    # chosen answer); with two answers the intercepts already cancel and this changes nothing.
+    B = B - B.mean()
     R = H @ W.T + B
     pairs = [(j, k) for j in range(K) for k in range(j + 1, K)]
     s_cal = np.sqrt(np.mean([(cal[:, k] - cal[:, j]).std() ** 2 for j, k in pairs]))
