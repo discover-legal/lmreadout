@@ -10,4 +10,4 @@ from .core import (Readout, collect, fit, twofold, patch, load_model, predict_it
 __all__ = ["Readout", "collect", "fit", "twofold", "patch", "load_model", "predict_items", "accuracy",
            "balanced_accuracy", "answer_tokens", "sweep", "wordcount_predict", "tune", "fit_auto", "candidates",
            "preferred_strength"]
-__version__ = "0.4.0.dev0"
+__version__ = "0.4.0"
