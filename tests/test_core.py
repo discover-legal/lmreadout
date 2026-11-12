@@ -263,3 +263,73 @@ def test_twofold_with_a_rare_answer_and_sweep_with_one_answer():
     z = np.flatnonzero(gold == 0)[:60]
     with pytest.raises(ValueError):
         sweep(H[z], LAB[z], LSE[z], gold[z], sizes=(15,), draws=2)
+
+
+# ------------------------------------------------------------------------------------------- choosing the settings
+
+from lmreadout.core import candidates, fit_auto, preferred_strength, sweep, tune  # noqa: E402
+
+
+def test_preferred_strength_steps_down_with_size():
+    assert preferred_strength(None) == 2.0
+    assert preferred_strength(0.9e9) == 2.0 and preferred_strength(2.3e9) == 2.0
+    assert preferred_strength(4.7e9) == 1.0 and preferred_strength(9.6e9) == 0.5
+
+
+def test_candidates_grid_and_tie_order():
+    for npar, s in ((1e9, 2.0), (4e9, 1.0), (9e9, 0.5)):
+        c = candidates(npar)
+        assert len(c) == 3 + 4 * 3 * 3                          # strength 0: ridge does not matter
+        assert c[0] == dict(lean=1.0, strength=s, lam_factor=1.0)
+        assert sum(x["lean"] == 0 and x["strength"] == 0 for x in c) == 1
+
+
+def test_lean_scales_the_calibration():
+    H, LAB, LSE, gold, _ = synthetic()
+    r0 = fit(H, LAB, LSE, gold, lean=0.0, alpha_mult=0.0)
+    assert np.allclose(r0.scores(H, LAB), LAB)                  # no lean removed, no read-out: the model as is
+    r1 = fit(H, LAB, LSE, gold, lean=1.0, alpha_mult=0.0)
+    assert np.allclose(r1.scores(H, LAB), r1.calibrated(H, LAB))
+    rh = fit(H, LAB, LSE, gold, lean=0.5, alpha_mult=0.0)
+    assert np.allclose(rh.shift, 0.5 * r1.shift)
+    rd = fit(H, LAB, LSE, gold)                                  # defaults unchanged: lean 1, strength 2
+    assert rd.meta["lean"] == 1.0 and rd.meta["alpha_mult"] == 2.0
+
+
+def test_tune_uses_a_planted_direction():
+    H, LAB, LSE, gold, _ = synthetic(n=40)
+    t = tune(H, LAB, LSE, gold)
+    assert not t["unchanged"] and t["alpha_mult"] > 0 and t["cv_bal"] > t["cv_unchanged"]
+    r, t2 = fit_auto(H, LAB, LSE, gold)
+    assert r is not None and r.meta["auto"]["alpha_mult"] == t2["alpha_mult"]
+
+
+def test_tune_leaves_a_model_that_is_already_right():
+    H, _, LSE, gold, _ = synthetic(n=30)
+    LAB = np.column_stack([-3.0 * (2 * gold - 1), 3.0 * (2 * gold - 1)]).astype(float)   # answers every item right
+    r, t = fit_auto(H, LAB, LSE, gold)
+    assert r is None and t["unchanged"] and t["cv_unchanged"] == 1.0
+
+
+def test_tune_refuses_an_answer_with_one_item():
+    H, LAB, LSE, gold, _ = synthetic(n=30)
+    gold = np.zeros(30, int); gold[0] = 1
+    try:
+        tune(H, LAB, LSE, gold)
+    except ValueError as e:
+        assert "two labelled items" in str(e)
+    else:
+        raise AssertionError("tune accepted an answer with a single item")
+
+
+def test_tune_uses_folds_above_fifty_items():
+    H, LAB, LSE, gold, _ = synthetic(n=120)
+    assert tune(H, LAB, LSE, gold)["folds"] == 10
+
+
+def test_sweep_and_twofold_with_auto():
+    H, LAB, LSE, gold, _ = synthetic(n=200)
+    res = sweep(H, LAB, LSE, gold, sizes=(15, 40), draws=3, auto=True, n_params=int(1e9))
+    assert all("bal_auto" in r and "auto_untunable_draws" in r for r in res)
+    tf = twofold(H, LAB, LSE, gold, auto=True)
+    assert tf["bal_edited"] > tf["bal_shipped"]

@@ -1,8 +1,8 @@
 """Command line: fit a read-out, sweep the number of labelled examples, evaluate on held-out items, patch a model, or
 predict with side heads.
 
-  lmreadout fit     --model ID --data items.jsonl --template t.txt [--labels A B ...] --out task.npz [--task NAME]
-  lmreadout sweep   --model ID --data items.jsonl --template t.txt [--labels A B ...] [--sizes 15 30 60 120] [--draws 20]
+  lmreadout fit     --model ID --data items.jsonl --template t.txt [--labels A B ...] --out task.npz [--task NAME] [--auto]
+  lmreadout sweep   --model ID --data items.jsonl --template t.txt [--labels A B ...] [--sizes 15 30 60 120] [--draws 20] [--auto]
   lmreadout eval    --model ID --readout task.npz --data heldout.jsonl
   lmreadout patch   --model ID --readout task.npz --out edited-model/
   lmreadout predict --model ID --readout a.npz [b.npz ...] --data items.jsonl [--out preds.jsonl]
@@ -11,6 +11,10 @@ items.jsonl: one JSON object per line with the template's fields and, for fit/sw
 template is a text file ending where the answer goes, with {{field}} placeholders. Without --labels the answers are
 read from the data (every distinct "answer", sorted). Each answer is read from the row of its first token after
 --label-prefix, so answers of several words work as long as their first tokens differ.
+
+--auto chooses how much of the lean to remove (0, 0.5, 1), the read-out's strength (0, 0.5, 1, 2, 4) and the ridge
+(n/4, n, 4n) from the labelled items by cross-validation, and may choose to leave the model unchanged. Ties go to
+a strength that steps down with model size: 2 below 3B parameters, 1 below 7B, 0.5 from 7B.
 """
 from __future__ import annotations
 
@@ -22,8 +26,8 @@ from pathlib import Path
 
 import numpy as np
 
-from .core import (Readout, accuracy, answer_tokens, balanced_accuracy, collect, fill_template, fit, load_model, patch,
-                   predict_items, sweep, template_fields, twofold)
+from .core import (Readout, accuracy, answer_tokens, balanced_accuracy, collect, fill_template, fit, fit_auto,
+                   load_model, patch, predict_items, sweep, template_fields, twofold)
 
 
 def read_jsonl(path: str) -> list[dict]:
@@ -85,16 +89,33 @@ def _scores_lines(d, K):
             f"calibrated={d['bal_calibrated']:.3f} edited={d['bal_edited']:.3f}")
 
 
+def _settings(a):
+    """--lam / --alpha-mult, or None with --auto (which chooses them itself)."""
+    if a.auto:
+        if a.lam is not None or a.alpha_mult is not None:
+            sys.exit("--auto chooses the ridge and strength itself; drop --lam / --alpha-mult, or drop --auto")
+        return {}
+    return dict(lam=a.lam, alpha_mult=2.0 if a.alpha_mult is None else a.alpha_mult)
+
+
+def _n_params(model):
+    return int(sum(p.numel() for p in model.parameters()))
+
+
 def cmd_fit(a):
     model, tok = load_model(a.model, a.device)
     rows = read_jsonl(a.data)[: a.max_items or None]
     labels, ids, used, prompts, gold, _ = _task_inputs(a, tok, rows, read_template(a.template))
     print(f"collecting {len(prompts)} items", flush=True)
     H, LAB, LSE = collect(model, tok, prompts, ids, max_len=a.max_len, progress=True)
+    kw, npar = _settings(a), _n_params(model)
     try:
-        tf = twofold(H, LAB, LSE, gold, lam=a.lam, alpha_mult=a.alpha_mult)
+        tf = twofold(H, LAB, LSE, gold, auto=a.auto, n_params=npar, **kw)
     except ValueError as e:
-        sys.exit(f"cannot score on held-out halves: {e}. Each answer needs at least two labelled items.")
+        need = "four (two in each half, for choosing settings inside each half)" if a.auto else "two"
+        sys.exit(f"cannot score on held-out halves: {e}. Each answer needs at least {need} labelled items.")
+    if a.auto:
+        print("two-fold with --auto: in each half the settings are chosen from that half alone", flush=True)
     print(f"two-fold (every item scored by a read-out that never saw it), n={tf['n']}\n" + _scores_lines(tf, len(labels)),
           flush=True)
     if tf["bal_edited"] < tf["bal_shipped"]:
@@ -103,8 +124,20 @@ def cmd_fit(a):
     if tf["edited"] <= tf["majority"] + 0.02:
         print("WARNING: the read-out is at the commonest-answer rate on held-out items; the model does not know this "
               "task in a linearly readable form at the answer position. The saved read-out is not useful.", flush=True)
-    r = fit(H, LAB, LSE, gold, model_id=a.model, labels=labels, label_ids=ids, template=used, lam=a.lam,
-            alpha_mult=a.alpha_mult, meta=dict(task=a.task or Path(a.out).stem, twofold=tf, label_prefix=a.label_prefix))
+    meta = dict(task=a.task or Path(a.out).stem, twofold=tf, label_prefix=a.label_prefix)
+    common = dict(model_id=a.model, labels=labels, label_ids=ids, template=used, meta=meta)
+    if a.auto:
+        r, t = fit_auto(H, LAB, LSE, gold, n_params=npar, **common)
+        print(f"--auto on all {len(gold)} items ({t['folds']} folds; model {npar / 1e9:.2f}B parameters, ties go to "
+              f"strength {t['preferred_strength']}): lean {t['lean']}, strength {t['alpha_mult']}, ridge "
+              f"{t['lam_factor']} x n; cross-validated balanced accuracy {t['cv_bal']:.3f} "
+              f"(model unchanged {t['cv_unchanged']:.3f})", flush=True)
+        if r is None:
+            print("no setting beat the model unchanged on the labelled items: leave the model as it is. "
+                  f"Nothing written to {a.out}.", flush=True)
+            return
+    else:
+        r = fit(H, LAB, LSE, gold, **kw, **common)
     r.save(a.out)
     print(f"saved {a.out}", flush=True)
 
@@ -116,17 +149,24 @@ def cmd_sweep(a):
     print(f"collecting {len(prompts)} items", flush=True)
     H, LAB, LSE = collect(model, tok, prompts, ids, max_len=a.max_len, progress=True)
     try:
-        res = sweep(H, LAB, LSE, gold, texts=texts, sizes=a.sizes, draws=a.draws, seed=a.seed, lam=a.lam,
-                    alpha_mult=a.alpha_mult)
+        res = sweep(H, LAB, LSE, gold, texts=texts, sizes=a.sizes, draws=a.draws, seed=a.seed,
+                    **(dict(lam=a.lam, alpha_mult=2.0 if a.alpha_mult is None else a.alpha_mult)),
+                    auto=a.auto, n_params=_n_params(model))
     except ValueError as e:
         sys.exit(str(e))
     K = len(labels)
     print(f"each size N: {a.draws} random draws of N labelled items, every other item scored, mean over draws\n"
           f"balanced accuracy (guessing = {1 / K:.3f}), accuracy in brackets", flush=True)
-    print(f"{'N':>6} {'as shipped':>16} {'calibrated':>16} {'word counts':>16} {'edited':>16}")
+    head = f"{'N':>6} {'as shipped':>16} {'calibrated':>16} {'word counts':>16} {'edited':>16}"
+    print(head + (f" {'auto':>16}  untunable draws" if a.auto else ""))
     for r in res:
         cell = lambda k: f"{r['bal_' + k]:.3f} ({r[k]:.3f})"
-        print(f"{r['n_fit']:>6} {cell('shipped'):>16} {cell('calibrated'):>16} {cell('wordcount'):>16} {cell('edited'):>16}")
+        line = f"{r['n_fit']:>6} {cell('shipped'):>16} {cell('calibrated'):>16} {cell('wordcount'):>16} {cell('edited'):>16}"
+        print(line + (f" {cell('auto'):>16}  {r['auto_untunable_draws']}" if a.auto else ""))
+    if a.auto:
+        print("edited = the fixed settings (all the lean, strength --alpha-mult, ridge --lam); auto = settings chosen "
+              "from the N items alone. Untunable draws (an answer with under two of the N items) keep the model "
+              "unchanged.", flush=True)
     if a.csv and res:
         with open(a.csv, "w", newline="") as fh:
             w = csv.DictWriter(fh, fieldnames=list(res[0]))
@@ -200,7 +240,9 @@ def main(argv=None):
     task.add_argument("--data", required=True); task.add_argument("--template", required=True)
     task.add_argument("--labels", nargs="+", default=None, help="the answers (default: every distinct answer in the data)")
     task.add_argument("--lam", type=float, default=None, help="ridge strength (default: number of fit items)")
-    task.add_argument("--alpha-mult", type=float, default=2.0)
+    task.add_argument("--alpha-mult", type=float, default=None, help="read-out strength (default 2)")
+    task.add_argument("--auto", action="store_true", help="choose lean, strength and ridge from the labelled items "
+                      "(fit: replaces --lam/--alpha-mult; sweep: adds an 'auto' column)")
     f = sub.add_parser("fit", parents=[common, task]); f.add_argument("--out", required=True)
     f.add_argument("--task", default=None); f.set_defaults(fn=cmd_fit)
     s = sub.add_parser("sweep", parents=[common, task])
