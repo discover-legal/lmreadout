@@ -107,7 +107,8 @@ two tasks. Balanced accuracy, 15 / 120 labelled items:
 | Rotten Tomatoes (new), 4B | 0.82 | **0.88 / 0.89** | 0.87 / 0.88 | 0.87 / **0.89** |
 
 - **It does no real harm.** With 15 labels it is never more than 0.02 below the model as shipped (worst: BoolQ,
-  0.632 against 0.648; the fixed edit lost 0.075 there), and on average it is level with the better of the model as
+  0.632 against 0.648; the fixed edit lost 0.075 there; at any number of labels tried the worst is BoolQ at 60,
+  0.623 against 0.647), and on average it is level with the better of the model as
   shipped and calibration alone (+0.01), which you would not know in advance.
 - **With 120 labels it matches or beats the fixed edit on every task** (worst: overruling, 0.001 below).
 - **It is not always the best choice.** With 15 labels cross-validation is noisy, so on some tasks it lands a little
