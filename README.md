@@ -25,6 +25,24 @@ The method was developed in the Handi experiment (https://github.com/discover-le
   non-merger tasks at every number of examples tried, and is no better than word counts on the 15 merger-agreement
   (MAUD) tasks.
 
+## Tried outside law: news topics
+
+AG News (fancyzhx/ag_news), four answers: World, Sports, Business, Science (the dataset's Sci/Tech). Qwen3.5-0.8B,
+installed from this repository into a clean environment and run through the commands below. Fitted on 1,000 random
+training stories (or the first 60 of them), scored on 1,000 random test stories it never saw. Prompt: "Classify the
+topic of this news story as World, Sports, Business or Science." then the story and "Topic:".
+
+| Held-out stories, accuracy | 60 labels | 1,000 labels |
+|---|---|---|
+| Commonest answer | 0.26 | 0.26 |
+| Qwen as shipped (best of the four answers) | 0.27 | 0.27 |
+| Same formula on word counts | 0.41 | 0.81 |
+| Qwen after the edit | **0.78** | **0.88** |
+
+Balanced accuracy is within 0.01 of each number (the four topics are close to even). The patched copy saved by
+`lmreadout patch` and reloaded with plain `transformers` gives the same 0.876. As on LegalBench, the model's state is
+worth most when labels are few: 37 points over word counts with 60 labels, 7 with 1,000.
+
 ## Install
 
 ```
@@ -136,6 +154,9 @@ form; the defaults (regularisation = number of items, strength x2) are fixed, no
 - Each answer must be one token after the prefix (default a space), and the answer tokens must differ. Answers that
   share their first token (for example "Unilateral change" and "Unilateral termination") cannot be told apart.
 - Fixed answer sets only: not free text copied from the item, not sets of answers.
+- The edit decides between the answer tokens; it does not stop the model preferring some other token. On the news
+  task, left to write freely, the patched model's next token was one of the four answers on 66.5% of stories (56.5%
+  before the edit). Read the answer tokens' scores, as `eval` and `predict` do, or restrict generation to them.
 - The read-out sits at the final layer. Linear probes a few layers earlier are usually a little better (0.84 vs
   0.78 mean in our runs); reaching them needs an edit inside the network, which this tool does not do.
 - It adds no knowledge.
