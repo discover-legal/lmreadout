@@ -180,10 +180,12 @@ lmreadout patch --model Qwen/Qwen3.5-0.8B --readout governing_law.npz --out qwen
 lmreadout predict --model Qwen/Qwen3.5-0.8B --readout governing_law.npz definitions.npz --data clauses.jsonl
 ```
 
-Options shared by every command: `--device cuda|cpu` (default: cuda when available), `--max-len` (prompts are cut
-to their last N tokens, default 1024, with a warning saying how many were cut), `--max-items`, `--label-prefix`
-(text put before each answer when tokenising, default a space). `fit` and `sweep` also take `--labels`, `--lam` and
-`--alpha-mult`; `sweep` takes `--sizes`, `--draws`, `--seed` and `--csv`. `lmreadout <command> --help` lists them.
+Every command takes `--model` and `--device cuda|cpu` (default: cuda when available). All but `patch` take
+`--max-len` (prompts are cut to their last N tokens, default 1024, with a warning saying how many were cut) and
+`--max-items` (use only the first N items). `fit` and `sweep` also take `--labels`, `--label-prefix` (text put
+before each answer when tokenising, default a space; `eval` and `predict` reuse the one saved in the read-out),
+`--lam`, `--alpha-mult` and `--auto`; `sweep` takes `--sizes` (at least 2), `--draws` (at least 1), `--seed` and
+`--csv`. `lmreadout <command> --help` lists them.
 
 Check a patched copy with plain `transformers` (answers are read from the first token of " " + answer):
 
@@ -198,13 +200,15 @@ answer = ["No", "Yes"][int(logits[ids].argmax())]       # should match `eval` / 
 From Python:
 
 ```python
-from lmreadout import load_model, label_token_ids, collect, fit, twofold, patch, Readout
+from lmreadout import load_model, answer_tokens, collect, fit, fit_auto, twofold, patch, Readout
 model, tok = load_model("Qwen/Qwen3.5-0.8B")
-ids = label_token_ids(tok, ["No", "Yes"])
+ids, suffix = answer_tokens(tok, ["No", "Yes"])         # suffix: text to add to the prompt (usually "")
 H, LAB, LSE = collect(model, tok, prompts, ids)          # final state + answer logits per prompt
-print(twofold(H, LAB, LSE, gold))                        # commonest / shipped / calibrated / edited, held-out
-r = fit(H, LAB, LSE, gold, labels=["No", "Yes"], label_ids=ids, template=template)
-patch(model, r)                                          # or r.predict(H, LAB) without touching the model
+size = model.num_parameters()                           # sets which strength ties go to
+print(twofold(H, LAB, LSE, gold, auto=True, n_params=size))   # commonest / shipped / calibrated / edited, held-out
+r, choice = fit_auto(H, LAB, LSE, gold, n_params=size, labels=["No", "Yes"], label_ids=ids, template=template)
+if r is not None:                                        # None: leave the model as it is
+    patch(model, r)                                      # or r.predict(H, LAB) without touching the model
 ```
 
 ## How it works
@@ -272,9 +276,12 @@ The tests use synthetic states, a toy tokenizer and tiny randomly initialised mo
 first token, digits after a space, clashing first tokens refused; the sweep and the word-count control; a planted
 direction recovered for two and four answers; the row edit reproduces the offline scores exactly; the intercepts are
 centred without changing any answer; the two-answer edit is identical to version 0.1's; save/load, including 0.1
-files; patch touches only the answer rows; float32 and bfloat16 models; a warning when prompts are cut; a fit with
-one answer refused, and the two-fold split surviving data ordered No, Yes, No, Yes; a line break at the end of the
-template removed. No model download.
+files; patch touches only the answer rows, on float32 and bfloat16 models; a warning when prompts are cut; a fit
+with one answer refused, and the two-fold split surviving data ordered No, Yes, No, Yes; a line break at the end of
+the template removed; `--auto`'s grid, tie order and size rule, its use of a planted direction, leaving a model that
+is already right unchanged, and the fallback when an answer is short of items; refusals of sweep sizes under two,
+no draws, predictions that would overwrite a field, fixed settings passed with auto, and reserved meta keys. No
+model download.
 
 ## Prior work
 

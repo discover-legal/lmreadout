@@ -15,8 +15,9 @@ gap_calibrated(h) + 2 alpha (w_1 . h + b_1)). Every step is closed form. Only th
 from __future__ import annotations
 
 import json
-import warnings
 import re
+import warnings
+from collections import Counter
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -26,25 +27,12 @@ import torch
 
 # ----------------------------------------------------------------------------------------------- model access
 
-def load_model(model_id: str, device: str | None = None, dtype=torch.float32):
+def load_model(model_id: str, device: str | None = None):
     from transformers import AutoModelForCausalLM, AutoTokenizer
     device = device or ("cuda" if torch.cuda.is_available() else "cpu")
-    model = AutoModelForCausalLM.from_pretrained(model_id, dtype=dtype).to(device).eval()
+    model = AutoModelForCausalLM.from_pretrained(model_id, dtype=torch.float32).to(device).eval()
     tok = AutoTokenizer.from_pretrained(model_id)
     return model, tok
-
-
-def label_token_ids(tok, labels: list[str], prefix: str = " ") -> list[int]:
-    ids = []
-    for lab in labels:
-        t = tok(prefix + lab, add_special_tokens=False)["input_ids"]
-        if len(t) != 1:
-            raise ValueError(f"label {lab!r} is {len(t)} tokens ({t}); the read-out needs one-token labels "
-                             f"(use a different prefix or spelling, or the first-token variant)")
-        ids.append(t[0])
-    if len(set(ids)) != len(ids):
-        raise ValueError("label tokens are not distinct")
-    return ids
 
 
 def answer_tokens(tok, labels: list[str], prefix: str = " ") -> tuple[list[int], str]:
@@ -77,16 +65,11 @@ def fill_template(template: str, row: dict) -> str:
 
 
 def _final_state_fn(model):
-    """Returns f(out, ids) -> h at the last position such that lm_head(h) == logits[-1]. Checks it once."""
+    """Ways to read, from the hidden states, the vector lm_head reads at the last position: the last hidden state as
+    is, or through the decoder's final norm. collect keeps the first that reproduces the logits."""
     dec = model.get_decoder() if hasattr(model, "get_decoder") else getattr(model, "model", None)
-    norm = None
-    for name in ("norm", "ln_f", "final_layer_norm", "final_norm"):
-        if dec is not None and hasattr(dec, name):
-            norm = getattr(dec, name); break
-    candidates = [lambda hs: hs[-1][:, -1]]
-    if norm is not None:
-        candidates.append(lambda hs: norm(hs[-1][:, -1]))
-    return candidates
+    norm = next((getattr(dec, a) for a in ("norm", "ln_f", "final_layer_norm", "final_norm") if hasattr(dec, a)), None)
+    return [lambda hs: hs[-1][:, -1]] + ([lambda hs: norm(hs[-1][:, -1])] if norm is not None else [])
 
 
 @torch.no_grad()
@@ -99,9 +82,7 @@ def collect(model, tok, prompts: list[str], label_ids: list[int], max_len: int =
     device = next(model.parameters()).device
     head = model.get_output_embeddings()
     H, LAB, LSE, OM = [], [], [], []
-    cut = 0
-    picker = None
-    mask = None
+    cut, picker, mask = 0, None, None
     for i, p in enumerate(prompts):
         ids = tok(p, add_special_tokens=False)["input_ids"]
         if len(ids) > max_len:
@@ -159,6 +140,10 @@ def balanced_accuracy(pred: np.ndarray, gold: np.ndarray) -> float:
     return float(np.mean([(pred[gold == c] == c).mean() for c in np.unique(gold)]))
 
 
+def _deltas(mu_hat, p_mean, shift, W, B, alpha):
+    return (shift + alpha * B / p_mean)[:, None] * mu_hat[None, :] + alpha * W
+
+
 @dataclass
 class Readout:
     model_id: str
@@ -176,8 +161,7 @@ class Readout:
     # --- arithmetic
     def deltas(self) -> np.ndarray:
         """[K, d]: what is added to each label row of lm_head.weight."""
-        return (self.shift[:, None] * self.mu_hat[None, :] + self.alpha * self.W
-                + (self.alpha * self.B / self.p_mean)[:, None] * self.mu_hat[None, :])
+        return _deltas(self.mu_hat, self.p_mean, self.shift, self.W, self.B, self.alpha)
 
     def scores(self, H: np.ndarray, LAB: np.ndarray) -> np.ndarray:
         """[n, K] edited label logits. Exactly what the patched model computes for the label tokens."""
@@ -198,7 +182,7 @@ class Readout:
         return S[:, 1] - S[:, 0]
 
     def row_deltas(self) -> dict[int, np.ndarray]:
-        return {t: d for t, d in zip(self.label_ids, self.deltas())}
+        return dict(zip(self.label_ids, self.deltas()))
 
     # --- io
     def save(self, path: str | Path) -> None:
@@ -224,8 +208,7 @@ class Readout:
 def _parts(H, LAB, LSE, gold, lam):
     """Everything a fit needs that does not depend on lean or strength: the mean direction, the full calibration
     shift, the per-answer ridges and the two spreads that set the read-out's scale."""
-    n, d = H.shape
-    K = LAB.shape[1]
+    d, K = H.shape[1], LAB.shape[1]
     mu_hat = H.mean(0); mu_hat = mu_hat / (np.linalg.norm(mu_hat) + 1e-12)
     proj = H @ mu_hat
     p_mean = float(proj.mean())
@@ -246,6 +229,10 @@ def _parts(H, LAB, LSE, gold, lam):
     return dict(mu_hat=mu_hat, p_mean=p_mean, shift=shift, W=W, B=B, s_cal=s_cal, s_read=s_read)
 
 
+def _alpha(P, alpha_mult):
+    return float(alpha_mult * P["s_cal"] / (P["s_read"] + 1e-9))
+
+
 def fit(H: np.ndarray, LAB: np.ndarray, LSE: np.ndarray, gold: np.ndarray, *, model_id: str = "", labels=None,
         label_ids=None, template: str = "", lam: float | None = None, alpha_mult: float = 2.0, lean: float = 1.0,
         meta: dict | None = None) -> Readout:
@@ -261,11 +248,14 @@ def fit(H: np.ndarray, LAB: np.ndarray, LSE: np.ndarray, gold: np.ndarray, *, mo
         raise ValueError(f"{K} label columns but {len(labels)} labels / {len(label_ids)} label ids")
     if alpha_mult > 0 and len(np.unique(gold)) < 2:
         raise ValueError("the fit items hold only one answer; a read-out needs examples of at least two")
+    reserved = sorted({"n_fit", "d", "lam", "alpha_mult", "lean"} & set(meta or {}))
+    if reserved:
+        raise ValueError(f"meta keys {reserved} are set by fit itself; use other names")
     lam = float(n) if lam is None else float(lam)
     P = _parts(H, LAB, LSE, gold, lam)
     if alpha_mult > 0 and P["s_read"] < 1e-9 * (1.0 + P["s_cal"]):
         raise ValueError("the read-out does not separate the answers on the fit items (zero spread); nothing to write")
-    alpha = float(alpha_mult * P["s_cal"] / (P["s_read"] + 1e-9))
+    alpha = _alpha(P, alpha_mult)
     return Readout(model_id=model_id, labels=labels, label_ids=label_ids, template=template, mu_hat=P["mu_hat"],
                    p_mean=P["p_mean"], shift=float(lean) * P["shift"], W=P["W"], B=P["B"], alpha=alpha,
                    meta=dict(n_fit=int(n), d=int(d), lam=lam, alpha_mult=alpha_mult, lean=float(lean), **(meta or {})))
@@ -281,9 +271,7 @@ LAM_FACTORS = (0.25, 1.0, 4.0)                                  # ridge strength
 def preferred_strength(n_params: int | None) -> float:
     """The strength ties go to, stepping down with model size (owner's rule): 2 up to the 2B class, 1 around 4B, 0.5
     from 9B. Cuts between the measured sizes: below 3B parameters, below 7B, 7B and up. Unknown size: 2."""
-    if n_params is None:
-        return 2.0
-    return 2.0 if n_params < 3e9 else 1.0 if n_params < 7e9 else 0.5
+    return 2.0 if n_params is None or n_params < 3e9 else 1.0 if n_params < 7e9 else 0.5
 
 
 def candidates(n_params: int | None = None) -> list[dict]:
@@ -291,22 +279,30 @@ def candidates(n_params: int | None = None) -> list[dict]:
     first, then by distance from it: strength steps first (lower first at equal distance), then lean, then ridge.
     Strength 0 has no read-out, so the ridge does not matter there; lean 0 with strength 0 is the model unchanged."""
     pref = STRENGTHS.index(preferred_strength(n_params))
-    out = []
-    for s in STRENGTHS:
-        for lean in LEANS:
-            for f in (LAM_FACTORS if s > 0 else (1.0,)):
-                out.append(dict(lean=lean, strength=s, lam_factor=f))
+    out = [dict(lean=lean, strength=s, lam_factor=f)
+           for s in STRENGTHS for lean in LEANS for f in (LAM_FACTORS if s > 0 else (1.0,))]
     lam_rank = {1.0: 0, 0.25: 1, 4.0: 1}
-    out.sort(key=lambda c: (abs(STRENGTHS.index(c["strength"]) - pref), c["strength"], 1.0 - c["lean"],
-                            lam_rank[c["lam_factor"]], c["lam_factor"]))
+    return sorted(out, key=lambda c: (abs(STRENGTHS.index(c["strength"]) - pref), c["strength"], 1.0 - c["lean"],
+                                      lam_rank[c["lam_factor"]], c["lam_factor"]))
+
+
+def _folds(gold, k, seed):
+    """Fold number (0..k-1) of each item: dealt in turn within each answer from a random start, so every fold gets
+    its share of every answer."""
+    rng = np.random.default_rng(seed)
+    fold = np.zeros(len(gold), int)
+    for c in np.unique(gold):
+        idx = np.flatnonzero(gold == c)
+        fold[rng.permutation(idx)] = (np.arange(len(idx)) + rng.integers(k)) % k
+    return fold
+
+
+def _rates(preds: dict, gold: np.ndarray) -> dict:
+    """{name: accuracy, "bal_" + name: balanced accuracy} for each named prediction."""
+    out = {}
+    for name, p in preds.items():
+        out[name] = accuracy(p, gold); out["bal_" + name] = balanced_accuracy(p, gold)
     return out
-
-
-def _cand_scores(P, H, LAB, c):
-    a = c["strength"] * P["s_cal"] / (P["s_read"] + 1e-9)
-    proj = H @ P["mu_hat"]
-    return (LAB + c["lean"] * proj[:, None] * P["shift"][None, :] + a * (H @ P["W"].T)
-            + (a * P["B"] / P["p_mean"])[None, :] * proj[:, None])
 
 
 def tune(H, LAB, LSE, gold, *, n_params: int | None = None, seed: int = 0) -> dict:
@@ -318,46 +314,40 @@ def tune(H, LAB, LSE, gold, *, n_params: int | None = None, seed: int = 0) -> di
     Fallback: when some answer has fewer than two labelled items nothing can be cross-validated, so the lean is
     removed (it needs no labels) and no read-out is added; fallback names the answers short of items."""
     n, K = len(gold), LAB.shape[1]
-    present, counts = np.unique(gold, return_counts=True)
     short = [k for k in range(K) if np.sum(gold == k) < 2]
     if short:
         return dict(lean=1.0, alpha_mult=0.0, lam=float(n), lam_factor=1.0, unchanged=False, cv_bal=None,
                     cv_unchanged=None, preferred_strength=preferred_strength(n_params), folds=0, table=[],
                     fallback=short)
     cands = candidates(n_params)
-    if n <= 50:
-        fold = np.arange(n)
-    else:
-        rng = np.random.default_rng(seed)
-        fold = np.zeros(n, int)
-        for c in present:
-            idx = np.flatnonzero(gold == c)
-            fold[rng.permutation(idx)] = (np.arange(len(idx)) + rng.integers(10)) % 10
+    fold = np.arange(n) if n <= 50 else _folds(gold, 10, seed)
     pred = np.zeros((len(cands), n), int)
     for f in np.unique(fold):
         tr, ev = fold != f, fold == f
         nt = int(tr.sum())
         Ps = {lf: _parts(H[tr], LAB[tr], LSE[tr], gold[tr], lf * nt) for lf in LAM_FACTORS}
         for i, c in enumerate(cands):
-            pred[i, ev] = _cand_scores(Ps[c["lam_factor"]], H[ev], LAB[ev], c).argmax(1)
+            P = Ps[c["lam_factor"]]                             # scored exactly as the fitted Readout would
+            D = _deltas(P["mu_hat"], P["p_mean"], c["lean"] * P["shift"], P["W"], P["B"], _alpha(P, c["strength"]))
+            pred[i, ev] = (LAB[ev] + H[ev] @ D.T).argmax(1)
     cv = [balanced_accuracy(p, gold) for p in pred]
-    i0 = next(i for i, c in enumerate(cands) if c["lean"] == 0 and c["strength"] == 0)
-    edits = [i for i in range(len(cands)) if i != i0]
-    best = max(edits, key=lambda i: (round(cv[i], 9), -i))       # among edits, ties go to the preferred setting
+    i0 = next(i for i, c in enumerate(cands) if c["lean"] == 0 and c["strength"] == 0)   # the model unchanged
+    best = max((i for i in range(len(cands)) if i != i0), key=lambda i: (round(cv[i], 9), -i))  # ties: preferred
     if round(cv[best], 9) <= round(cv[i0], 9):                  # no edit beats the model unchanged: leave it
         best = i0
     c = cands[best]
-    table = [dict(**cands[i], cv_bal=float(cv[i])) for i in range(len(cands))]
     return dict(lean=c["lean"], alpha_mult=c["strength"], lam=float(c["lam_factor"] * n), lam_factor=c["lam_factor"],
-                unchanged=bool(c["lean"] == 0 and c["strength"] == 0), cv_bal=float(cv[best]),
-                cv_unchanged=float(next(t["cv_bal"] for t in table if t["lean"] == 0 and t["strength"] == 0)),
-                preferred_strength=preferred_strength(n_params), folds=int(len(np.unique(fold))), table=table,
-                fallback=[])
+                unchanged=best == i0, cv_bal=float(cv[best]), cv_unchanged=float(cv[i0]),
+                preferred_strength=preferred_strength(n_params), folds=int(len(np.unique(fold))),
+                table=[dict(**c, cv_bal=float(v)) for c, v in zip(cands, cv)], fallback=[])
 
 
 def fit_auto(H, LAB, LSE, gold, *, n_params: int | None = None, seed: int = 0, **kw):
     """tune, then fit the chosen setting on all items. Returns (Readout, or None when the choice is to leave the model
     unchanged, and the tune result)."""
+    fixed = sorted({"lam", "alpha_mult", "lean"} & set(kw))
+    if fixed:
+        raise ValueError(f"auto chooses {fixed} itself; drop them or fit without auto")
     t = tune(H, LAB, LSE, gold, n_params=n_params, seed=seed)
     if t["unchanged"]:
         return None, t
@@ -370,12 +360,7 @@ def twofold(H, LAB, LSE, gold, seed: int = 0, auto: bool = False, n_params: int 
     giving the commonest label, the model as shipped, calibrated only, and edited; every item scored by a read-out
     that never saw it."""
     n = len(gold)
-    rng = np.random.default_rng(seed)
-    fold = np.zeros(n, int)
-    for c in np.unique(gold):                                    # halves split within each answer, so both get every
-        idx = np.flatnonzero(gold == c)                          # answer that has two or more items
-        fold[rng.permutation(idx)] = (np.arange(len(idx)) + rng.integers(2)) % 2
-    p0 = LAB.argmax(1)
+    fold = _folds(gold, 2, seed)            # halves split within each answer: both get every answer with two items
     p1, p2 = np.zeros(n, int), np.zeros(n, int)
     for f in (0, 1):
         fit_m, ev = fold != f, fold == f
@@ -383,15 +368,10 @@ def twofold(H, LAB, LSE, gold, seed: int = 0, auto: bool = False, n_params: int 
             r, _ = fit_auto(H[fit_m], LAB[fit_m], LSE[fit_m], gold[fit_m], n_params=n_params, seed=seed, **kw)
         else:
             r = fit(H[fit_m], LAB[fit_m], LSE[fit_m], gold[fit_m], **kw)
-        if r is None:                                            # auto chose to leave the model unchanged
-            p1[ev] = p2[ev] = LAB[ev].argmax(1)
-        else:
-            p1[ev] = r.calibrated(H[ev], LAB[ev]).argmax(1)
-            p2[ev] = r.predict(H[ev], LAB[ev])
-    out = dict(n=int(n), majority=float(np.bincount(gold).max() / n))
-    for name, p in (("shipped", p0), ("calibrated", p1), ("edited", p2)):
-        out[name] = accuracy(p, gold); out["bal_" + name] = balanced_accuracy(p, gold)
-    return out
+        c, e = (LAB[ev], LAB[ev]) if r is None else (r.calibrated(H[ev], LAB[ev]), r.scores(H[ev], LAB[ev]))
+        p1[ev], p2[ev] = c.argmax(1), e.argmax(1)               # r None: auto left the model unchanged
+    return dict(n=int(n), majority=float(np.bincount(gold).max() / n),
+                **_rates(dict(shipped=LAB.argmax(1), calibrated=p1, edited=p2), gold))
 
 
 # ----------------------------------------------------------------------------------------------- baselines and sweeps
@@ -400,14 +380,10 @@ def words(text: str) -> list[str]:
     return re.findall(r"\w+", text.lower())
 
 
-def wordcount_predict(train_texts: list[str], train_gold: np.ndarray, test_texts: list[str], K: int,
-                      lam: float | None = None) -> np.ndarray:
+def wordcount_predict(train_texts: list[str], train_gold: np.ndarray, test_texts: list[str], K: int) -> np.ndarray:
     """The control: the same per-answer ridge fed word counts instead of the model's state. Vocabulary = words in at
     least two training items. Returns predicted answer indices for test_texts."""
-    seen: dict[str, int] = {}
-    for t in train_texts:
-        for x in set(words(t)):
-            seen[x] = seen.get(x, 0) + 1
+    seen = Counter(x for t in train_texts for x in set(words(t)))
     vocab = {x: i for i, x in enumerate(sorted(x for x, c in seen.items() if c >= 2))}
     if not vocab or len(set(train_gold.tolist())) < 2:
         return np.full(len(test_texts), int(np.bincount(train_gold, minlength=K).argmax()), dtype=int)
@@ -416,12 +392,11 @@ def wordcount_predict(train_texts: list[str], train_gold: np.ndarray, test_texts
         X = np.zeros((len(ts), len(vocab)))
         for i, t in enumerate(ts):
             for x in words(t):
-                j = vocab.get(x)
-                if j is not None:
-                    X[i, j] += 1
+                if x in vocab:
+                    X[i, vocab[x]] += 1
         return X
     X, Xe = counts(train_texts), counts(test_texts)
-    lam = float(len(train_gold)) if lam is None else lam
+    lam = float(len(train_gold))
     S = np.column_stack([Xe @ w + b for w, b in (ridge(X, 2.0 * (train_gold == k) - 1.0, lam) for k in range(K))])
     return S.argmax(1)
 
@@ -437,15 +412,17 @@ def sweep(H, LAB, LSE, gold, texts: list[str] | None = None, sizes=(15, 30, 60, 
     n, K = len(gold), LAB.shape[1]
     if len(np.unique(gold)) < 2:
         raise ValueError("the items hold only one answer; a read-out needs examples of at least two")
+    if draws < 1 or min(sizes) < 2:
+        raise ValueError("sweep needs at least one draw and sizes of at least two items (a fit needs two answers)")
     rng = np.random.default_rng(seed)
     out = []
     for N in sizes:
         if N >= n:
             continue
         acc_: dict[str, list] = {}
-        fallback, chosen = 0, {}
+        fallback, chosen = 0, Counter()
         for _ in range(draws):
-            tr = np.zeros(n, bool); tr[rng.choice(n, N, replace=False)] = True
+            tr = np.zeros(n, bool)
             while len(np.unique(gold[tr])) < 2:                  # a fit set needs two answers; rare, redraw
                 tr[:] = False; tr[rng.choice(n, N, replace=False)] = True
             ev = ~tr
@@ -457,17 +434,16 @@ def sweep(H, LAB, LSE, gold, texts: list[str] | None = None, sizes=(15, 30, 60, 
                 preds["auto"] = LAB[ev].argmax(1) if ra is None else ra.predict(H[ev], LAB[ev])
                 fallback += bool(t["fallback"])
                 key = "unchanged" if t["unchanged"] else f"lean {t['lean']:g} strength {t['alpha_mult']:g} ridge {t['lam_factor']:g}n"
-                chosen[key] = chosen.get(key, 0) + 1
+                chosen[key] += 1
             if texts is not None:
                 preds["wordcount"] = wordcount_predict([t for t, m in zip(texts, tr) if m], gold[tr],
                                                        [t for t, m in zip(texts, ev) if m], K)
-            for name, p in preds.items():
-                acc_.setdefault(name, []).append(accuracy(p, gold[ev]))
-                acc_.setdefault("bal_" + name, []).append(balanced_accuracy(p, gold[ev]))
+            for k, v in _rates(preds, gold[ev]).items():
+                acc_.setdefault(k, []).append(v)
         row = dict(n_fit=int(N), n_scored=int(n - N), draws=int(draws))
         if auto:                                                 # draws where an answer had under two of the N
             row["auto_fallback_draws"] = int(fallback)           # items: lean removed, no read-out
-            row["auto_choices"] = "; ".join(f"{k}: {v}" for k, v in sorted(chosen.items(), key=lambda x: -x[1]))
+            row["auto_choices"] = "; ".join(f"{k}: {v}" for k, v in chosen.most_common())
         for k, v in acc_.items():
             row[k] = float(np.mean(v)); row[k + "_sd"] = float(np.std(v))
         out.append(row)
@@ -492,13 +468,18 @@ def patch(model, readout: Readout):
 def predict_items(model, tok, readouts: list[Readout], rows: list[dict], max_len: int = 1024) -> list[dict]:
     """Side-head mode: score each row with every read-out without changing the model. Several read-outs can share
     one model this way, which they cannot when patched into the same label rows."""
+    names = [r.meta.get("task", "readout") for r in readouts]
+    taken = {k for row in rows for k in row}
+    clash = sorted({x for x in names if names.count(x) > 1} | {x for x in names if {x, x + "_margin"} & taken})
+    if clash:
+        raise ValueError(f"read-out task names {clash} repeat or clash with item fields; predictions would overwrite "
+                         "them (refit with a different --task)")
     out = [dict(row) for row in rows]
-    for r in readouts:
+    for r, name in zip(readouts, names):
         prompts = [fill_template(r.template, row) for row in rows]
         H, LAB, _ = collect(model, tok, prompts, r.label_ids, max_len=max_len)
         S = np.sort(r.scores(H, LAB), axis=1)
         pred = r.predict(H, LAB)
-        name = r.meta.get("task", "readout")
         for o, k, s in zip(out, pred, S):
             o[name] = r.labels[int(k)]; o[name + "_margin"] = float(s[-1] - s[-2])
     return out

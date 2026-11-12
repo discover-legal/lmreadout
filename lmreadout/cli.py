@@ -27,13 +27,13 @@ from pathlib import Path
 
 import numpy as np
 
-from .core import (Readout, accuracy, answer_tokens, balanced_accuracy, collect, fill_template, fit, fit_auto,
-                   load_model, patch, predict_items, sweep, template_fields, twofold)
+from .core import (Readout, _rates, answer_tokens, collect, fill_template, fit, fit_auto, load_model, patch,
+                   predict_items, sweep, template_fields, twofold)
 
 
-def read_jsonl(path: str) -> list[dict]:
+def read_jsonl(path: str, limit: int = 0) -> list[dict]:
     with open(path) as fh:
-        return [json.loads(line) for line in fh if line.strip()]
+        return [json.loads(line) for line in fh if line.strip()][: limit or None]
 
 
 def read_template(path: str) -> str:
@@ -57,12 +57,22 @@ def check_model(model, r: Readout, model_id: str):
               "same weights", flush=True)
 
 
+def _load(a, paths):
+    """The model, its tokenizer and the read-outs, each checked against the model."""
+    model, tok = load_model(a.model, a.device)
+    readouts = [Readout.load(p) for p in paths]
+    for r in readouts:
+        check_model(model, r, a.model)
+    return model, tok, readouts
+
+
 def _task_inputs(a, tok, rows, template):
     """Answers, their rows, the prompt template as used, prompts, gold indices and the item texts (for word counts)."""
     if not all("answer" in r for r in rows):
         sys.exit("every item needs an 'answer' field")
-    labels = [str(x) for x in a.labels] if a.labels else sorted({str(r["answer"]) for r in rows})
-    missing = sorted({str(r["answer"]) for r in rows} - set(labels))
+    answers = [str(r["answer"]) for r in rows]
+    labels = [str(x) for x in a.labels] if a.labels else sorted(set(answers))
+    missing = sorted(set(answers) - set(labels))
     if missing:
         sys.exit(f"answers in the data that are not in --labels: {missing}")
     if len(labels) < 2:
@@ -77,10 +87,21 @@ def _task_inputs(a, tok, rows, template):
           + (f"; the prompt ends with {suffix!r}" if suffix else ""), flush=True)
     used = template + suffix
     prompts = [fill_template(used, r) for r in rows]
-    gold = np.array([labels.index(str(r["answer"])) for r in rows])
+    gold = np.array([labels.index(x) for x in answers])
     fields = template_fields(template)
     texts = [" ".join(str(r.get(f, "")) for f in fields) for r in rows]
     return labels, ids, used, prompts, gold, texts
+
+
+def _collect_task(a):
+    """fit / sweep: load the model, read the items, collect the states. Returns model, labels, ids, the template as
+    used, gold, item texts, H, LAB, LSE."""
+    model, tok = load_model(a.model, a.device)
+    rows = read_jsonl(a.data, a.max_items)
+    labels, ids, used, prompts, gold, texts = _task_inputs(a, tok, rows, read_template(a.template))
+    print(f"collecting {len(prompts)} items", flush=True)
+    H, LAB, LSE = collect(model, tok, prompts, ids, max_len=a.max_len, progress=True)
+    return model, labels, ids, used, gold, texts, H, LAB, LSE
 
 
 def _scores_lines(d, K):
@@ -90,9 +111,9 @@ def _scores_lines(d, K):
             f"calibrated={d['bal_calibrated']:.3f} edited={d['bal_edited']:.3f}")
 
 
-def _settings(a):
-    """--lam / --alpha-mult, or None with --auto (which chooses them itself)."""
-    if a.auto:
+def _settings(a, auto=False):
+    """--lam / --alpha-mult, or none with fit --auto (which chooses them itself)."""
+    if auto:
         if a.lam is not None or a.alpha_mult is not None:
             sys.exit("--auto chooses the ridge and strength itself; drop --lam / --alpha-mult, or drop --auto")
         return {}
@@ -104,16 +125,14 @@ def _n_params(model):
 
 
 def cmd_fit(a):
-    model, tok = load_model(a.model, a.device)
-    rows = read_jsonl(a.data)[: a.max_items or None]
-    labels, ids, used, prompts, gold, _ = _task_inputs(a, tok, rows, read_template(a.template))
-    print(f"collecting {len(prompts)} items", flush=True)
-    H, LAB, LSE = collect(model, tok, prompts, ids, max_len=a.max_len, progress=True)
-    kw, npar = _settings(a), _n_params(model)
+    kw = _settings(a, a.auto)                                    # before loading anything: a clash fails at once
+    model, labels, ids, used, gold, _, H, LAB, LSE = _collect_task(a)
+    npar = _n_params(model)
     try:
         tf = twofold(H, LAB, LSE, gold, auto=a.auto, n_params=npar, **kw)
     except ValueError as e:
-        sys.exit(f"cannot score on held-out halves: {e}. Each answer needs at least two labelled items.")
+        hint = " Each answer needs at least two labelled items." if "only one answer" in str(e) else ""
+        sys.exit(f"cannot score on held-out halves: {e}.{hint}")
     if a.auto:
         print("two-fold with --auto: in each half the settings are chosen from that half alone", flush=True)
     print(f"two-fold (every item scored by a read-out that never saw it), n={tf['n']}\n" + _scores_lines(tf, len(labels)),
@@ -129,16 +148,14 @@ def cmd_fit(a):
     if a.auto:
         r, t = fit_auto(H, LAB, LSE, gold, n_params=npar, **common)
         if t["fallback"]:
-            short = [labels[k] for k in t["fallback"]]
-            print(f"--auto: fewer than two labelled items of {short}, so no settings can be chosen: removing the lean "
-                  "only (needs no labels), no read-out. Label more items of those answers to let --auto choose.",
-                  flush=True)
-            r.save(a.out); print(f"saved {a.out}", flush=True)
-            return
-        print(f"--auto on all {len(gold)} items ({t['folds']} folds; model {npar / 1e9:.2f}B parameters, ties go to "
-              f"strength {t['preferred_strength']}): lean {t['lean']}, strength {t['alpha_mult']}, ridge "
-              f"{t['lam_factor']} x n; cross-validated balanced accuracy {t['cv_bal']:.3f} "
-              f"(model unchanged {t['cv_unchanged']:.3f})", flush=True)
+            print(f"--auto: fewer than two labelled items of {[labels[k] for k in t['fallback']]}, so no settings can "
+                  "be chosen: removing the lean only (needs no labels), no read-out. Label more items of those answers "
+                  "to let --auto choose.", flush=True)
+        else:
+            print(f"--auto on all {len(gold)} items ({t['folds']} folds; model {npar / 1e9:.2f}B parameters, ties go "
+                  f"to strength {t['preferred_strength']}): lean {t['lean']}, strength {t['alpha_mult']}, ridge "
+                  f"{t['lam_factor']} x n; cross-validated balanced accuracy {t['cv_bal']:.3f} "
+                  f"(model unchanged {t['cv_unchanged']:.3f})", flush=True)
         if r is None:
             print("no setting beat the model unchanged on the labelled items: leave the model as it is. "
                   f"Nothing written to {a.out}.", flush=True)
@@ -150,14 +167,9 @@ def cmd_fit(a):
 
 
 def cmd_sweep(a):
-    model, tok = load_model(a.model, a.device)
-    rows = read_jsonl(a.data)[: a.max_items or None]
-    labels, ids, used, prompts, gold, texts = _task_inputs(a, tok, rows, read_template(a.template))
-    print(f"collecting {len(prompts)} items", flush=True)
-    H, LAB, LSE = collect(model, tok, prompts, ids, max_len=a.max_len, progress=True)
+    model, labels, _, _, gold, texts, H, LAB, LSE = _collect_task(a)
     try:
-        res = sweep(H, LAB, LSE, gold, texts=texts, sizes=a.sizes, draws=a.draws, seed=a.seed,
-                    **(dict(lam=a.lam, alpha_mult=2.0 if a.alpha_mult is None else a.alpha_mult)),
+        res = sweep(H, LAB, LSE, gold, texts=texts, sizes=a.sizes, draws=a.draws, seed=a.seed, **_settings(a),
                     auto=a.auto, n_params=_n_params(model))
     except ValueError as e:
         sys.exit(str(e))
@@ -184,12 +196,10 @@ def cmd_sweep(a):
 
 
 def cmd_eval(a):
-    model, tok = load_model(a.model, a.device)
-    r = Readout.load(a.readout)
-    check_model(model, r, a.model)
-    rows = read_jsonl(a.data)[: a.max_items or None]
+    model, tok, (r,) = _load(a, [a.readout])
+    rows = read_jsonl(a.data, a.max_items)
     if not all("answer" in x for x in rows):
-        sys.exit("eval needs an 'answer' field on every item")
+        sys.exit("every item needs an 'answer' field")
     ids, _ = answer_tokens(tok, r.labels, r.meta.get("label_prefix", " "))
     if ids != r.label_ids:
         sys.exit(f"answer tokens differ from the read-out's ({ids} vs {r.label_ids}); same model and tokenizer?")
@@ -199,23 +209,15 @@ def cmd_eval(a):
     gold = np.array([r.labels.index(str(x["answer"])) for x in rows])
     prompts = [fill_template(r.template, x) for x in rows]
     H, LAB, _, OM = collect(model, tok, prompts, r.label_ids, max_len=a.max_len, progress=True, other_max=True)
-    S = r.scores(H, LAB)
-    p0, pc, p1 = LAB.argmax(1), r.calibrated(H, LAB).argmax(1), S.argmax(1)
-    K = len(r.labels)
-    maj = np.bincount(gold, minlength=K).max() / len(gold)
-    print(f"held-out n={len(gold)}, {K} answers\n"
-          f"  accuracy:          commonest answer={maj:.3f} as shipped={accuracy(p0, gold):.3f} "
-          f"calibrated={accuracy(pc, gold):.3f} edited={accuracy(p1, gold):.3f}\n"
-          f"  balanced accuracy: guessing={1 / K:.3f} as shipped={balanced_accuracy(p0, gold):.3f} "
-          f"calibrated={balanced_accuracy(pc, gold):.3f} edited={balanced_accuracy(p1, gold):.3f}\n"
-          f"  free next token is one of the answers: as shipped {(LAB.max(1) >= OM).mean():.1%}, "
+    S, K = r.scores(H, LAB), len(r.labels)
+    d = _rates(dict(shipped=LAB.argmax(1), calibrated=r.calibrated(H, LAB).argmax(1), edited=S.argmax(1)), gold)
+    print(f"held-out n={len(gold)}, {K} answers\n" + _scores_lines(dict(d, majority=np.bincount(gold).max() / len(gold)), K)
+          + f"\n  free next token is one of the answers: as shipped {(LAB.max(1) >= OM).mean():.1%}, "
           f"edited {(S.max(1) >= OM).mean():.1%}", flush=True)
 
 
 def cmd_patch(a):
-    model, tok = load_model(a.model, a.device)
-    r = Readout.load(a.readout)
-    check_model(model, r, a.model)
+    model, tok, (r,) = _load(a, [a.readout])
     patch(model, r)
     model.save_pretrained(a.out); tok.save_pretrained(a.out)
     print(f"saved patched model to {a.out} (rows {r.label_ids} of the output table changed; everything else "
@@ -223,15 +225,13 @@ def cmd_patch(a):
 
 
 def cmd_predict(a):
-    model, tok = load_model(a.model, a.device)
-    readouts = [Readout.load(p) for p in a.readout]
-    for r in readouts:
-        check_model(model, r, a.model)
-    rows = read_jsonl(a.data)[: a.max_items or None]
-    out = predict_items(model, tok, readouts, rows, max_len=a.max_len)
+    model, tok, readouts = _load(a, a.readout)
+    try:
+        out = predict_items(model, tok, readouts, read_jsonl(a.data, a.max_items), max_len=a.max_len)
+    except ValueError as e:
+        sys.exit(str(e))
     fh = open(a.out, "w") if a.out else sys.stdout
-    for o in out:
-        fh.write(json.dumps(o) + "\n")
+    fh.writelines(json.dumps(o) + "\n" for o in out)
     if a.out:
         fh.close(); print(f"wrote {a.out}", flush=True)
 
@@ -242,25 +242,26 @@ def main(argv=None):
     common = argparse.ArgumentParser(add_help=False)
     common.add_argument("--model", required=True, help="Hugging Face model id or local path")
     common.add_argument("--device", default=None, help="cuda or cpu (default: cuda when available)")
-    common.add_argument("--max-len", type=int, default=1024, help="prompts are left-truncated to this many tokens")
-    common.add_argument("--max-items", type=int, default=0)
-    common.add_argument("--label-prefix", default=" ", help="text put before each answer when tokenising (default: a space)")
+    items = argparse.ArgumentParser(add_help=False)
+    items.add_argument("--max-len", type=int, default=1024, help="prompts are left-truncated to this many tokens")
+    items.add_argument("--max-items", type=int, default=0, help="use only the first N items (default: all)")
     task = argparse.ArgumentParser(add_help=False)
+    task.add_argument("--label-prefix", default=" ", help="text put before each answer when tokenising (default: a space)")
     task.add_argument("--data", required=True); task.add_argument("--template", required=True)
     task.add_argument("--labels", nargs="+", default=None, help="the answers (default: every distinct answer in the data)")
     task.add_argument("--lam", type=float, default=None, help="ridge strength (default: number of fit items)")
     task.add_argument("--alpha-mult", type=float, default=None, help="read-out strength (default 2)")
     task.add_argument("--auto", action="store_true", help="choose lean, strength and ridge from the labelled items "
                       "(fit: replaces --lam/--alpha-mult; sweep: adds an 'auto' column)")
-    f = sub.add_parser("fit", parents=[common, task]); f.add_argument("--out", required=True)
+    f = sub.add_parser("fit", parents=[common, items, task]); f.add_argument("--out", required=True)
     f.add_argument("--task", default=None); f.set_defaults(fn=cmd_fit)
-    s = sub.add_parser("sweep", parents=[common, task])
+    s = sub.add_parser("sweep", parents=[common, items, task])
     s.add_argument("--sizes", nargs="+", type=int, default=[15, 30, 60, 120], help="numbers of labelled items to fit on")
     s.add_argument("--draws", type=int, default=20, help="random draws per size")
     s.add_argument("--seed", type=int, default=0); s.add_argument("--csv", default=None); s.set_defaults(fn=cmd_sweep)
-    e = sub.add_parser("eval", parents=[common]); e.add_argument("--readout", required=True); e.add_argument("--data", required=True); e.set_defaults(fn=cmd_eval)
+    e = sub.add_parser("eval", parents=[common, items]); e.add_argument("--readout", required=True); e.add_argument("--data", required=True); e.set_defaults(fn=cmd_eval)
     p = sub.add_parser("patch", parents=[common]); p.add_argument("--readout", required=True); p.add_argument("--out", required=True); p.set_defaults(fn=cmd_patch)
-    q = sub.add_parser("predict", parents=[common]); q.add_argument("--readout", nargs="+", required=True); q.add_argument("--data", required=True)
+    q = sub.add_parser("predict", parents=[common, items]); q.add_argument("--readout", nargs="+", required=True); q.add_argument("--data", required=True)
     q.add_argument("--out", default=None); q.set_defaults(fn=cmd_predict)
     a = ap.parse_args(argv)
     a.fn(a)

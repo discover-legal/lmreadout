@@ -219,6 +219,17 @@ def test_collect_and_patch_half_precision():
         m = _tiny_llama(dt)
         H, LAB, LSE = collect(m, _IdTok(), ["abc", "hello there", "xy"], [3, 5])
         assert H.shape == (3, 32) and LAB.shape == (3, 2) and np.isfinite(H).all()
+        Hs, LABs, LSEs, gs, _ = synthetic(n=60, d=32)
+        r = fit(Hs, LABs, LSEs, gs, label_ids=(3, 5))
+        before = m.get_output_embeddings().weight.detach().float().clone()
+        patch(m, r)
+        after = m.get_output_embeddings().weight.detach().float()
+        D = torch.as_tensor(r.deltas(), dtype=torch.float32)
+        tol = 1e-5 if dt == torch.float32 else 0.02 * (before[[3, 5]].abs().max() + D.abs().max())
+        assert torch.allclose(after[[3, 5]] - before[[3, 5]], D, atol=float(tol))   # the two answer rows moved
+        others = [i for i in range(after.shape[0]) if i not in (3, 5)]
+        assert torch.equal(after[others], before[others])                          # nothing else did
+        assert after.dtype == torch.float32 and m.get_output_embeddings().weight.dtype == dt
 
 
 def test_collect_warns_when_prompts_are_cut():
@@ -332,3 +343,31 @@ def test_sweep_and_twofold_with_auto():
     assert all("bal_auto" in r and "auto_fallback_draws" in r and r["auto_choices"] for r in res)
     tf = twofold(H, LAB, LSE, gold, auto=True)
     assert tf["bal_edited"] > tf["bal_shipped"]
+
+
+def test_sweep_refuses_tiny_sizes_and_no_draws():
+    import pytest
+    H, LAB, LSE, gold, _ = synthetic(n=50)
+    for kw in (dict(sizes=(1,)), dict(sizes=(15,), draws=0)):
+        with pytest.raises(ValueError):
+            sweep(H, LAB, LSE, gold, **kw)
+
+
+def test_predict_refuses_names_that_overwrite():
+    import pytest
+    from lmreadout.core import predict_items
+    H, LAB, LSE, gold, _ = synthetic(n=60)
+    a = fit(H, LAB, LSE, gold, meta=dict(task="answer"))
+    b1, b2 = (fit(H, LAB, LSE, gold, meta=dict(task="t")) for _ in range(2))
+    for ros in ([a], [b1, b2]):
+        with pytest.raises(ValueError, match="overwrite"):
+            predict_items(None, None, ros, [dict(text="x", answer="No")])
+
+
+def test_auto_refuses_fixed_settings_and_fit_refuses_reserved_meta():
+    import pytest
+    H, LAB, LSE, gold, _ = synthetic(n=60)
+    with pytest.raises(ValueError, match="auto chooses"):
+        twofold(H, LAB, LSE, gold, auto=True, lam=10.0)
+    with pytest.raises(ValueError, match="set by fit"):
+        fit(H, LAB, LSE, gold, meta=dict(lam=3))
