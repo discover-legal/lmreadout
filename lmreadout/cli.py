@@ -91,7 +91,10 @@ def cmd_fit(a):
     labels, ids, used, prompts, gold, _ = _task_inputs(a, tok, rows, read_template(a.template))
     print(f"collecting {len(prompts)} items", flush=True)
     H, LAB, LSE = collect(model, tok, prompts, ids, max_len=a.max_len, progress=True)
-    tf = twofold(H, LAB, LSE, gold, lam=a.lam, alpha_mult=a.alpha_mult)
+    try:
+        tf = twofold(H, LAB, LSE, gold, lam=a.lam, alpha_mult=a.alpha_mult)
+    except ValueError as e:
+        sys.exit(f"cannot score on held-out halves: {e}. Each answer needs at least two labelled items.")
     print(f"two-fold (every item scored by a read-out that never saw it), n={tf['n']}\n" + _scores_lines(tf, len(labels)),
           flush=True)
     if tf["bal_edited"] < tf["bal_shipped"]:
@@ -112,8 +115,11 @@ def cmd_sweep(a):
     labels, ids, used, prompts, gold, texts = _task_inputs(a, tok, rows, read_template(a.template))
     print(f"collecting {len(prompts)} items", flush=True)
     H, LAB, LSE = collect(model, tok, prompts, ids, max_len=a.max_len, progress=True)
-    res = sweep(H, LAB, LSE, gold, texts=texts, sizes=a.sizes, draws=a.draws, seed=a.seed, lam=a.lam,
-                alpha_mult=a.alpha_mult)
+    try:
+        res = sweep(H, LAB, LSE, gold, texts=texts, sizes=a.sizes, draws=a.draws, seed=a.seed, lam=a.lam,
+                    alpha_mult=a.alpha_mult)
+    except ValueError as e:
+        sys.exit(str(e))
     K = len(labels)
     print(f"each size N: {a.draws} random draws of N labelled items, every other item scored, mean over draws\n"
           f"balanced accuracy (guessing = {1 / K:.3f}), accuracy in brackets", flush=True)

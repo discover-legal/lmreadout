@@ -259,10 +259,15 @@ def fit(H: np.ndarray, LAB: np.ndarray, LSE: np.ndarray, gold: np.ndarray, *, mo
 
 
 def twofold(H, LAB, LSE, gold, seed: int = 0, **kw) -> dict:
-    """Fit on one random half (fixed seed), score the other, both ways. Returns accuracy and balanced accuracy for always
+    """Fit on one random half (fixed seed, split within each answer), score the other, both ways. Returns accuracy and balanced accuracy for always
     giving the commonest label, the model as shipped, calibrated only, and edited; every item scored by a read-out
     that never saw it."""
-    n = len(gold); fold = np.random.default_rng(seed).permutation(n) % 2
+    n = len(gold)
+    rng = np.random.default_rng(seed)
+    fold = np.zeros(n, int)
+    for c in np.unique(gold):                                    # halves split within each answer, so both get every
+        idx = np.flatnonzero(gold == c)                          # answer that has two or more items
+        fold[rng.permutation(idx)] = (np.arange(len(idx)) + rng.integers(2)) % 2
     p0 = LAB.argmax(1)
     p1, p2 = np.zeros(n, int), np.zeros(n, int)
     for f in (0, 1):
@@ -314,6 +319,8 @@ def sweep(H, LAB, LSE, gold, texts: list[str] | None = None, sizes=(15, 30, 60, 
     item. Returns one dict per size with the mean (and sd over draws) of accuracy and balanced accuracy for the
     model as shipped, calibrated only, edited, and, when texts are given, word counts fitted on the same N items."""
     n, K = len(gold), LAB.shape[1]
+    if len(np.unique(gold)) < 2:
+        raise ValueError("the items hold only one answer; a read-out needs examples of at least two")
     rng = np.random.default_rng(seed)
     out = []
     for N in sizes:

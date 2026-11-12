@@ -52,8 +52,8 @@ What it shows:
 
 - **Strong where the answer is a kind of text:** a topic, or whether a sentence overrules a case. On news topics the
   edit with 15 labels beats word counts with 120.
-- **With 15 labels it can make things worse:** below calibration alone on emotion, tweets and the seven-way legal
-  task, and below the model as shipped on tweets and BoolQ. On tweets it passes the model as shipped from 60 labels
+- **With 15 labels it can make things worse:** below calibration alone on emotion and tweets (on the seven-way legal
+  task the two are level), and below the model as shipped on tweets and BoolQ. On tweets it passes the model as shipped from 60 labels
   (0.45; 0.48 at 120; on 400 test items after fitting on 300: 0.51 shipped, 0.53 edited).
 - **Why it hurts** (our reading of these runs, not a tested account): the read-out is added at a fixed strength
   whatever its quality, so with few labels on a label the final state carries weakly it adds mostly noise on top of
@@ -63,7 +63,7 @@ What it shows:
   and passage together: word counts stay at guessing (0.51) and 120 labels are not enough for the read-out to beat
   the model's own answer.
 - **Only `sweep` shows the harm reliably.** On BoolQ the score `fit` prints (fitted on 250, scored on the other 250)
-  is level with the model as shipped (0.643 shipped, 0.646 edited), and so is `eval` on 500 new items (0.652,
+  is level with the model as shipped (0.643 shipped, 0.646 edited, with 0.3.1's split), and so is `eval` on 500 new items (0.652,
   0.661); the drop appears with 15 to 120 labels. `fit` warns when its held-out score falls below the model as
   shipped.
 
@@ -241,7 +241,7 @@ form; the defaults (regularisation = number of items, strength x2) are fixed, no
   into the same rows mostly cancel. For several tasks use `predict` (side heads) or give each task its own answer
   tokens.
 - **Verify the patch.** After `patch`, score the held-out items with your ordinary pipeline; it should match `eval`
-  to a few decimals. `collect` checks once that it has found the hidden state `lm_head` actually reads and refuses
+  to a few decimals. `collect` checks once that it has found the hidden state the output table actually reads and refuses
   architectures where it cannot.
 
 ## Limits
@@ -259,8 +259,8 @@ form; the defaults (regularisation = number of items, strength x2) are fixed, no
 - The read-out sits at the final layer. Linear probes a few layers earlier are usually a little better (0.84 vs
   0.78 mean in our runs); reaching them needs an edit inside the network, which this tool does not do.
 - A patched copy is saved in float32 with its output table untied (about 4 GB for the 0.8B).
-- It adds no knowledge: like the no-gradient weight edits in Takehi et al. (2026), it can only surface what the
-  model's state already carries.
+- It adds no knowledge: it can only surface what the model's state already carries (compare Takehi et al.'s finding
+  that weight edits can uncover an ability but not add one).
 
 ## Tests
 
@@ -280,8 +280,9 @@ template removed. No model download.
 
 - Takehi, Teoh, Zhang, Khattab, "Sparks of Weight-Space Programming: LLMs can natively read & write neural network
   weights", MIT CSAIL blog post, 2 Nov 2026, https://rikiyat.github.io/blog/weight-space-programming/. GPT-6 Astra
-  edits Qwen3.5-0.8B's weights without gradients; "Editing weights could remove an obstacle that hid an ability, but
-  it could not add an ability the model lacked." The Handi experiment this came from was prompted by it.
+  edits Qwen3.5-0.8B's weights without gradients, and concludes from its Gemma 3 270M edits: "Editing weights could
+  remove an obstacle that hid an ability, but it could not add an ability the model lacked." The Handi experiment
+  this came from was prompted by it.
 - Zhao, Wallace, Feng, Klein, Singh, "Calibrate Before Use: Improving Few-Shot Performance of Language Models",
   ICML 2021, https://arxiv.org/abs/2102.09690 (label-token bias).
 - Zhou, Wan, Proleev, Mincu, Chen, Heller, Roy, "Batch Calibration: Rethinking Calibration for In-Context Learning
@@ -298,7 +299,7 @@ template removed. No model download.
   https://arxiv.org/abs/2410.02707; Burns, Ye, Klein, Steinhardt, "Discovering Latent Knowledge in Language Models
   Without Supervision", ICLR 2023, https://arxiv.org/abs/2212.03827 (hidden states carry more than the output says).
 - Li, Patel, Viégas, Pfister, Wattenberg, "Inference-Time Intervention: Eliciting Truthful Answers from a Language
-  Model", NeurIPS 2023, https://arxiv.org/abs/2306.03341 (probe directions written back into the model).
+  Model", NeurIPS 2023, https://arxiv.org/abs/2306.03341 (activations steered along probe directions at inference time).
 - Guha et al., "LegalBench: A Collaboratively Built Benchmark for Measuring Legal Reasoning in Large Language
   Models", NeurIPS 2023 Datasets and Benchmarks, https://arxiv.org/abs/2308.11462. Other data: AG News (Zhang, Zhao,
   LeCun 2015), dair-ai/emotion, tweet_eval (Barbieri et al. 2020), BoolQ (Clark et al. 2019).

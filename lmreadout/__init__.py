@@ -8,4 +8,4 @@ from .core import (Readout, collect, fit, twofold, patch, load_model, predict_it
 
 __all__ = ["Readout", "collect", "fit", "twofold", "patch", "load_model", "predict_items", "label_token_ids", "accuracy",
            "balanced_accuracy", "answer_tokens", "sweep", "wordcount_predict"]
-__version__ = "0.3.2"
+__version__ = "0.3.3"

@@ -250,3 +250,16 @@ def test_template_trailing_newline_removed(tmp_path):
     from lmreadout.cli import read_template
     (tmp_path / "t.txt").write_text("Clause: {{text}}\nLabel:\n")
     assert read_template(str(tmp_path / "t.txt")) == "Clause: {{text}}\nLabel:"
+
+
+def test_twofold_with_a_rare_answer_and_sweep_with_one_answer():
+    import pytest
+    from lmreadout.core import sweep
+    H, LAB, LSE, gold, _ = synthetic()
+    idx = np.concatenate([np.flatnonzero(gold == 0)[:38], np.flatnonzero(gold == 1)[:2]])   # two Yes in 40
+    for seed in range(5):
+        tf = twofold(H[idx], LAB[idx], LSE[idx], gold[idx], seed=seed)
+        assert 0.0 <= tf["bal_edited"] <= 1.0
+    z = np.flatnonzero(gold == 0)[:60]
+    with pytest.raises(ValueError):
+        sweep(H[z], LAB[z], LSE[z], gold[z], sizes=(15,), draws=2)
