@@ -1,0 +1,4 @@
+What kind of thing does this text describe? Answer Album, Animal, Artist, Athlete, Building, Company, Educational institution, Film, Means of transportation, Natural place, Office holder, Plant, Village or Written work.
+
+Text: {{text}}
+Label:

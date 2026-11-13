@@ -1,0 +1,4 @@
+Is this sentence grammatically acceptable English? Answer Yes or No.
+
+Sentence: {{text}}
+Label:

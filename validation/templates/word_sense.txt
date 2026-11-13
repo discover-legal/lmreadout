@@ -1,0 +1,6 @@
+Is the word used with the same meaning in both sentences? Answer Yes or No.
+
+Word: {{word}}
+Sentence 1: {{sentence1}}
+Sentence 2: {{sentence2}}
+Label:

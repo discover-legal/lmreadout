@@ -1,0 +1,4 @@
+What is this request to a voice assistant about? Answer Alarm, Calling, Event, Messaging, Music, News, People, Recipes, Reminder, Timer or Weather.
+
+Request: {{text}}
+Label:

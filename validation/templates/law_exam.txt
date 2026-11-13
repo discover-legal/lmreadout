@@ -1,0 +1,8 @@
+Which option correctly answers or completes this law exam question? Answer A, B, C or D.
+
+Question: {{question}}
+A: {{a}}
+B: {{b}}
+C: {{c}}
+D: {{d}}
+Label:

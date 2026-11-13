@@ -1,0 +1,4 @@
+Why does this sentence from a scientific paper cite other work? Answer Background (it gives background), Method (it uses a method or tool) or Result (it compares results).
+
+Sentence: {{text}}
+Label:

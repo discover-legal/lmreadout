@@ -1,0 +1,6 @@
+The passage is from a court decision. Which of the two cited cases, described below, supports the passage more strongly? Answer A or B.
+
+Passage: {{context}}
+A: {{a}}
+B: {{b}}
+Label:

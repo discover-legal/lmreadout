@@ -1,0 +1,5 @@
+Given the premise, is the hypothesis true, false or neither? Answer True, False or Neither.
+
+Premise: {{premise}}
+Hypothesis: {{hypothesis}}
+Label:
