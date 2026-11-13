@@ -326,22 +326,23 @@ if r is not None:                                        # None: leave the model
 
 ## How it works
 
-At the answer position the model holds a vector `h` (the final-norm hidden state). The output table `U` scores
-token `t` as `U[t] . h`, and the model's answer is the answer token whose row scores highest. The read-out changes
-only those rows:
+Just before it answers, the model holds a list of numbers, its state, that sums up what it has read. To choose the
+next word it scores every word in its vocabulary against that state, using one row of numbers per word, and the
+highest score wins. This tool changes only the rows of your answer words (say "Yes" and "No"), in two steps:
 
-1. **Calibration.** Shift each answer row along the unit mean state `mu` so every answer has the same mean
-   log-probability on the fit items (`h . mu` is nearly constant after the final norm, so this is a clean per-answer
-   offset). Removes the model's lean towards one answer.
-2. **Read-out.** One ridge regression per answer, from `h` to +1 for that answer's items and -1 for the rest,
-   regularisation = number of items on standardised features. Scaled so that half the read-out's difference between
-   two answers spreads twice as wide as the calibrated model's difference (so the read-out adds four times that
-   spread to the differences between answers; the same scaling as the Handi runs), and added to that answer's row,
-   intercept carried along `mu`. The intercepts are centred, so the edit does not lower every answer row together.
+1. **Remove the lean.** Small models often favour one answer whatever the question. We measure by how much on your
+   examples and shift each answer's row so that, on average, no answer is favoured. This is the calibration step.
+2. **Add what the model knows but does not say.** The state often tells Yes items from No items better than the
+   model's actual answer does. For each answer we fit a simple linear classifier (a ridge regression) on your
+   examples that separates that answer's items from the rest, and add it to that answer's row. From then on the
+   model's ordinary scoring does the classifying.
 
-For two answers this is a single direction added to one row and subtracted from the other. Everything is closed
-form. Without `--auto` the settings are fixed (all the lean, regularisation = number of items, strength x2); with
-`--auto` they are chosen per task as described above.
+How hard step 2 pushes is the "strength". At the default of 2, the read-out's vote counts about four times as much
+as the model's own, so it wins most disagreements. With few examples that is often too much, which is why `--auto`
+chooses the strength (and the other two settings) from your examples instead.
+
+There is no training loop. Both steps are solved by a formula in one pass, which is why it takes seconds once the
+model has read your examples. The exact arithmetic is in the comment at the top of `lmreadout/core.py`.
 
 ## What to check, every time
 
