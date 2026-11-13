@@ -1,0 +1,19 @@
+# Builds the wheel and source archive when a GitHub release is published and uploads them to PyPI.
+# One-time setup on pypi.org: add a "trusted publisher" for this repository, workflow publish.yml, environment pypi.
+name: publish
+on:
+  release:
+    types: [published]
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install build && python -m build
+      - uses: pypa/gh-action-pypi-publish@release/v1

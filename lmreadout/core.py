@@ -18,6 +18,7 @@ import json
 import re
 import warnings
 from collections import Counter
+from contextlib import contextmanager
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -464,6 +465,26 @@ def patch(model, readout: Readout):
     for t, dr in readout.row_deltas().items():
         W[t] += torch.as_tensor(dr, dtype=W.dtype, device=W.device)
     return model
+
+
+@contextmanager
+def patched(model, readout: Readout):
+    """`with patched(model, readout) as model:` the read-out is written into the answer rows inside the block and
+    the rows (and a tied embedding) are put back exactly on exit."""
+    head = model.get_output_embeddings()
+    original, tied = head.weight, bool(getattr(model.config, "tie_word_embeddings", False))
+    ids = list(readout.label_ids)
+    rows = head.weight.detach()[ids].clone()
+    patch(model, readout)
+    try:
+        yield model
+    finally:
+        if tied:                                                 # patch wrote into a copy; hand the shared table back
+            head.weight = original
+            model.config.tie_word_embeddings = True
+        else:
+            with torch.no_grad():
+                head.weight[ids] = rows
 
 
 def predict_items(model, tok, readouts: list[Readout], rows: list[dict], max_len: int = 1024) -> list[dict]:

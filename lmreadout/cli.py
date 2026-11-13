@@ -1,21 +1,30 @@
-"""Command line: fit a read-out, sweep the number of labelled examples, evaluate on held-out items, patch a model, or
-predict with side heads.
+"""Make a small language model better at a classification task from a few labelled examples, without training.
 
-  lmreadout fit     --model ID --data items.jsonl --template t.txt [--labels A B ...] --out task.npz [--task NAME] [--auto]
+  lmreadout fit     --model ID --data items.jsonl --template t.txt --out task.npz [--labels A B ...] [--task NAME] [--auto]
   lmreadout sweep   --model ID --data items.jsonl --template t.txt [--labels A B ...] [--sizes 15 30 60 120] [--draws 20] [--auto]
   lmreadout eval    --model ID --readout task.npz --data heldout.jsonl
   lmreadout patch   --model ID --readout task.npz --out edited-model/
   lmreadout predict --model ID --readout a.npz [b.npz ...] --data items.jsonl [--out preds.jsonl]
 
-items.jsonl: one JSON object per line with the template's fields and, for fit/sweep/eval, an "answer" field. The
-template is a text file ending where the answer goes, with {{field}} placeholders. Without --labels the answers are
-read from the data (every distinct "answer", sorted). Each answer is read from the row of its first token after
---label-prefix, so answers of several words work as long as their first tokens differ.
+  fit      work out the correction from your examples, print an honest score, save it
+  sweep    show how it does with fewer examples, beside the untouched model and plain word counts
+  eval     score a saved correction on new items
+  patch    save a copy of the model with the correction written in
+  predict  answer items with one or more saved corrections, leaving the model as it is
 
---auto chooses how much of the lean to remove (0, 0.5, 1), the read-out's strength (0, 0.5, 1, 2, 4) and the ridge
-(n/4, n, 4n) from the labelled items by cross-validation, and may choose to leave the model unchanged. Ties go to
-a strength that steps down with model size: 2 below 3B parameters, 1 below 7B, 0.5 from 7B. When some answer has
-fewer than two labelled items nothing can be cross-validated: the lean is removed (no labels needed), no read-out.
+Your files:
+  items.jsonl   one JSON object per line: the fields your prompt uses, plus "answer" (for fit, sweep and eval)
+  t.txt         your prompt, with {{field}} where each field goes; it must end exactly where the answer goes
+
+Answers: without --labels, every distinct "answer" in the data is used. Each answer is recognised by its first
+token, so answers of several words are fine as long as they start differently.
+
+--auto picks the settings from your examples and may decide to leave the model alone. It tries each combination of:
+  lean      how much of the model's bias towards one answer to remove: none, half or all
+  strength  how hard the correction overrides the model's own answer: 0, 0.5, 1, 2 or 4
+  ridge     how much the correction is smoothed: n/4, n or 4n, for n examples
+and keeps the one that scores best on examples held back from the fit. Ties go to a gentler strength on bigger
+models. If some answer has fewer than two examples it cannot choose, so it only removes the bias.
 """
 from __future__ import annotations
 
@@ -243,21 +252,22 @@ def main(argv=None):
     common.add_argument("--model", required=True, help="Hugging Face model id or local path")
     common.add_argument("--device", default=None, help="cuda or cpu (default: cuda when available)")
     items = argparse.ArgumentParser(add_help=False)
-    items.add_argument("--max-len", type=int, default=1024, help="prompts are left-truncated to this many tokens")
+    items.add_argument("--max-len", type=int, default=1024, help="longest prompt in tokens; longer ones lose their start (default 1024)")
     items.add_argument("--max-items", type=int, default=0, help="use only the first N items (default: all)")
     task = argparse.ArgumentParser(add_help=False)
-    task.add_argument("--label-prefix", default=" ", help="text put before each answer when tokenising (default: a space)")
-    task.add_argument("--data", required=True); task.add_argument("--template", required=True)
+    task.add_argument("--label-prefix", default=" ", help="text put before each answer when it is turned into tokens (default: a space)")
+    task.add_argument("--data", required=True, help="your examples, one JSON object per line")
+    task.add_argument("--template", required=True, help="your prompt, as a text file")
     task.add_argument("--labels", nargs="+", default=None, help="the answers (default: every distinct answer in the data)")
-    task.add_argument("--lam", type=float, default=None, help="ridge strength (default: number of fit items)")
-    task.add_argument("--alpha-mult", type=float, default=None, help="read-out strength (default 2)")
-    task.add_argument("--auto", action="store_true", help="choose lean, strength and ridge from the labelled items "
-                      "(fit: replaces --lam/--alpha-mult; sweep: adds an 'auto' column)")
+    task.add_argument("--lam", type=float, default=None, help="how much the correction is smoothed (default: the number of examples)")
+    task.add_argument("--alpha-mult", type=float, default=None, help="how hard the correction overrides the model's own answer (default 2)")
+    task.add_argument("--auto", action="store_true", help="pick the settings from your examples "
+                      "(fit: instead of --lam/--alpha-mult; sweep: adds an 'auto' column)")
     f = sub.add_parser("fit", parents=[common, items, task]); f.add_argument("--out", required=True)
     f.add_argument("--task", default=None); f.set_defaults(fn=cmd_fit)
     s = sub.add_parser("sweep", parents=[common, items, task])
-    s.add_argument("--sizes", nargs="+", type=int, default=[15, 30, 60, 120], help="numbers of labelled items to fit on")
-    s.add_argument("--draws", type=int, default=20, help="random draws per size")
+    s.add_argument("--sizes", nargs="+", type=int, default=[15, 30, 60, 120], help="numbers of examples to fit on")
+    s.add_argument("--draws", type=int, default=20, help="how many random sets of examples to try per size")
     s.add_argument("--seed", type=int, default=0); s.add_argument("--csv", default=None); s.set_defaults(fn=cmd_sweep)
     e = sub.add_parser("eval", parents=[common, items]); e.add_argument("--readout", required=True); e.add_argument("--data", required=True); e.set_defaults(fn=cmd_eval)
     p = sub.add_parser("patch", parents=[common]); p.add_argument("--readout", required=True); p.add_argument("--out", required=True); p.set_defaults(fn=cmd_patch)
