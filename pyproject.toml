@@ -1,21 +1,50 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "lmreadout"
-version = "0.4.0"
+dynamic = ["version"]
 description = "Pull a classifier out of a causal language model's own hidden state and write it into the model's output rows. No gradient training: closed form, from a few labelled examples."
 readme = "README.md"
 requires-python = ">=3.10"
-license = {text = "MIT"}
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{name = "hordruma"}]
+keywords = ["language model", "classification", "few-shot", "calibration", "linear probe", "model editing", "transformers"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Typing :: Typed",
+]
 dependencies = ["numpy>=1.24", "torch>=2.1", "transformers>=5.2"]
+
+[project.urls]
+Homepage = "https://github.com/discover-legal/lmreadout"
+Issues = "https://github.com/discover-legal/lmreadout/issues"
 
 [project.scripts]
 lmreadout = "lmreadout.cli:main"
 
 [project.optional-dependencies]
-dev = ["pytest>=7"]
+dev = ["pytest>=7", "build>=1"]
 
-[build-system]
-requires = ["setuptools>=68"]
-build-backend = "setuptools.build_meta"
+[tool.setuptools.dynamic]
+version = {attr = "lmreadout.__version__"}
 
 [tool.setuptools.packages.find]
 include = ["lmreadout*"]
+
+[tool.setuptools.package-data]
+lmreadout = ["py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

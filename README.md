@@ -151,6 +151,9 @@ above), so read the answer tokens' scores, as `eval` and `predict` do, or restri
 pip install git+https://github.com/discover-legal/lmreadout
 ```
 
+or, from a checkout, `pip install .` (`pip install -e ".[dev]"` to work on it). `python -m build` makes a wheel and
+a source archive in `dist/`. This installs the `lmreadout` command and the `lmreadout` Python package.
+
 Needs `torch`, `numpy` and `transformers` 5.2 or later (the first with Qwen3.5). For a CPU-only machine, install
 torch from its CPU index first (`pip install torch --index-url https://download.pytorch.org/whl/cpu`), or pip may pull
 the much larger CUDA build.
@@ -160,7 +163,66 @@ models where it cannot; other architectures pass the unit tests on tiny random m
 task. Models are loaded in float32: an 8 GB GPU is enough for 1B-class models; on CPU expect under a second per short
 item for Qwen3.5-0.8B (transformers warns that it falls back to slower kernels; that is expected).
 
-## Use
+## In your code
+
+Give it a model and labelled examples; get back something you call. By default the settings are chosen from the
+examples (`--auto`, above), which can mean leaving the model alone: the classifier then gives the model's own answer
+among the labels. Nothing is written into the model unless you ask.
+
+```python
+from lmreadout import Classifier
+
+clf = Classifier.fit(
+    "Qwen/Qwen3.5-0.8B",                       # a model id or path, or (model, tokenizer) you already loaded
+    "governing_law.jsonl",                     # or a list of dicts, or (item, answer) pairs
+    template="Does the clause say which law governs the contract?\n\nClause: {{text}}\nLabel:",
+)
+clf("This Agreement shall be governed by the laws of the State of Delaware.")     # "Yes"
+clf.predict(["...", "..."])                   # a list of answers
+clf.scores(["..."])                           # [{"No": 0.08, "Yes": 0.92}]: probabilities among the answers
+clf.report                                    # the held-out two-fold scores, as `fit` prints them
+clf.settings, clf.unchanged                   # what was chosen; True when the model was left alone
+clf.sweep(sizes=(15, 30, 60))                 # how it does at fewer examples, beside word counts
+
+clf.save("governing_law.npz")                 # the read-out alone; works with the command line too
+clf = Classifier.load("governing_law.npz")    # loads the model the read-out names, or pass one
+```
+
+As a decorator: the function writes the prompt, the decorated function returns the answer. It is fitted on the
+first call; with `cache=` the fit is saved and reused while the model, the prompts, the answers and the settings
+stay the same. Tasks on the same model id share one loaded copy.
+
+```python
+from lmreadout import classifier
+
+@classifier("Qwen/Qwen3.5-0.8B", examples="governing_law.jsonl", cache="governing_law.npz")
+def governing_law(text):
+    return f"Does the clause say which law governs the contract?\n\nClause: {text}\nLabel:"
+
+governing_law("Either party may terminate on thirty days' notice.")    # "No"
+governing_law.scores("...")                   # {"No": 0.9, "Yes": 0.1}
+governing_law.map(["...", "..."])             # many at once
+governing_law.classifier                      # the Classifier above
+governing_law.prompt("...")                   # the original function
+```
+
+Examples for the decorator are dicts or JSON lines holding the function's arguments by name plus `answer`, or
+`(input, answer)` pairs. Both forms take `labels=`, `auto=`, `lam=`, `alpha_mult=`, `device=`, `label_prefix=` and
+`max_len=`; giving `lam` or `alpha_mult` turns the automatic choice off.
+
+To put the read-out into the model itself, so your existing `generate` or logits code gives its answer:
+
+```python
+model = clf.patch()                           # for good, in memory; returns the model
+with clf.patched() as model:                  # or only inside the block; the rows are put back on exit
+    ...
+clf.export("qwen-governing-law/")             # or save a patched copy for plain transformers; memory unchanged
+```
+
+The cautions under "What to check, every time" apply here as well: one task per set of answer rows when patching,
+and look at `clf.report` and `clf.sweep()` before relying on it.
+
+## Use from the command line
 
 Items are JSON lines with the fields your prompt template uses and an `answer` (other fields are ignored, and
 `predict` passes them through):
@@ -248,7 +310,7 @@ logits = m(**tok(prompt, return_tensors="pt", add_special_tokens=False)).logits[
 answer = ["No", "Yes"][int(logits[ids].argmax())]       # should match `eval` / `predict` item for item
 ```
 
-From Python:
+The pieces behind `Classifier`, from Python:
 
 ```python
 from lmreadout import load_model, answer_tokens, collect, fit, fit_auto, twofold, patch, Readout
@@ -335,8 +397,11 @@ files; patch touches only the answer rows, on float32 and bfloat16 models; a war
 with one answer refused, and the two-fold split surviving data ordered No, Yes, No, Yes; a line break at the end of
 the template removed; `--auto`'s grid, tie order and size rule, its use of a planted direction, leaving a model that
 is already right unchanged, and the fallback when an answer is short of items; refusals of sweep sizes under two,
-no draws, predictions that would overwrite a field, fixed settings passed with auto, and reserved meta keys. No
-model download.
+no draws, predictions that would overwrite a field, fixed settings passed with auto, and reserved meta keys; and for
+the `Classifier` and the decorator, on a tiny random model: its answers are the patched model's own, `patched()`
+puts the rows (and a tied embedding) back exactly, an exported copy reloaded with plain `transformers` agrees,
+save and load, and the decorator fits on first call, reuses its cache and refits when the examples change. No model
+download.
 
 ## Prior work
 
