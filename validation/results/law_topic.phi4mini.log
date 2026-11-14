@@ -1,0 +1,38 @@
+[transformers] This model config has set a `rope_parameters['original_max_position_embeddings']` field, to be used together with `max_position_embeddings` to determine a scaling factor. Please set the `factor` field of `rope_parameters`with this ratio instead -- we recommend the use of this field over `original_max_position_embeddings`, as it is compatible with most model architectures.
+Loading weights:   0%|          | 0/194 [00:00<?, ?it/s]Loading weights:   1%|          | 1/194 [00:00<03:07,  1.03it/s]Loading weights:  42%|████▏     | 81/194 [00:01<00:01, 102.17it/s]Loading weights:  64%|██████▍   | 124/194 [00:01<00:00, 105.01it/s]Loading weights:  79%|███████▉  | 153/194 [00:01<00:00, 111.26it/s]Loading weights:  91%|█████████ | 176/194 [00:01<00:00, 111.08it/s]Loading weights: 100%|██████████| 194/194 [00:02<00:00, 96.04it/s] 
+16 answers: ['Business', 'Civil law', 'Constitutional law', 'Contract law', 'Contracts', 'Copyright', 'Criminal law', 'Employment', 'Intellectual property', 'Internet', 'Liability', 'Licensing', 'Privacy', 'Software', 'Tax law', 'Trademark']; read by their first token: ['Civil law', 'Constitutional law', 'Contract law', 'Criminal law', 'Intellectual property', 'Tax law']
+collecting 1000 items
+  50/1000
+  100/1000
+  150/1000
+  200/1000
+  250/1000
+  300/1000
+  350/1000
+  400/1000
+  450/1000
+  500/1000
+  550/1000
+  600/1000
+  650/1000
+  700/1000
+  750/1000
+  800/1000
+  850/1000
+  900/1000
+  950/1000
+  1000/1000
+each size N: 20 random draws of N labelled items, every other item scored, mean over draws
+balanced accuracy (guessing = 0.062), accuracy in brackets
+     N       as shipped       calibrated      word counts           edited             auto  fallback draws
+    15    0.475 (0.566)    0.518 (0.486)    0.083 (0.212)    0.281 (0.458)    0.518 (0.486)  20
+    30    0.476 (0.566)    0.529 (0.501)    0.103 (0.235)    0.354 (0.536)    0.529 (0.501)  20
+    60    0.475 (0.565)    0.531 (0.505)    0.139 (0.294)    0.439 (0.598)    0.531 (0.505)  20
+   120    0.475 (0.567)    0.534 (0.510)    0.192 (0.352)    0.484 (0.634)    0.533 (0.512)  16
+edited = the fixed settings (all the lean, strength --alpha-mult, ridge --lam); auto = settings chosen from the N items alone. Fallback draws (an answer with under two of the N items): lean removed only, no read-out.
+settings auto chose (lean / strength / ridge), count over the draws:
+    15  fallback (lean only): 20
+    30  fallback (lean only): 20
+    60  fallback (lean only): 20
+   120  fallback (lean only): 16; lean 1, no read-out: 3; lean 0.5, no read-out: 1
+wrote validation/results/law_topic.phi4mini.csv

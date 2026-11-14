@@ -1,0 +1,39 @@
+Loading weights:   0%|          | 0/320 [00:00<?, ?it/s]Loading weights:  53%|█████▎    | 171/320 [00:00<00:00, 1671.70it/s]Loading weights: 100%|██████████| 320/320 [00:00<00:00, 1912.68it/s]
+2 answers: ['A', 'B']
+collecting 1000 items
+[transformers] `causal_conv1d_fn` is falling back to its reference PyTorch implementation because `causal_conv1d` is not installed. This is correct but much slower; install `causal_conv1d` for the optimized kernel.
+[transformers] `chunk_gated_delta_rule` is falling back to its reference PyTorch implementation because `flash-linear-attention` is not installed. This is correct but much slower; install `flash-linear-attention` for the optimized kernel.
+  50/1000
+  100/1000
+  150/1000
+  200/1000
+  250/1000
+  300/1000
+  350/1000
+  400/1000
+  450/1000
+  500/1000
+  550/1000
+  600/1000
+  650/1000
+  700/1000
+  750/1000
+  800/1000
+  850/1000
+  900/1000
+  950/1000
+  1000/1000
+each size N: 20 random draws of N labelled items, every other item scored, mean over draws
+balanced accuracy (guessing = 0.500), accuracy in brackets
+     N       as shipped       calibrated      word counts           edited             auto  fallback draws
+    15    0.497 (0.511)    0.483 (0.483)    0.502 (0.503)    0.499 (0.502)    0.491 (0.497)  0
+    30    0.497 (0.511)    0.484 (0.484)    0.505 (0.506)    0.498 (0.499)    0.498 (0.503)  0
+    60    0.497 (0.511)    0.485 (0.485)    0.500 (0.500)    0.503 (0.503)    0.499 (0.504)  0
+   120    0.497 (0.511)    0.484 (0.483)    0.505 (0.506)    0.525 (0.526)    0.511 (0.513)  0
+edited = the fixed settings (all the lean, strength --alpha-mult, ridge --lam); auto = settings chosen from the N items alone. Fallback draws (an answer with under two of the N items): lean removed only, no read-out.
+settings auto chose (lean / strength / ridge), count over the draws:
+    15  lean 1, no read-out: 5; unchanged: 3; lean 1 strength 2 ridge 1n: 3; lean 0.5 strength 2 ridge 1n: 2; lean 1 strength 4 ridge 1n: 2; lean 0.5 strength 4 ridge 1n: 1; lean 0.5 strength 0.5 ridge 1n: 1; lean 0.5, no read-out: 1; lean 0 strength 4 ridge 1n: 1; lean 1 strength 2 ridge 0.25n: 1
+    30  lean 1 strength 2 ridge 1n: 3; lean 0.5, no read-out: 3; lean 0 strength 4 ridge 1n: 2; lean 1, no read-out: 2; lean 1 strength 1 ridge 1n: 2; lean 0.5 strength 2 ridge 1n: 2; lean 1 strength 4 ridge 1n: 2; lean 0.5 strength 4 ridge 1n: 1; lean 1 strength 4 ridge 4n: 1; lean 0 strength 1 ridge 4n: 1; unchanged: 1
+    60  lean 1, no read-out: 4; lean 0.5, no read-out: 3; unchanged: 2; lean 1 strength 2 ridge 0.25n: 1; lean 0 strength 2 ridge 1n: 1; lean 0 strength 2 ridge 4n: 1; lean 0 strength 4 ridge 1n: 1; lean 1 strength 0.5 ridge 1n: 1; lean 1 strength 1 ridge 1n: 1; lean 0.5 strength 1 ridge 4n: 1; lean 1 strength 1 ridge 4n: 1; lean 1 strength 4 ridge 4n: 1; lean 0.5 strength 4 ridge 4n: 1; lean 0.5 strength 1 ridge 1n: 1
+   120  lean 1 strength 1 ridge 0.25n: 2; lean 0.5 strength 4 ridge 4n: 2; lean 1 strength 4 ridge 0.25n: 2; lean 0.5 strength 0.5 ridge 0.25n: 1; lean 1 strength 4 ridge 4n: 1; lean 0.5 strength 1 ridge 0.25n: 1; lean 1, no read-out: 1; lean 0.5 strength 2 ridge 1n: 1; lean 1 strength 4 ridge 1n: 1; lean 0.5 strength 4 ridge 0.25n: 1; lean 0.5, no read-out: 1; lean 0 strength 2 ridge 4n: 1; lean 1 strength 0.5 ridge 0.25n: 1; lean 1 strength 2 ridge 1n: 1; lean 1 strength 2 ridge 4n: 1; unchanged: 1; lean 1 strength 2 ridge 0.25n: 1
+wrote validation/results/legal_support.qwen08.csv

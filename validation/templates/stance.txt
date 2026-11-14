@@ -1,0 +1,5 @@
+Is the argument for or against the topic? Answer Pro or Con.
+
+Topic: {{topic}}
+Argument: {{argument}}
+Label:

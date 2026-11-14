@@ -1,0 +1,5 @@
+Do these two sentences mean the same thing? Answer Yes or No.
+
+Sentence 1: {{sentence1}}
+Sentence 2: {{sentence2}}
+Label:

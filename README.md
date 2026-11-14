@@ -8,8 +8,9 @@ answers your task with its normal inference code: no wrapper, no prompt trick, n
 two answers or more.
 
 It does not always help. With fixed settings it improves some tasks and hurts others. With `--auto` it picks the
-settings from your examples, and may decide to leave the model alone; in our tests that never did more than slight
-harm. Either way, measure it on your own task before you rely on it. The `sweep` command does that.
+settings from your examples, and may decide to leave the model alone; in the task-by-task tests below, the worst
+that did was 0.025 below the untouched model. Either way, measure it on your own task before you rely on it. The
+`sweep` command does that.
 
 Neither half of the method is new. Correcting a model's bias towards one answer is known (Zhao et al. 2021; Zhou et
 al. 2024), and so is fitting a linear classifier on a model's internal state (Alain & Bengio 2016; Buckmann & Hill
@@ -33,8 +34,9 @@ pip install torch --index-url https://download.pytorch.org/whl/cpu
 
 What to expect:
 
-- This package has been run on real tasks with Qwen3.5 only. Other model families pass the unit tests but are untested on
-  real tasks. If it cannot work with a model's architecture it says so and stops.
+- This package has been run on real tasks with Qwen3.5 and, on four tasks, Phi-4-mini. Other model families pass
+  the unit tests but are untested on real tasks. If it cannot work with a model's architecture it says so and
+  stops.
 - An 8 GB GPU is enough for models around 1B parameters.
 - On CPU, Qwen3.5-0.8B takes under a second per short item. `transformers` will warn about slower kernels; that is
   expected.
@@ -338,6 +340,10 @@ Tested the same way: a separate agent, installing from GitHub, 20 draws per size
 before, Rotten Tomatoes movie reviews, with the plan written down before any score. We also ran Qwen3.5-4B on two
 tasks. Scores are for 15 / 120 examples.
 
+Six of these seven tasks had already been run with the fixed settings before `--auto` was written; only Rotten
+Tomatoes was new. The held-out test in the next section is the cleaner check, and it did not confirm every limit
+stated here.
+
 | Task, model | As shipped | Calibration only | Fixed edit | `--auto` |
 |---|---|---|---|---|
 | AG News, 0.8B | 0.27 | 0.59 / 0.61 | **0.67** / 0.81 | 0.65 / **0.82** |
@@ -352,12 +358,14 @@ tasks. Scores are for 15 / 120 examples.
 
 What this shows:
 
-- **It does no real harm.** With 15 examples it is never more than 0.02 below the untouched model. The worst case
-  is BoolQ: 0.632 against 0.648, where the fixed edit lost 0.075. Across every number of examples we tried, the
-  worst is BoolQ at 60: 0.623 against 0.647.
+- **It did little harm on these tasks.** With 15 examples it was never more than 0.02 below the untouched model.
+  The worst case is BoolQ: 0.632 against 0.648, where the fixed edit lost 0.075. Across every number of examples
+  we tried, the worst is BoolQ at 60: 0.623 against 0.647. On new tasks the worst was 0.025 below; see the
+  held-out test.
 - **On average it matches the better of two safe choices.** With 15 examples it is level (+0.01) with whichever is
   better of the untouched model and calibration alone. You would not know in advance which of those to pick.
-- **With 120 examples it matches or beats the fixed edit on every task.** The worst is overruling, 0.001 below.
+- **With 120 examples it matched or beat the fixed edit on every one of these tasks.** The worst is overruling,
+  0.001 below. On new tasks it was up to 0.015 below; see the held-out test.
 - **It is not always the best choice.** With 15 examples cross-validation is noisy, so on some tasks it lands a
   little below calibration alone: Rotten Tomatoes 0.85 against 0.86; tweets on the 4B 0.62 against 0.63, and 0.61
   against 0.63 at 60 examples.
@@ -367,6 +375,79 @@ What this shows:
 On LegalBench with 15 examples, `--auto` gives 0.80 / 0.84 / 0.86 for Qwen3.5-2B / 4B / 9B. The fixed edit gives
 0.81 / 0.82 / 0.83, and the untouched models 0.72 / 0.81 / 0.84. These are the 98 two-answer tasks from the Handi
 runs, which the method was developed on, so this is not a clean test.
+
+### Held-out test: twelve new tasks
+
+The results above come from tasks we could see while building the package. To check them, version 0.5.0 was
+frozen and run on twelve tasks it had never been run on.
+
+- **The tasks were chosen blind.** A separate agent that had only this README chose them and wrote the prompts.
+  One task in its first draft turned out to have been used during development and was replaced before any score
+  was computed.
+- **The rules came first.** The tasks, prompts, commands and three pass/fail rules were committed before any model
+  was run. The rules were the three `--auto` claims in the section above.
+- **Everything is kept.** The plan, the data, the raw results and the full tables are in `validation/`.
+
+Qwen3.5-0.8B on all twelve tasks, run the same way as the tables above: 20 draws per size, up to 1,000 items per
+task, scores for 15 / 120 examples. The first four tasks are legal.
+
+| Task | Answers | Guessing | As shipped | Calibration only, 15 / 120 | Word counts, 15 / 120 | Fixed edit, 15 / 120 | `--auto`, 15 / 120 |
+|---|---|---|---|---|---|---|---|
+| Area of law of a question (Law Stack Exchange) | 16 | 0.06 | 0.09 | **0.48 / 0.49** | 0.08 / 0.19 | 0.26 / 0.43 | **0.48 / 0.49** |
+| Law exam question (MMLU professional law) | 4 | 0.25 | 0.26 | **0.30 / 0.29** | 0.25 / 0.25 | 0.27 / **0.29** | 0.28 / 0.28 |
+| Which cited case supports a passage (LegalSupport) | 2 | 0.50 | **0.50** | 0.48 / 0.48 | **0.50** / 0.51 | **0.50 / 0.53** | 0.49 / 0.51 |
+| Role of a sentence in a German court decision | 4 | 0.25 | 0.26 | 0.24 / 0.24 | 0.31 / 0.38 | **0.32 / 0.41** | 0.24 / 0.40 |
+| Is the sentence grammatical (CoLA) | 2 | 0.50 | 0.50 | **0.53** / 0.53 | 0.50 / 0.51 | 0.52 / **0.56** | 0.52 / 0.54 |
+| Does one sentence follow from another (MultiNLI) | 3 | 0.33 | 0.34 | 0.42 / 0.42 | 0.34 / 0.34 | **0.44 / 0.55** | 0.42 / 0.54 |
+| For or against a topic (IBM argument quality) | 2 | 0.50 | 0.48 | 0.48 / 0.48 | 0.51 / 0.57 | **0.53 / 0.69** | 0.51 / **0.69** |
+| Same meaning or not (PAWS) | 2 | 0.50 | 0.50 | 0.52 / 0.52 | 0.50 / 0.51 | **0.60 / 0.72** | 0.56 / **0.72** |
+| Same sense of a word (WiC) | 2 | 0.50 | 0.50 | 0.48 / 0.48 | **0.51 / 0.53** | **0.51 / 0.53** | 0.50 / 0.52 |
+| Topic of a voice-assistant request (MTOP) | 11 | 0.09 | 0.44 | **0.80** / 0.82 | 0.23 / 0.70 | 0.63 / **0.90** | **0.80 / 0.90** |
+| Why a paper cites other work (SciCite) | 3 | 0.33 | 0.34 | **0.52** / 0.54 | 0.42 / 0.55 | 0.46 / **0.60** | 0.51 / **0.60** |
+| Kind of thing a Wikipedia text describes (DBpedia) | 14 | 0.07 | 0.19 | **0.50** / 0.52 | 0.24 / 0.69 | 0.44 / **0.81** | **0.50 / 0.81** |
+| **Mean** | | | 0.37 | 0.48 / 0.48 | 0.37 / 0.48 | 0.46 / 0.58 | 0.48 / 0.58 |
+
+Phi-4-mini on four of the twelve, named in the plan before any score. It ran on CPU.
+
+| Task | Answers | Guessing | As shipped | Calibration only, 15 / 120 | Word counts, 15 / 120 | Fixed edit, 15 / 120 | `--auto`, 15 / 120 |
+|---|---|---|---|---|---|---|---|
+| Area of law of a question (Law Stack Exchange) | 16 | 0.06 | 0.47 | **0.52 / 0.53** | 0.08 / 0.19 | 0.28 / 0.48 | **0.52 / 0.53** |
+| Which cited case supports a passage (LegalSupport) | 2 | 0.50 | 0.50 | **0.56** / 0.56 | 0.50 / 0.51 | 0.53 / 0.56 | 0.54 / **0.57** |
+| Is the sentence grammatical (CoLA) | 2 | 0.50 | **0.77** | 0.76 / 0.76 | 0.50 / 0.51 | 0.70 / 0.75 | 0.75 / **0.77** |
+| Topic of a voice-assistant request (MTOP) | 11 | 0.09 | **0.89** | 0.88 / 0.90 | 0.23 / 0.70 | 0.68 / **0.95** | 0.88 / 0.94 |
+| **Mean** | | | 0.66 | 0.68 / 0.69 | 0.33 / 0.48 | 0.55 / 0.69 | 0.67 / 0.70 |
+
+How the three claims did:
+
+- **"With 15 examples, never more than 0.02 below the untouched model" failed, narrowly.** On Qwen the German task
+  is 0.025 below (0.239 against 0.264); the other eleven are within 0.006. On Phi-4-mini the grammar task is 0.022
+  below (0.749 against 0.770).
+- **"With 120 examples, matches or beats the fixed edit on every task" failed, narrowly.** Counting anything more
+  than 0.005 below as a miss, `--auto` is 0.008 to 0.015 below the fixed edit on five of the twelve Qwen tasks,
+  and 0.010 below on one of the four Phi-4-mini tasks. The means are level: 0.583 against 0.584 on Qwen.
+- **"With 15 examples, level on average with the better of the untouched model and calibration alone" held on
+  Qwen and failed narrowly on Phi-4-mini.** The mean gap is 0.000 on Qwen and -0.012 on Phi-4-mini, against a
+  limit of -0.01.
+
+What this shows:
+
+- **The method carries over to new tasks.** Mean over the twelve on Qwen: 0.37 untouched, 0.48 with 15 examples,
+  0.58 with 120. From 60 examples `--auto` is above the untouched model on all twelve, and with 120 it is above
+  word counts on eleven.
+- **The exact limits in the section above were fitted to the tasks they were measured on.** New tasks go slightly
+  past them. Read them as what happened on those tasks, not as a guarantee.
+- **`--auto` still protects against the fixed edit.** On Phi-4-mini with 15 examples the fixed edit is 0.07 to 0.21
+  below the untouched model on three of the four tasks. `--auto` is within 0.022 on all four.
+- **With many answers and 15 examples, all the gain is calibration.** On the three tasks with 11 to 16 answers
+  there are too few examples of each answer to cross-validate, so `--auto` only removes the lean. That lifts Qwen
+  by 0.31 to 0.39, and the fixed edit scores lower on all three.
+- **The same fallback caused the Qwen failure.** In the German task one answer is 3% of the items, so with 15
+  examples `--auto` removed the lean without being able to check it, and there that hurt.
+- **On four tasks nothing helps Qwen3.5-0.8B.** Law exam, legal support, word sense and grammar stay within 0.06 of
+  guessing for every method at every number of examples. Phi-4-mini, a larger model, scores 0.77 on grammar
+  untouched.
+- **A model that already answers well gains little.** Phi-4-mini's mean goes from 0.66 untouched to 0.67 with 15
+  examples and 0.70 with 120. Four tasks is a thin sample.
 
 ### Where it came from: LegalBench
 
@@ -449,7 +530,11 @@ only, which is what `eval`, `predict` and `Classifier` do, or restrict generatio
   is already decent and examples are few, like tweets. Check with `sweep`.
 - **Without `--auto` the strength is fixed at 2,** whatever the quality of the read-out. With few examples that is
   often too much. `--auto` chooses it from your examples, which with 15 of them is itself noisy.
-- **`--auto`'s rule for model size was set on Qwen3.5 from 0.8B to 9B.** Other model families are untested.
+- **`--auto`'s rule for model size was set on Qwen3.5 from 0.8B to 9B.** Phi-4-mini has been run on four tasks;
+  other model families are untested.
+- **`--auto`'s fallback is not checked against your examples.** When some answer has fewer than two examples it
+  removes the lean without cross-validating. In the held-out test on Qwen3.5-0.8B that gained 0.31 to 0.39 on
+  three tasks and cost 0.025 on one.
 - **Prompts get no beginning-of-sequence token.** Qwen uses none. Models that expect one, like Llama 3 and Gemma,
   may score lower than they should.
 - **It reads the model's last layer only.** Classifiers fitted a few layers earlier are usually a little better

@@ -1,0 +1,4 @@
+What part does this sentence play in the reasoning of a German court decision? Answer Conclusion, Definition, Subsumption or Other.
+
+Sentence: {{text}}
+Label:

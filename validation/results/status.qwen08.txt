@@ -1,0 +1,25 @@
+2026-11-13T15:34:03-05:00 start law_topic.qwen08
+2026-11-13T15:45:17-05:00 exit=0 law_topic.qwen08
+2026-11-13T15:45:17-05:00 start law_exam.qwen08
+2026-11-13T15:57:17-05:00 exit=0 law_exam.qwen08
+2026-11-13T15:57:17-05:00 start legal_support.qwen08
+2026-11-13T16:03:20-05:00 exit=0 legal_support.qwen08
+2026-11-13T16:03:20-05:00 start german_argument.qwen08
+2026-11-13T16:12:14-05:00 exit=0 german_argument.qwen08
+2026-11-13T16:12:14-05:00 start acceptability.qwen08
+2026-11-13T16:17:36-05:00 exit=0 acceptability.qwen08
+2026-11-13T16:17:36-05:00 start nli.qwen08
+2026-11-13T16:25:31-05:00 exit=0 nli.qwen08
+2026-11-13T16:25:31-05:00 start stance.qwen08
+2026-11-13T16:30:53-05:00 exit=0 stance.qwen08
+2026-11-13T16:30:53-05:00 start paraphrase.qwen08
+2026-11-13T16:36:23-05:00 exit=0 paraphrase.qwen08
+2026-11-13T16:36:23-05:00 start word_sense.qwen08
+2026-11-13T16:41:40-05:00 exit=0 word_sense.qwen08
+2026-11-13T16:41:40-05:00 start request_domain.qwen08
+2026-11-13T17:06:19-05:00 exit=0 request_domain.qwen08
+2026-11-13T17:06:19-05:00 start citation_intent.qwen08
+2026-11-13T17:14:18-05:00 exit=0 citation_intent.qwen08
+2026-11-13T17:14:18-05:00 start wiki_category.qwen08
+2026-11-13T17:47:48-05:00 exit=0 wiki_category.qwen08
+2026-11-13T17:47:48-05:00 ALL DONE qwen08
