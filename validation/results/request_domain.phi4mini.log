@@ -1,0 +1,38 @@
+[transformers] This model config has set a `rope_parameters['original_max_position_embeddings']` field, to be used together with `max_position_embeddings` to determine a scaling factor. Please set the `factor` field of `rope_parameters`with this ratio instead -- we recommend the use of this field over `original_max_position_embeddings`, as it is compatible with most model architectures.
+Loading weights:   0%|          | 0/194 [00:00<?, ?it/s]Loading weights:   1%|          | 1/194 [00:00<00:31,  6.13it/s]Loading weights:  33%|███▎      | 64/194 [00:00<00:00, 287.75it/s]Loading weights:  55%|█████▌    | 107/194 [00:00<00:00, 334.80it/s]Loading weights:  79%|███████▉  | 153/194 [00:00<00:00, 374.96it/s]Loading weights: 100%|██████████| 194/194 [00:00<00:00, 340.70it/s]
+11 answers: ['Alarm', 'Calling', 'Event', 'Messaging', 'Music', 'News', 'People', 'Recipes', 'Reminder', 'Timer', 'Weather']
+collecting 1000 items
+  50/1000
+  100/1000
+  150/1000
+  200/1000
+  250/1000
+  300/1000
+  350/1000
+  400/1000
+  450/1000
+  500/1000
+  550/1000
+  600/1000
+  650/1000
+  700/1000
+  750/1000
+  800/1000
+  850/1000
+  900/1000
+  950/1000
+  1000/1000
+each size N: 20 random draws of N labelled items, every other item scored, mean over draws
+balanced accuracy (guessing = 0.091), accuracy in brackets
+     N       as shipped       calibrated      word counts           edited             auto  fallback draws
+    15    0.889 (0.886)    0.883 (0.885)    0.234 (0.279)    0.678 (0.726)    0.883 (0.885)  20
+    30    0.889 (0.886)    0.895 (0.897)    0.364 (0.415)    0.851 (0.873)    0.895 (0.897)  20
+    60    0.890 (0.887)    0.901 (0.901)    0.569 (0.615)    0.916 (0.930)    0.919 (0.922)  8
+   120    0.890 (0.887)    0.902 (0.901)    0.697 (0.739)    0.946 (0.952)    0.937 (0.939)  1
+edited = the fixed settings (all the lean, strength --alpha-mult, ridge --lam); auto = settings chosen from the N items alone. Fallback draws (an answer with under two of the N items): lean removed only, no read-out.
+settings auto chose (lean / strength / ridge), count over the draws:
+    15  fallback (lean only): 20
+    30  fallback (lean only): 20
+    60  fallback (lean only): 8; lean 1 strength 1 ridge 1n: 3; lean 0.5, no read-out: 2; lean 0.5 strength 1 ridge 4n: 1; lean 0.5 strength 1 ridge 1n: 1; lean 1 strength 4 ridge 0.25n: 1; lean 0.5 strength 2 ridge 1n: 1; lean 1 strength 0.5 ridge 4n: 1; lean 1 strength 0.5 ridge 0.25n: 1; lean 1, no read-out: 1
+   120  lean 1 strength 1 ridge 1n: 4; lean 0.5 strength 0.5 ridge 4n: 2; unchanged: 2; lean 1 strength 2 ridge 0.25n: 1; lean 1 strength 2 ridge 1n: 1; fallback (lean only): 1; lean 0 strength 0.5 ridge 1n: 1; lean 1 strength 4 ridge 4n: 1; lean 1 strength 4 ridge 1n: 1; lean 1 strength 1 ridge 0.25n: 1; lean 1 strength 0.5 ridge 4n: 1; lean 1, no read-out: 1; lean 0.5, no read-out: 1; lean 0.5 strength 1 ridge 1n: 1; lean 1 strength 1 ridge 4n: 1
+wrote validation/results/request_domain.phi4mini.csv
