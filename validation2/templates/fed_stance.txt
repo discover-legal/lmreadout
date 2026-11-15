@@ -1,0 +1,4 @@
+Is this sentence from the US central bank dovish (leaning towards easier monetary policy), hawkish (leaning towards tighter monetary policy) or neutral? Answer Dovish, Hawkish or Neutral.
+
+Sentence: {{text}}
+Label:

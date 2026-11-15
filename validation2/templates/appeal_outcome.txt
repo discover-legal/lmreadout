@@ -1,0 +1,4 @@
+A patient appealed against a health insurer's refusal to pay for a treatment, and independent doctors reviewed the case. Was the refusal upheld or overturned? Answer Upheld or Overturned.
+
+Case: {{text}}
+Label:

@@ -1,0 +1,1000 @@
+{"idx": 0, "state": "Alabama", "question": "Is there a state/territory law regulating residential evictions?", "answer": "Yes"}
+{"idx": 1, "state": "Alabama", "question": "Does the law specify a minimum number of days a tenant can be late on rent before the landlord can file an eviction action for nonpayment?", "answer": "Yes"}
+{"idx": 2, "state": "Alabama", "question": "Does the law specify rebuttals available to tenants subject to eviction proceedings?", "answer": "Yes"}
+{"idx": 9, "state": "Alabama", "question": "Can a landlord evict a tenant for material breach? The law should explicitly mention \"material breach\", or allow for eviction if there is a substantial violation of the lease, material noncompliance with the lease, or when the breach is one that materially affects health, safety or welfare", "answer": "Yes"}
+{"idx": 12, "state": "Alabama", "question": "Can a landlord evict a tenant for committing domestic violence? This includes when the a tenant can be evicted if they are a domestic violence offender, or if they endanger another tenant and are subject to a protective order or criminal complaint for domestic abuse.", "answer": "No"}
+{"idx": 15, "state": "Alabama", "question": "Can a landlord evict a tenant for refusal to allow the landlord lawful access to the unit?", "answer": "No"}
+{"idx": 19, "state": "Alabama", "question": "Can a landlord evict a tenant for criminal activity? This includes: criminal or illegal activity generally; committing a specific crime or illegal act; the use, possession, or sale of controlled substances; an unlawful action causing serious physical harm to another person; or criminal nuisance.", "answer": "Yes"}
+{"idx": 26, "state": "Alabama", "question": "Can a landlord evict a tenant for nonpayment of rent?", "answer": "Yes"}
+{"idx": 27, "state": "Alabama", "question": "Is it specified for which cause a landlord must accept a tenant's attempt to cure?", "answer": "Yes"}
+{"idx": 52, "state": "Alabama", "question": "Is it unlawful to evict a tenant because of their physical appearance?", "answer": "No"}
+{"idx": 58, "state": "Alabama", "question": "For tenants residing in properties that go into foreclosure, does the law require a continuation of the landlord's lease obligations?", "answer": "No"}
+{"idx": 63, "state": "Alabama", "question": "Does the law require landlords to provide information on rights when giving tenants notice to vacate the property?", "answer": "No"}
+{"idx": 64, "state": "Alabama", "question": "Does the law require landlords to provide a reason for eviction when giving tenants notice to vacate the property?", "answer": "Yes"}
+{"idx": 69, "state": "Alabama", "question": "Does the law require landlords to state the amount owed when giving tenants notice to vacate the property?", "answer": "Yes"}
+{"idx": 72, "state": "Alabama", "question": "Is it specified in which court eviction cases are first heard?", "answer": "Yes"}
+{"idx": 79, "state": "Alabama", "question": "Are eviction cases first heard in court of common pleas?", "answer": "No"}
+{"idx": 81, "state": "Alabama", "question": "Are eviction cases first heard in magistrates court?", "answer": "No"}
+{"idx": 82, "state": "Alabama", "question": "Are eviction cases first heard in superior court?", "answer": "No"}
+{"idx": 101, "state": "Alabama", "question": "In an eviction action, can a tenant rebut/raise the defense that the landlord accepted partial payment of rent?", "answer": "Yes"}
+{"idx": 108, "state": "Alabama", "question": "In an eviction action, can a tenant rebut/raise the defense that the landlord refused to complete repairs?", "answer": "Yes"}
+{"idx": 115, "state": "Alabama", "question": "When a tenant appeals, is the execution of eviction stayed for the duration of the pending appeal?", "answer": "Yes"}
+{"idx": 117, "state": "Alabama", "question": "Is it specified what term is used to refer to the order from the court to the authorities to remove a tenant?", "answer": "Yes"}
+{"idx": 120, "state": "Alabama", "question": "Is the term 'Summary order for removal' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 125, "state": "Alabama", "question": "Is the term 'Writ for removal' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 132, "state": "Alabama", "question": "Is the term 'Writ of assistance' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 152, "state": "Alaska", "question": "Is it specified whether a landlord waives their right to evict for nonpayment of rent by accepting partial payment of rent?", "answer": "Yes"}
+{"idx": 165, "state": "Alaska", "question": "Can a landlord evict a tenant for committing domestic violence? This includes when the a tenant can be evicted if they are a domestic violence offender, or if they endanger another tenant and are subject to a protective order or criminal complaint for domestic abuse.", "answer": "No"}
+{"idx": 167, "state": "Alaska", "question": "Can a landlord evict a tenant for remaining on property after expiration of the lease?", "answer": "Yes"}
+{"idx": 168, "state": "Alaska", "question": "Can a landlord evict a tenant for refusal to allow the landlord lawful access to the unit?", "answer": "No"}
+{"idx": 177, "state": "Alaska", "question": "Can a landlord evict a tenant for committing or failing to dispose of waste?", "answer": "Yes"}
+{"idx": 178, "state": "Alaska", "question": "Can a landlord evict a tenant because they seek to use the property for personal use?", "answer": "Yes"}
+{"idx": 186, "state": "Alaska", "question": "Must a landlord accept a tenant's attempt to cure for nuisance activities?", "answer": "Yes"}
+{"idx": 201, "state": "Alaska", "question": "Is it unlawful to evict a tenant because they are part of two or more of the federally protected classes under the Fair Housing Act (race, color, religion, national origin, sex, disability, and familial status)?", "answer": "Yes"}
+{"idx": 209, "state": "Alaska", "question": "Is it unlawful to evict a tenant because of their immigration status?", "answer": "No"}
+{"idx": 218, "state": "Alaska", "question": "Does the law require landlords to describe repercussions for failure to vacate when giving tenants notice to vacate the property?", "answer": "Yes"}
+{"idx": 226, "state": "Alaska", "question": "In an eviction action, can a tenant rebut/raise the defense that the property is uninhabitable?", "answer": "Yes"}
+{"idx": 228, "state": "Alaska", "question": "In an eviction action, can a tenant rebut/raise the defense that they lawfully deducted repair costs from the rent? This is when the law allows them to make repairs and deduct the cost of the repairs from the rent, or when the law allows a tenant to pay for utility services the landlord failed to pay, then deduct the cost from rent.", "answer": "Yes"}
+{"idx": 240, "state": "Arizona", "question": "With regards to eviction law, does the jurisdiction have separate legal provisions for different types of landlords?", "answer": "Yes"}
+{"idx": 246, "state": "Arizona", "question": "Does state/territory eviction law explicitly regulate residential landlords generally?", "answer": "Yes"}
+{"idx": 251, "state": "Arizona", "question": "Can a landlord evict a tenant for material falsification on the rental application?", "answer": "Yes"}
+{"idx": 258, "state": "Arizona", "question": "Can a landlord evict a tenant for refusal to allow the landlord lawful access to the unit?", "answer": "No"}
+{"idx": 265, "state": "Arizona", "question": "Can a landlord evict a tenant for endangering another person? This includes instances when the law allows for eviction of a tenant if: their behavior or the behavior of members of their family adversely affects the health or safety of other tenants, or the landlord or their representatives; the tenant or a guest are a perpetrator of violence; or the presence of a domestic violence offender at the tenant’s premises results in violent disturbances that pose a threat to the safety of other residents.", "answer": "Yes"}
+{"idx": 270, "state": "Arizona", "question": "Is it specified for which cause a landlord must accept a tenant's attempt to cure?", "answer": "Yes"}
+{"idx": 275, "state": "Arizona", "question": "Must a landlord accept a tenant's attempt to cure for criminal activities?", "answer": "No"}
+{"idx": 288, "state": "Arizona", "question": "Is it unlawful to evict a tenant based on their marital status?", "answer": "No"}
+{"idx": 290, "state": "Arizona", "question": "Is it unlawful to evict a tenant because they experienced domestic violence?", "answer": "No"}
+{"idx": 292, "state": "Arizona", "question": "Is it unlawful to evict a tenant because of the type of income they receive, their status with regard to public assistance, or because they have a housing voucher?", "answer": "No"}
+{"idx": 294, "state": "Arizona", "question": "Is it specified what is required to be in the notice?", "answer": "Yes"}
+{"idx": 298, "state": "Arizona", "question": "Does the law require landlords to describe repercussions for failure to cure when giving tenants notice to vacate the property?", "answer": "No"}
+{"idx": 309, "state": "Arkansas", "question": "With regards to eviction law, does the jurisdiction have separate legal provisions for different types of landlords?", "answer": "Yes"}
+{"idx": 312, "state": "Arkansas", "question": "Does the law require the tenant to respond to an eviction action before a hearing?", "answer": "Yes"}
+{"idx": 316, "state": "Arkansas", "question": "Does the law require a tenant to pay a bond in order to appeal an eviction judgment?", "answer": "Yes"}
+{"idx": 318, "state": "Arkansas", "question": "Does state/territory eviction law explicitly regulate mobile/manufactured home landlords?", "answer": "Yes"}
+{"idx": 322, "state": "Arkansas", "question": "Can a landlord evict a tenant for material falsification on the rental application?", "answer": "No"}
+{"idx": 327, "state": "Arkansas", "question": "Can a landlord evict a tenant for endangering property? This includes where the law refers to situations that could result in damage to the property; or a pet capable of causing damage to persons or property.", "answer": "No"}
+{"idx": 331, "state": "Arkansas", "question": "Can a landlord evict a tenant for having unauthorized occupants?", "answer": "No"}
+{"idx": 332, "state": "Arkansas", "question": "Can a landlord evict a tenant for violating statutory tenant obligations?", "answer": "Yes"}
+{"idx": 333, "state": "Arkansas", "question": "Can a landlord evict a tenant for criminal activity? This includes: criminal or illegal activity generally; committing a specific crime or illegal act; the use, possession, or sale of controlled substances; an unlawful action causing serious physical harm to another person; or criminal nuisance.", "answer": "Yes"}
+{"idx": 337, "state": "Arkansas", "question": "Can a landlord evict a tenant for refusal of new lease terms? This includes when the law allows for eviction if the tenant refused to sign a lease extension; refused to agree to a fair rent increase; or refused to agree to lease changes at the time of renewal", "answer": "No"}
+{"idx": 344, "state": "Arkansas", "question": "Must a landlord accept a tenant's attempt to cure for material breach?", "answer": "No"}
+{"idx": 346, "state": "Arkansas", "question": "Must a landlord accept a tenant's attempt to cure for criminal activities?", "answer": "No"}
+{"idx": 365, "state": "Arkansas", "question": "Is it specified what is required to be in the notice?", "answer": "Yes"}
+{"idx": 370, "state": "Arkansas", "question": "Does the law require landlords to provide information on how to cure when giving tenants notice to vacate the property?", "answer": "No"}
+{"idx": 374, "state": "Arkansas", "question": "Does the law require the landlord to give the tenant notice to vacate the property prior to terminating a tenancy?", "answer": "Yes"}
+{"idx": 378, "state": "Arkansas", "question": "Are eviction cases first heard in county court?", "answer": "No"}
+{"idx": 383, "state": "Arkansas", "question": "Are eviction cases first heard in justice of the peace court?", "answer": "No"}
+{"idx": 385, "state": "Arkansas", "question": "Are eviction cases first heard in superior court?", "answer": "No"}
+{"idx": 395, "state": "Arkansas", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is publication a permitted secondary method of service for an eviction action?", "answer": "No"}
+{"idx": 408, "state": "Arkansas", "question": "Is it required that the evictions summons served to tenants state the amount owed by the tenant?", "answer": "No"}
+{"idx": 429, "state": "Arkansas", "question": "Is the term 'Warrant of restitution' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 454, "state": "California", "question": "Is it specified whether a tenant forfeits the right to an eviction hearing by failing to respond to the court summons?", "answer": "Yes"}
+{"idx": 473, "state": "California", "question": "Can a landlord evict a tenant for breach/breaking the lease, the rental agreement, or a landlord’s rule?", "answer": "No"}
+{"idx": 475, "state": "California", "question": "Can a landlord evict a tenant for endangering another person? This includes instances when the law allows for eviction of a tenant if: their behavior or the behavior of members of their family adversely affects the health or safety of other tenants, or the landlord or their representatives; the tenant or a guest are a perpetrator of violence; or the presence of a domestic violence offender at the tenant’s premises results in violent disturbances that pose a threat to the safety of other residents.", "answer": "No"}
+{"idx": 492, "state": "California", "question": "Is injunctive relief available to a tenant who is unlawfully evicted?", "answer": "Yes"}
+{"idx": 493, "state": "California", "question": "Are damages available to a tenant who is unlawfully evicted?", "answer": "Yes"}
+{"idx": 500, "state": "California", "question": "Does the law prohibit rental agreements from including a provision allowing a landlord to evict a tenant because they contacted law enforcement services, health services, or safety services?", "answer": "Yes"}
+{"idx": 509, "state": "California", "question": "Is it unlawful to evict a tenant because of their immigration status?", "answer": "Yes"}
+{"idx": 510, "state": "California", "question": "Is it specified what protection, if any, the law offers tenants when the landlord wants to sell the property?", "answer": "Yes"}
+{"idx": 515, "state": "California", "question": "When a landlord wants to sell a property occupied by a tenant, does the law require longer than the standard notice period?", "answer": "Yes"}
+{"idx": 523, "state": "California", "question": "Does the law require landlords to provide information on rights when giving tenants notice to vacate the property?", "answer": "No"}
+{"idx": 537, "state": "California", "question": "Are eviction cases first heard in circuit court?", "answer": "No"}
+{"idx": 539, "state": "California", "question": "Are eviction cases first heard in court of common pleas?", "answer": "No"}
+{"idx": 543, "state": "California", "question": "Are eviction cases first heard in district court?", "answer": "No"}
+{"idx": 544, "state": "California", "question": "Are eviction cases first heard in justice court?", "answer": "No"}
+{"idx": 557, "state": "California", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is personal service to suitable person other than defendant a permitted secondary method of service for an eviction action?", "answer": "No"}
+{"idx": 565, "state": "California", "question": "Is it required that the evictions summons served to tenants state the amount owed by the tenant?", "answer": "No"}
+{"idx": 573, "state": "California", "question": "In an eviction action, can a tenant rebut/raise the defense that the landlord breached the lease?", "answer": "No"}
+{"idx": 576, "state": "California", "question": "In an eviction action, can a tenant raise \"any equitable defense\" available to them? This is true when the relevant law refers broadly to all equitable defenses that might be raised.", "answer": "No"}
+{"idx": 577, "state": "California", "question": "In an eviction action, can a tenant rebut/raise the defense that eviction is unlawful because it was motivated by a legally recognized form of discrimination?", "answer": "Yes"}
+{"idx": 580, "state": "California", "question": "In an eviction action, can a tenant rebut/raise the defense that criminal activity was committed by someone else, and they reported the criminal activity to law enforcement?", "answer": "No"}
+{"idx": 589, "state": "California", "question": "Is the term 'Warrant for possession' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 599, "state": "California", "question": "Is the term 'Execution for possession' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 604, "state": "California", "question": "Is the term 'Writ of restitution' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 606, "state": "California", "question": "Is the term 'Restitution of premises' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 617, "state": "California", "question": "Does the law regulate circumstances in which eviction records may be expunged?", "answer": "No"}
+{"idx": 625, "state": "Colorado", "question": "With regards to eviction law, does the jurisdiction have separate legal provisions for different types of landlords?", "answer": "Yes"}
+{"idx": 638, "state": "Colorado", "question": "Does state/territory eviction law explicitly regulate mobile/manufactured home landlords?", "answer": "Yes"}
+{"idx": 643, "state": "Colorado", "question": "Can a landlord evict a tenant for material breach? The law should explicitly mention \"material breach\", or allow for eviction if there is a substantial violation of the lease, material noncompliance with the lease, or when the breach is one that materially affects health, safety or welfare", "answer": "No"}
+{"idx": 647, "state": "Colorado", "question": "Can a landlord evict a tenant for endangering property? This includes where the law refers to situations that could result in damage to the property; or a pet capable of causing damage to persons or property.", "answer": "Yes"}
+{"idx": 657, "state": "Colorado", "question": "Can a landlord evict a tenant for refusal of new lease terms? This includes when the law allows for eviction if the tenant refused to sign a lease extension; refused to agree to a fair rent increase; or refused to agree to lease changes at the time of renewal", "answer": "No"}
+{"idx": 659, "state": "Colorado", "question": "Can a landlord evict a tenant because they seek to use the property for personal use?", "answer": "No"}
+{"idx": 661, "state": "Colorado", "question": "Is it specified for which cause a landlord must accept a tenant's attempt to cure?", "answer": "Yes"}
+{"idx": 666, "state": "Colorado", "question": "Must a landlord accept a tenant's attempt to cure for criminal activities?", "answer": "No"}
+{"idx": 668, "state": "Colorado", "question": "Must a landlord accept a tenant's attempt to cure for statutory tenant obligations?", "answer": "No"}
+{"idx": 674, "state": "Colorado", "question": "Are damages available to a tenant who is unlawfully evicted?", "answer": "Yes"}
+{"idx": 683, "state": "Colorado", "question": "Is it unlawful to evict a tenant because of their sexual orientation?", "answer": "Yes"}
+{"idx": 685, "state": "Colorado", "question": "Is it unlawful to evict a tenant based on their marital status?", "answer": "Yes"}
+{"idx": 688, "state": "Colorado", "question": "Is it unlawful to evict a tenant because of their age?", "answer": "No"}
+{"idx": 692, "state": "Colorado", "question": "Does the law require landlords to provide information on rights when giving tenants notice to vacate the property?", "answer": "No"}
+{"idx": 693, "state": "Colorado", "question": "Does the law require landlords to provide a reason for eviction when giving tenants notice to vacate the property?", "answer": "Yes"}
+{"idx": 698, "state": "Colorado", "question": "Does the law require landlords to state the amount owed when giving tenants notice to vacate the property?", "answer": "No"}
+{"idx": 708, "state": "Colorado", "question": "Are eviction cases first heard in court of common pleas?", "answer": "No"}
+{"idx": 712, "state": "Colorado", "question": "Are eviction cases first heard in district court?", "answer": "Yes"}
+{"idx": 735, "state": "Colorado", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Are certified mail and regular mail a permitted  secondary methods of service for an eviction action?", "answer": "No"}
+{"idx": 742, "state": "Colorado", "question": "Is it required that the evictions summons served to tenants mention the tenant's right to a jury trial?", "answer": "No"}
+{"idx": 745, "state": "Colorado", "question": "Is it required that the evictions summons served to tenants mention information on legal services the tenant could leverage (e.g., legal aid or legal services that a tenant could contact to request assistance)?", "answer": "No"}
+{"idx": 747, "state": "Colorado", "question": "Is it required that the evictions summons served to tenants provide information on appeal process?", "answer": "No"}
+{"idx": 749, "state": "Colorado", "question": "Is it required that the evictions summons served to tenants state the retaliatory eviction is unlawful?", "answer": "No"}
+{"idx": 750, "state": "Colorado", "question": "Is it required that the evictions summons served to tenants describe what rights the landlord has to dispose of the tenant’s property?", "answer": "No"}
+{"idx": 758, "state": "Colorado", "question": "In an eviction action, can a tenant rebut/raise the defense that eviction is unlawful because it was motivated by a legally recognized form of discrimination?", "answer": "No"}
+{"idx": 764, "state": "Colorado", "question": "In an eviction action, can a tenant use landlord noncompliance with a statutory duty as a rebuttal/defense?", "answer": "Yes"}
+{"idx": 765, "state": "Colorado", "question": "In an eviction action, can a tenant rebut/raise the defense that the landlord refused a voucher?", "answer": "No"}
+{"idx": 767, "state": "Colorado", "question": "Is it specified what term is used to refer to the order from the court to the authorities to remove a tenant?", "answer": "Yes"}
+{"idx": 776, "state": "Colorado", "question": "Is the term 'Writ of possession' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 801, "state": "Colorado", "question": "Is the bailiff an individual empowered by law to execute a writ of eviction?", "answer": "No"}
+{"idx": 803, "state": "Colorado", "question": "Is the constable an individual empowered by law to execute a writ of eviction?", "answer": "No"}
+{"idx": 809, "state": "Colorado", "question": "Does the law regulate circumstances in which eviction records may be expunged?", "answer": "No"}
+{"idx": 812, "state": "Colorado", "question": "Are court records for cases dismissed automatically made inaccessible for the public?", "answer": "Yes"}
+{"idx": 814, "state": "Colorado", "question": "Are court records for eviction cases which result in judgement for the tenant automatically made inaccessible?", "answer": "Yes"}
+{"idx": 820, "state": "Connecticut", "question": "Does the law require the tenant to respond to an eviction action before a hearing?", "answer": "Yes"}
+{"idx": 824, "state": "Connecticut", "question": "Does a landlord waive their right to evict for nonpayment of rent by accepting partial payment of rent?", "answer": "No"}
+{"idx": 826, "state": "Connecticut", "question": "Does the law allow a landlord to include a lease provision whereby a tenant waives their right to notice?", "answer": "No"}
+{"idx": 831, "state": "Connecticut", "question": "Does state/territory eviction law explicitly regulate residential landlords generally?", "answer": "Yes"}
+{"idx": 835, "state": "Connecticut", "question": "Does state/territory eviction law explicitly regulate landlords with minimal rental properties? This includes includes: landlords who own five or fewer single family homes; landlords who own three or less homes or rental properties; and owners of three or less condominium or cooperative units.", "answer": "No"}
+{"idx": 840, "state": "Connecticut", "question": "Can a landlord evict a tenant for committing domestic violence? This includes when the a tenant can be evicted if they are a domestic violence offender, or if they endanger another tenant and are subject to a protective order or criminal complaint for domestic abuse.", "answer": "No"}
+{"idx": 857, "state": "Connecticut", "question": "Must a landlord accept a tenant's attempt to cure for waste?", "answer": "No"}
+{"idx": 858, "state": "Connecticut", "question": "Must a landlord accept a tenant's attempt to cure for material breach?", "answer": "Yes"}
+{"idx": 862, "state": "Connecticut", "question": "Must a landlord accept a tenant's attempt to cure for statutory tenant obligations?", "answer": "Yes"}
+{"idx": 889, "state": "Connecticut", "question": "When a landlord wants to sell a property occupied by a tenant, does the law limit their ability to evict a tenant without just cause?", "answer": "Yes"}
+{"idx": 890, "state": "Connecticut", "question": "When a landlord wants to sell a property occupied by a tenant, does the law require longer than the standard notice period?", "answer": "Yes"}
+{"idx": 893, "state": "Connecticut", "question": "For tenants residing in properties that go into foreclosure, does the law require a continuation of the landlord's lease obligations?", "answer": "No"}
+{"idx": 909, "state": "Connecticut", "question": "Are eviction cases first heard in municipal court?", "answer": "No"}
+{"idx": 918, "state": "Connecticut", "question": "Are eviction cases first heard in district court?", "answer": "No"}
+{"idx": 920, "state": "Connecticut", "question": "Are the primary methods of service permitted for an eviction action specified?", "answer": "Yes"}
+{"idx": 929, "state": "Connecticut", "question": "Primary methods of service are defined as those methods that must be attempted before a secondary method is permitted. Is personal service to a suitable person other than the defendant a primary method of service for eviction actions?", "answer": "No"}
+{"idx": 937, "state": "Connecticut", "question": "Is it required that the evictions summons served to tenants state the amount owed by the tenant?", "answer": "No"}
+{"idx": 941, "state": "Connecticut", "question": "Is it required that the evictions summons served to tenants describe what rights the landlord has to dispose of the tenant’s property?", "answer": "No"}
+{"idx": 942, "state": "Connecticut", "question": "In an eviction action, can a tenant raise \"any legal defense\" available to them? This is true when the relevant law refers broadly to all defenses that might be raised.", "answer": "Yes"}
+{"idx": 944, "state": "Connecticut", "question": "In an eviction action, can a tenant rebut/raise the defense that the property is uninhabitable?", "answer": "No"}
+{"idx": 948, "state": "Connecticut", "question": "In an eviction action, can a tenant raise \"any equitable defense\" available to them? This is true when the relevant law refers broadly to all equitable defenses that might be raised.", "answer": "Yes"}
+{"idx": 950, "state": "Connecticut", "question": "In an eviction action, can a tenant rebut/raise the defense that the landlord refused to complete repairs?", "answer": "No"}
+{"idx": 959, "state": "Connecticut", "question": "Can a tenant request that the issuance of a writ be stayed to request more time to relocate?", "answer": "Yes"}
+{"idx": 960, "state": "Connecticut", "question": "Can a tenant request that the issuance of a writ be stayed because they are a service member?", "answer": "No"}
+{"idx": 968, "state": "Connecticut", "question": "Is the term 'Summary order for removal' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 974, "state": "Connecticut", "question": "Is the term 'Writ of possession' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 980, "state": "Connecticut", "question": "Is the term 'Writ of assistance' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 987, "state": "Connecticut", "question": "Is it specified which entity is responsible for executing the writ?", "answer": "Yes"}
+{"idx": 989, "state": "Connecticut", "question": "Is the bailiff an individual empowered by law to execute a writ of eviction?", "answer": "No"}
+{"idx": 994, "state": "Connecticut", "question": "Is the municipal police department an entity empowered by law to execute a writ of eviction?", "answer": "No"}
+{"idx": 995, "state": "Connecticut", "question": "Does the state/territory have a law regarding mediation proceedings for evictions?", "answer": "No"}
+{"idx": 1009, "state": "Delaware", "question": "Does state/territory eviction law explicitly regulate mobile/manufactured home landlords?", "answer": "Yes"}
+{"idx": 1010, "state": "Delaware", "question": "Does state/territory eviction law explicitly regulate corporate landlords?", "answer": "No"}
+{"idx": 1014, "state": "Delaware", "question": "Can a landlord evict a tenant for material breach? The law should explicitly mention \"material breach\", or allow for eviction if there is a substantial violation of the lease, material noncompliance with the lease, or when the breach is one that materially affects health, safety or welfare", "answer": "Yes"}
+{"idx": 1018, "state": "Delaware", "question": "Can a landlord evict a tenant for endangering property? This includes where the law refers to situations that could result in damage to the property; or a pet capable of causing damage to persons or property.", "answer": "Yes"}
+{"idx": 1019, "state": "Delaware", "question": "Can a landlord evict a tenant for remaining on property after expiration of the lease?", "answer": "Yes"}
+{"idx": 1022, "state": "Delaware", "question": "Can a landlord evict a tenant for having unauthorized occupants?", "answer": "No"}
+{"idx": 1025, "state": "Delaware", "question": "Can a landlord evict a tenant for breach/breaking the lease, the rental agreement, or a landlord’s rule?", "answer": "No"}
+{"idx": 1041, "state": "Delaware", "question": "Is it specified what remedies are available to a tenant who is unlawfully evicted?", "answer": "Yes"}
+{"idx": 1043, "state": "Delaware", "question": "Are criminal charges brought against landlords for unlawfully evicting a tenant?", "answer": "No"}
+{"idx": 1062, "state": "Delaware", "question": "Is it specified what is required to be in the notice?", "answer": "Yes"}
+{"idx": 1066, "state": "Delaware", "question": "Does the law require landlords to describe repercussions for failure to cure when giving tenants notice to vacate the property?", "answer": "No"}
+{"idx": 1069, "state": "Delaware", "question": "Does the law require landlords to state the amount owed when giving tenants notice to vacate the property?", "answer": "No"}
+{"idx": 1081, "state": "Delaware", "question": "Are eviction cases first heard in magistrates court?", "answer": "No"}
+{"idx": 1083, "state": "Delaware", "question": "Are eviction cases first heard in district court?", "answer": "No"}
+{"idx": 1084, "state": "Delaware", "question": "Are eviction cases first heard in justice court?", "answer": "No"}
+{"idx": 1087, "state": "Delaware", "question": "Primary methods of service are defined as those methods that must be attempted before a secondary method is permitted. Is delivery by commercial carrier a primary method of service for eviction actions?", "answer": "No"}
+{"idx": 1092, "state": "Delaware", "question": "Primary methods of service are defined as those methods that must be attempted before a secondary method is permitted. Is personal service to a suitable person other than the defendant and mail a primary method of service for eviction actions?", "answer": "No"}
+{"idx": 1101, "state": "Delaware", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is mail a permitted secondary method of service for an eviction action?", "answer": "No"}
+{"idx": 1104, "state": "Delaware", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is publication a permitted secondary method of service for an eviction action?", "answer": "No"}
+{"idx": 1128, "state": "Delaware", "question": "In an eviction action, can a tenant use their status as a victim of domestic violence as a rebuttal/defense?", "answer": "Yes"}
+{"idx": 1134, "state": "Delaware", "question": "Is the term 'Warrant for removal' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 1140, "state": "Delaware", "question": "Is the term 'Writ for removal' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 1143, "state": "Delaware", "question": "Is the term 'Writ of eviction' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 1144, "state": "Delaware", "question": "Is the term 'Execution' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 1154, "state": "Delaware", "question": "Are the circumstances that postpone the execution of a writ of eviction specified?", "answer": "Yes"}
+{"idx": 1162, "state": "Delaware", "question": "Does the law require that writs of execution be postponed for good cause? This includes when the law states that the court shall specify the time when the tenant must vacate the property, taking into consideration the possibility of harm to the parties and other material facts; or when the court can postpone execution if it deemed additional time was appropriate.", "answer": "No"}
+{"idx": 1165, "state": "Delaware", "question": "Is the marshal an individual empowered by law to execute a writ of eviction?", "answer": "No"}
+{"idx": 1167, "state": "Delaware", "question": "Is the county sheriff’s office an entity empowered by law to execute a writ of eviction?", "answer": "Yes"}
+{"idx": 1169, "state": "Delaware", "question": "Is a private company an entity empowered by law to execute a writ of eviction?", "answer": "No"}
+{"idx": 1173, "state": "District of Columbia", "question": "Does the law directly regulate the amount a landlord can charge as a fee for late rent?", "answer": "Yes"}
+{"idx": 1193, "state": "District of Columbia", "question": "Can a landlord evict a tenant for refusal of new lease terms? This includes when the law allows for eviction if the tenant refused to sign a lease extension; refused to agree to a fair rent increase; or refused to agree to lease changes at the time of renewal", "answer": "No"}
+{"idx": 1198, "state": "District of Columbia", "question": "Must a landlord accept a tenant's attempt to cure for breach?", "answer": "Yes"}
+{"idx": 1203, "state": "District of Columbia", "question": "Must a landlord accept a tenant's attempt to cure for nuisance activities?", "answer": "No"}
+{"idx": 1215, "state": "District of Columbia", "question": "Is it unlawful to evict a tenant based on their political affiliations?", "answer": "Yes"}
+{"idx": 1219, "state": "District of Columbia", "question": "Is it unlawful to evict a tenant because of their sexual orientation?", "answer": "Yes"}
+{"idx": 1224, "state": "District of Columbia", "question": "Is it unlawful to evict a tenant because of their age?", "answer": "Yes"}
+{"idx": 1225, "state": "District of Columbia", "question": "Is it unlawful to evict a tenant because of the type of income they receive, their status with regard to public assistance, or because they have a housing voucher?", "answer": "Yes"}
+{"idx": 1237, "state": "District of Columbia", "question": "Does the law require landlords to provide the date the rental agreement will terminate when giving tenants notice to vacate the property?", "answer": "No"}
+{"idx": 1239, "state": "District of Columbia", "question": "Does the law require landlords to provide information on how to cure when giving tenants notice to vacate the property?", "answer": "No"}
+{"idx": 1240, "state": "District of Columbia", "question": "Does the law require landlords to provide information on legal services when giving tenants notice to vacate the property?", "answer": "No"}
+{"idx": 1256, "state": "District of Columbia", "question": "Is it specified what must be included on the summons?", "answer": "Yes"}
+{"idx": 1260, "state": "District of Columbia", "question": "Is it required that the evictions summons served to tenants mention information on legal services the tenant could leverage (e.g., legal aid or legal services that a tenant could contact to request assistance)?", "answer": "No"}
+{"idx": 1265, "state": "District of Columbia", "question": "Is it required that the evictions summons served to tenants describe what rights the landlord has to dispose of the tenant’s property?", "answer": "No"}
+{"idx": 1275, "state": "District of Columbia", "question": "Can a writ of eviction only be executed during the daytime?", "answer": "No"}
+{"idx": 1277, "state": "District of Columbia", "question": "Does the law require that writs of execution not be executed on holidays?", "answer": "No"}
+{"idx": 1279, "state": "District of Columbia", "question": "Does the law require that writs of execution not be executed on weekends?", "answer": "No"}
+{"idx": 1281, "state": "District of Columbia", "question": "Is the marshal an individual empowered by law to execute a writ of eviction?", "answer": "Yes"}
+{"idx": 1286, "state": "District of Columbia", "question": "Is an officer of the court an individual empowered by law to execute a writ of eviction?", "answer": "No"}
+{"idx": 1291, "state": "Florida", "question": "Is there a state/territory law regulating residential evictions?", "answer": "Yes"}
+{"idx": 1296, "state": "Florida", "question": "Is it specified whether a landlord waives their right to evict for nonpayment of rent by accepting partial payment of rent?", "answer": "Yes"}
+{"idx": 1311, "state": "Florida", "question": "Can a landlord evict a tenant for remaining on property after expiration of the lease?", "answer": "Yes"}
+{"idx": 1316, "state": "Florida", "question": "Can a landlord evict a tenant for criminal activity? This includes: criminal or illegal activity generally; committing a specific crime or illegal act; the use, possession, or sale of controlled substances; an unlawful action causing serious physical harm to another person; or criminal nuisance.", "answer": "No"}
+{"idx": 1326, "state": "Florida", "question": "Must a landlord accept a tenant's attempt to cure for waste?", "answer": "No"}
+{"idx": 1339, "state": "Florida", "question": "Is it specified on what basis it is unlawful to evict a tenant under state/territory law?", "answer": "Yes"}
+{"idx": 1341, "state": "Florida", "question": "Is it unlawful to evict a tenant based on their ancestry?", "answer": "No"}
+{"idx": 1342, "state": "Florida", "question": "Is it unlawful to evict a tenant based on their political affiliations?", "answer": "No"}
+{"idx": 1357, "state": "Florida", "question": "Does the law require landlords to provide the date the rental agreement will terminate when giving tenants notice to vacate the property?", "answer": "Yes"}
+{"idx": 1364, "state": "Florida", "question": "Is it specified in which court eviction cases are first heard?", "answer": "Yes"}
+{"idx": 1387, "state": "Florida", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Are posting and personal service to suitable person other than defendant and mail permitted secondary methods of service for an eviction action?", "answer": "No"}
+{"idx": 1396, "state": "Florida", "question": "In an eviction action, can a tenant rebut/raise the defense that they lawfully deducted repair costs from the rent? This is when the law allows them to make repairs and deduct the cost of the repairs from the rent, or when the law allows a tenant to pay for utility services the landlord failed to pay, then deduct the cost from rent.", "answer": "No"}
+{"idx": 1431, "state": "Florida", "question": "Is the bailiff an individual empowered by law to execute a writ of eviction?", "answer": "No"}
+{"idx": 1432, "state": "Florida", "question": "Is the county sheriff’s office an entity empowered by law to execute a writ of eviction?", "answer": "Yes"}
+{"idx": 1457, "state": "Georgia", "question": "Can a landlord evict a tenant for refusal to allow the landlord lawful access to the unit?", "answer": "No"}
+{"idx": 1460, "state": "Georgia", "question": "Can a landlord evict a tenant for violating statutory tenant obligations?", "answer": "No"}
+{"idx": 1471, "state": "Georgia", "question": "Are criminal charges brought against landlords for unlawfully evicting a tenant?", "answer": "Yes"}
+{"idx": 1477, "state": "Georgia", "question": "Is it unlawful to evict a tenant based on their ancestry?", "answer": "No"}
+{"idx": 1490, "state": "Georgia", "question": "Does the law require the landlord to give the tenant notice to vacate the property prior to terminating a tenancy?", "answer": "Yes"}
+{"idx": 1492, "state": "Georgia", "question": "Are eviction cases first heard in housing court?", "answer": "No"}
+{"idx": 1506, "state": "Georgia", "question": "Primary methods of service are defined as those methods that must be attempted before a secondary method is permitted. Is delivery by commercial carrier a primary method of service for eviction actions?", "answer": "No"}
+{"idx": 1507, "state": "Georgia", "question": "Primary methods of service are defined as those methods that must be attempted before a secondary method is permitted. Is posting and mail a primary method of service for eviction actions?", "answer": "No"}
+{"idx": 1515, "state": "Georgia", "question": "Primary methods of service are defined as those methods that must be attempted before a secondary method is permitted. Is personal service and mail a primary method of service for eviction actions?", "answer": "No"}
+{"idx": 1518, "state": "Georgia", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is delivery by commercial carrier a permitted secondary method of service for an eviction action?", "answer": "No"}
+{"idx": 1519, "state": "Georgia", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is posting and mail a permitted secondary method of service for an eviction action?", "answer": "Yes"}
+{"idx": 1529, "state": "Georgia", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is personal service a permitted secondary method of service permitted for an eviction action?", "answer": "No"}
+{"idx": 1531, "state": "Georgia", "question": "Is it specified what must be included on the summons?", "answer": "Yes"}
+{"idx": 1540, "state": "Georgia", "question": "Is it required that the evictions summons served to tenants describe what rights the landlord has to dispose of the tenant’s property?", "answer": "No"}
+{"idx": 1544, "state": "Georgia", "question": "Must a landlord halt the eviction process after filing but prior to the judgment if the tenant offers to pay back part or all of the rent prior to the judgment?", "answer": "Yes"}
+{"idx": 1549, "state": "Georgia", "question": "In an eviction action, can a tenant rebut/raise the defense that they lawfully deducted repair costs from the rent? This is when the law allows them to make repairs and deduct the cost of the repairs from the rent, or when the law allows a tenant to pay for utility services the landlord failed to pay, then deduct the cost from rent.", "answer": "No"}
+{"idx": 1551, "state": "Georgia", "question": "In an eviction action, can a tenant raise \"any equitable defense\" available to them? This is true when the relevant law refers broadly to all equitable defenses that might be raised.", "answer": "Yes"}
+{"idx": 1559, "state": "Georgia", "question": "In an eviction action, can a tenant rebut/raise the defense that the landlord refused a voucher?", "answer": "No"}
+{"idx": 1560, "state": "Georgia", "question": "When a tenant appeals, is the execution of eviction stayed for the duration of the pending appeal?", "answer": "Yes"}
+{"idx": 1565, "state": "Georgia", "question": "Is the term 'Summary order for removal' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 1572, "state": "Georgia", "question": "Is the term 'Warrant of ejectment' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 1575, "state": "Georgia", "question": "Is the term 'Eviction order' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 1594, "state": "Hawaii", "question": "Does the law specify a minimum number of days a tenant can be late on rent before the landlord can file an eviction action for nonpayment?", "answer": "Yes"}
+{"idx": 1597, "state": "Hawaii", "question": "Is it specified whether a landlord waives their right to evict for nonpayment of rent by accepting partial payment of rent?", "answer": "Yes"}
+{"idx": 1605, "state": "Hawaii", "question": "Can a landlord evict a tenant for remaining on property after expiration of the lease?", "answer": "Yes"}
+{"idx": 1621, "state": "Hawaii", "question": "Must a landlord accept a tenant's attempt to cure for material breach?", "answer": "No"}
+{"idx": 1622, "state": "Hawaii", "question": "Must a landlord accept a tenant's attempt to cure for substantial damage to property?", "answer": "No"}
+{"idx": 1626, "state": "Hawaii", "question": "Must a landlord accept a tenant's attempt to cure for nonpayment of rent?", "answer": "No"}
+{"idx": 1633, "state": "Hawaii", "question": "Is it specified on what basis it is unlawful to evict a tenant under state/territory law?", "answer": "Yes"}
+{"idx": 1652, "state": "Hawaii", "question": "Does the law require landlords to describe repercussions for failure to cure when giving tenants notice to vacate the property?", "answer": "Yes"}
+{"idx": 1654, "state": "Hawaii", "question": "Does the law require landlords to provide information on legal services when giving tenants notice to vacate the property?", "answer": "No"}
+{"idx": 1664, "state": "Hawaii", "question": "Are eviction cases first heard in state court?", "answer": "No"}
+{"idx": 1666, "state": "Hawaii", "question": "Are eviction cases first heard in justice of the peace court?", "answer": "No"}
+{"idx": 1668, "state": "Hawaii", "question": "Are eviction cases first heard in superior court?", "answer": "No"}
+{"idx": 1671, "state": "Hawaii", "question": "Are the secondary methods of service permitted for an eviction action specified?", "answer": "Yes"}
+{"idx": 1675, "state": "Hawaii", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is mail a permitted secondary method of service for an eviction action?", "answer": "No"}
+{"idx": 1677, "state": "Hawaii", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is publication and mail used a permitted secondary method of service for an eviction action?", "answer": "No"}
+{"idx": 1685, "state": "Hawaii", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Are publication and certified mail permitted secondary methods of service for an eviction action?", "answer": "No"}
+{"idx": 1688, "state": "Hawaii", "question": "In an eviction action, can a tenant rebut/raise the defense that the property is uninhabitable?", "answer": "No"}
+{"idx": 1697, "state": "Hawaii", "question": "In an eviction action, can a tenant rebut/raise the defense that eviction was retaliatory?", "answer": "Yes"}
+{"idx": 1702, "state": "Hawaii", "question": "Is it specified what term is used to refer to the order from the court to the authorities to remove a tenant?", "answer": "Yes"}
+{"idx": 1703, "state": "Hawaii", "question": "Is the term 'Writ of ejectment' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 1704, "state": "Hawaii", "question": "Is the term 'Warrant for removal' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 1722, "state": "Hawaii", "question": "Is the term 'Writ of execution' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 1725, "state": "Hawaii", "question": "Does a public emergency require postponement of the execution of a write of eviction?", "answer": "No"}
+{"idx": 1749, "state": "Idaho", "question": "Does state/territory eviction law explicitly regulate residential landlords generally?", "answer": "Yes"}
+{"idx": 1762, "state": "Idaho", "question": "Can a landlord evict a tenant for nuisance activity? This includes: maintaining, committing, or permitting the maintenance or commission of a nuisance; conduct that disturbs a neighbor’s or another tenant’s peaceful enjoyment of their premises; causing a serious health hazard to exist on the property; or for misuse of property.", "answer": "No"}
+{"idx": 1767, "state": "Idaho", "question": "Can a landlord evict a tenant if the property is made uninhabitable?", "answer": "No"}
+{"idx": 1768, "state": "Idaho", "question": "Can a landlord evict a tenant for endangering another person? This includes instances when the law allows for eviction of a tenant if: their behavior or the behavior of members of their family adversely affects the health or safety of other tenants, or the landlord or their representatives; the tenant or a guest are a perpetrator of violence; or the presence of a domestic violence offender at the tenant’s premises results in violent disturbances that pose a threat to the safety of other residents.", "answer": "No"}
+{"idx": 1769, "state": "Idaho", "question": "Can a landlord evict a tenant for refusal of new lease terms? This includes when the law allows for eviction if the tenant refused to sign a lease extension; refused to agree to a fair rent increase; or refused to agree to lease changes at the time of renewal", "answer": "No"}
+{"idx": 1779, "state": "Idaho", "question": "Must a landlord accept a tenant's attempt to cure for nuisance activities?", "answer": "No"}
+{"idx": 1785, "state": "Idaho", "question": "Is injunctive relief available to a tenant who is unlawfully evicted?", "answer": "No"}
+{"idx": 1789, "state": "Idaho", "question": "Is it unlawful to evict a tenant based on military or veteran status?", "answer": "No"}
+{"idx": 1791, "state": "Idaho", "question": "Is it unlawful to evict a tenant based on their political affiliations?", "answer": "No"}
+{"idx": 1792, "state": "Idaho", "question": "Is it unlawful to evict a tenant because of their gender identity?", "answer": "No"}
+{"idx": 1803, "state": "Idaho", "question": "Is it specified what is required to be in the notice?", "answer": "Yes"}
+{"idx": 1806, "state": "Idaho", "question": "Does the law require landlords to provide the date the rental agreement will terminate when giving tenants notice to vacate the property?", "answer": "No"}
+{"idx": 1809, "state": "Idaho", "question": "Does the law require landlords to provide information on legal services when giving tenants notice to vacate the property?", "answer": "No"}
+{"idx": 1810, "state": "Idaho", "question": "Does the law require landlords to state the amount owed when giving tenants notice to vacate the property?", "answer": "Yes"}
+{"idx": 1816, "state": "Idaho", "question": "Are eviction cases first heard in county court?", "answer": "No"}
+{"idx": 1825, "state": "Idaho", "question": "Are eviction cases first heard in justice court?", "answer": "No"}
+{"idx": 1827, "state": "Idaho", "question": "Is the term 'Writ of ejectment' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 1843, "state": "Idaho", "question": "Is the term 'Writ of habere facias possessionem' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 1881, "state": "Illinois", "question": "Can a landlord evict a tenant for nonpayment of rent?", "answer": "Yes"}
+{"idx": 1888, "state": "Illinois", "question": "Must a landlord accept a tenant's attempt to cure for nuisance activities?", "answer": "No"}
+{"idx": 1903, "state": "Illinois", "question": "Is it unlawful to evict a tenant because of their age?", "answer": "No"}
+{"idx": 1907, "state": "Illinois", "question": "When a landlord wants to sell a property occupied by a tenant, does the law require they provide local government with notice?", "answer": "No"}
+{"idx": 1913, "state": "Illinois", "question": "Is it specified what protection, if any, the law offers for tenants residing in property that goes into foreclosure?", "answer": "Yes"}
+{"idx": 1929, "state": "Illinois", "question": "Primary methods of service are defined as those methods that must be attempted before a secondary method is permitted. Is certified mail a primary method of service for eviction actions?", "answer": "No"}
+{"idx": 1938, "state": "Illinois", "question": "Primary methods of service are defined as those methods that must be attempted before a secondary method is permitted. Is personal service a primary method of service for eviction actions?", "answer": "Yes"}
+{"idx": 1954, "state": "Illinois", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Are publication and certified mail permitted secondary methods of service for an eviction action?", "answer": "No"}
+{"idx": 1957, "state": "Illinois", "question": "Is it required that the evictions summons served to tenants describe what the tenant must do? This includes: a direction that the defendant file a pleading in response to the complaint; a direction that the defendant respond either orally or in writing; instructions on what a tenant had to do to respond to the summons; a requirement that the defendant appear in court; or a requirement that the defendant file an appearance.", "answer": "Yes"}
+{"idx": 1961, "state": "Illinois", "question": "Is it required that the evictions summons served to tenants provide information on appeal process?", "answer": "No"}
+{"idx": 1963, "state": "Illinois", "question": "Is it required that the evictions summons served to tenants state the retaliatory eviction is unlawful?", "answer": "No"}
+{"idx": 1967, "state": "Illinois", "question": "Is the term 'Warrant for removal' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 1983, "state": "Illinois", "question": "Is the term 'Writ of recovery of premises and order to vacate' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 1989, "state": "Illinois", "question": "Is the bailiff an individual empowered by law to execute a writ of eviction?", "answer": "No"}
+{"idx": 1990, "state": "Illinois", "question": "Is the county sheriff’s office an entity empowered by law to execute a writ of eviction?", "answer": "Yes"}
+{"idx": 1998, "state": "Illinois", "question": "Does the law regulate circumstances in which eviction records may appear in credit reports?", "answer": "No"}
+{"idx": 2031, "state": "Indiana", "question": "Can a landlord evict a tenant if the property is made uninhabitable?", "answer": "No"}
+{"idx": 2032, "state": "Indiana", "question": "Can a landlord evict a tenant for endangering another person? This includes instances when the law allows for eviction of a tenant if: their behavior or the behavior of members of their family adversely affects the health or safety of other tenants, or the landlord or their representatives; the tenant or a guest are a perpetrator of violence; or the presence of a domestic violence offender at the tenant’s premises results in violent disturbances that pose a threat to the safety of other residents.", "answer": "No"}
+{"idx": 2040, "state": "Indiana", "question": "Must a landlord accept a tenant's attempt to cure for material breach?", "answer": "No"}
+{"idx": 2052, "state": "Indiana", "question": "Is it specified on what basis it is unlawful to evict a tenant under state/territory law?", "answer": "Yes"}
+{"idx": 2053, "state": "Indiana", "question": "Is it unlawful to evict a tenant based on military or veteran status?", "answer": "No"}
+{"idx": 2055, "state": "Indiana", "question": "Is it unlawful to evict a tenant based on their political affiliations?", "answer": "No"}
+{"idx": 2069, "state": "Indiana", "question": "Does the law require landlords to provide a reason for eviction when giving tenants notice to vacate the property?", "answer": "Yes"}
+{"idx": 2084, "state": "Indiana", "question": "Are eviction cases first heard in court of common pleas?", "answer": "No"}
+{"idx": 2092, "state": "Indiana", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is delivery by commercial carrier a permitted secondary method of service for an eviction action?", "answer": "No"}
+{"idx": 2101, "state": "Indiana", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Are posting and certified mail permitted secondary methods of service for an eviction action?", "answer": "Yes"}
+{"idx": 2104, "state": "Indiana", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Are publication and certified mail permitted secondary methods of service for an eviction action?", "answer": "No"}
+{"idx": 2115, "state": "Indiana", "question": "In an eviction action, can a tenant raise \"any legal defense\" available to them? This is true when the relevant law refers broadly to all defenses that might be raised.", "answer": "Yes"}
+{"idx": 2121, "state": "Indiana", "question": "In an eviction action, can a tenant raise \"any equitable defense\" available to them? This is true when the relevant law refers broadly to all equitable defenses that might be raised.", "answer": "Yes"}
+{"idx": 2123, "state": "Indiana", "question": "In an eviction action, can a tenant rebut/raise the defense that the landlord refused to complete repairs?", "answer": "No"}
+{"idx": 2127, "state": "Indiana", "question": "In an eviction action, can a tenant use their status as a victim of domestic violence as a rebuttal/defense?", "answer": "No"}
+{"idx": 2129, "state": "Indiana", "question": "In an eviction action, can a tenant rebut/raise the defense that the landlord refused a voucher?", "answer": "No"}
+{"idx": 2130, "state": "Indiana", "question": "Is it specified what term is used to refer to the order from the court to the authorities to remove a tenant?", "answer": "Yes"}
+{"idx": 2131, "state": "Indiana", "question": "Is the term 'Writ of ejectment' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 2133, "state": "Indiana", "question": "Is the term 'Summary order for removal' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 2137, "state": "Indiana", "question": "Is the term 'Warrant of eviction' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 2146, "state": "Indiana", "question": "Is the term 'Warrant of restitution' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 2150, "state": "Indiana", "question": "Is the term 'Writ of execution' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 2208, "state": "Iowa", "question": "Are attorney fees available to a tenant who is unlawfully evicted?", "answer": "Yes"}
+{"idx": 2212, "state": "Iowa", "question": "Is it unlawful to evict a tenant based on their political affiliations?", "answer": "No"}
+{"idx": 2220, "state": "Iowa", "question": "Is it unlawful to evict a tenant because they experienced domestic violence?", "answer": "No"}
+{"idx": 2223, "state": "Iowa", "question": "Is it unlawful to evict a tenant because of their immigration status?", "answer": "No"}
+{"idx": 2250, "state": "Iowa", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is personal service to suitable person other than defendant a permitted secondary method of service for an eviction action?", "answer": "No"}
+{"idx": 2254, "state": "Iowa", "question": "In an eviction action, can a tenant rebut/raise the defense that the landlord accepted partial payment of rent?", "answer": "No"}
+{"idx": 2257, "state": "Iowa", "question": "In an eviction action, can a tenant rebut/raise the defense that they lawfully deducted repair costs from the rent? This is when the law allows them to make repairs and deduct the cost of the repairs from the rent, or when the law allows a tenant to pay for utility services the landlord failed to pay, then deduct the cost from rent.", "answer": "Yes"}
+{"idx": 2268, "state": "Kansas", "question": "Is there a state/territory law regulating residential evictions?", "answer": "Yes"}
+{"idx": 2280, "state": "Kansas", "question": "Does state/territory eviction law explicitly regulate corporate landlords?", "answer": "No"}
+{"idx": 2282, "state": "Kansas", "question": "Does state/territory eviction law explicitly regulate landlords with minimal rental properties? This includes includes: landlords who own five or fewer single family homes; landlords who own three or less homes or rental properties; and owners of three or less condominium or cooperative units.", "answer": "No"}
+{"idx": 2293, "state": "Kansas", "question": "Are fines assessed to landlords for unlawfully evicting a tenant?", "answer": "No"}
+{"idx": 2294, "state": "Kansas", "question": "Are criminal charges brought against landlords for unlawfully evicting a tenant?", "answer": "No"}
+{"idx": 2300, "state": "Kansas", "question": "Is it unlawful to evict a tenant based on their ancestry?", "answer": "Yes"}
+{"idx": 2308, "state": "Kansas", "question": "Is it unlawful to evict a tenant because of their physical appearance?", "answer": "No"}
+{"idx": 2316, "state": "Kansas", "question": "Does the law require landlords to provide the date the rental agreement will terminate when giving tenants notice to vacate the property?", "answer": "Yes"}
+{"idx": 2321, "state": "Kansas", "question": "Does the law require landlords to describe repercussions for failure to vacate when giving tenants notice to vacate the property?", "answer": "No"}
+{"idx": 2351, "state": "Kansas", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is mail a permitted secondary method of service for an eviction action?", "answer": "Yes"}
+{"idx": 2356, "state": "Kansas", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Are certified mail and regular mail a permitted  secondary methods of service for an eviction action?", "answer": "No"}
+{"idx": 2358, "state": "Kansas", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Are posting and certified mail permitted secondary methods of service for an eviction action?", "answer": "No"}
+{"idx": 2371, "state": "Kansas", "question": "Is it required that the evictions summons served to tenants describe what rights the landlord has to dispose of the tenant’s property?", "answer": "No"}
+{"idx": 2372, "state": "Kansas", "question": "In an eviction action, can a tenant raise \"any legal defense\" available to them? This is true when the relevant law refers broadly to all defenses that might be raised.", "answer": "No"}
+{"idx": 2373, "state": "Kansas", "question": "In an eviction action, can a tenant rebut/raise the defense that the landlord accepted partial payment of rent?", "answer": "No"}
+{"idx": 2374, "state": "Kansas", "question": "In an eviction action, can a tenant rebut/raise the defense that the property is uninhabitable?", "answer": "Yes"}
+{"idx": 2378, "state": "Kansas", "question": "In an eviction action, can a tenant raise \"any equitable defense\" available to them? This is true when the relevant law refers broadly to all equitable defenses that might be raised.", "answer": "No"}
+{"idx": 2384, "state": "Kansas", "question": "In an eviction action, can a tenant use their status as a victim of domestic violence as a rebuttal/defense?", "answer": "No"}
+{"idx": 2394, "state": "Kansas", "question": "Is the term 'Order of possession' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 2397, "state": "Kansas", "question": "Is the term 'Writ for removal' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 2402, "state": "Kansas", "question": "Is the term 'Eviction order' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 2403, "state": "Kansas", "question": "Is the term 'Execution for possession' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 2406, "state": "Kansas", "question": "Is the term 'Writ of habere facias possessionem' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 2411, "state": "Kansas", "question": "Is it specified which entity is responsible for executing the writ?", "answer": "Yes"}
+{"idx": 2414, "state": "Kansas", "question": "Is the county sheriff’s office an entity empowered by law to execute a writ of eviction?", "answer": "Yes"}
+{"idx": 2427, "state": "Louisiana", "question": "Are fines assessed to landlords for unlawfully evicting a tenant?", "answer": "No"}
+{"idx": 2441, "state": "Louisiana", "question": "Is it unlawful to evict a tenant based on their marital status?", "answer": "No"}
+{"idx": 2445, "state": "Louisiana", "question": "Is it unlawful to evict a tenant because of the type of income they receive, their status with regard to public assistance, or because they have a housing voucher?", "answer": "No"}
+{"idx": 2449, "state": "Louisiana", "question": "Must a landlord halt the eviction process after filing but prior to the judgment if the landlord accepts payment of rent?", "answer": "No"}
+{"idx": 2451, "state": "Maine", "question": "Is there a state/territory law regulating residential evictions?", "answer": "Yes"}
+{"idx": 2452, "state": "Maine", "question": "With regards to eviction law, does the jurisdiction have separate legal provisions for different types of landlords?", "answer": "Yes"}
+{"idx": 2459, "state": "Maine", "question": "Is it specified whether the law requires a tenant to pay a bond in order to appeal an eviction judgment?", "answer": "Yes"}
+{"idx": 2461, "state": "Maine", "question": "Does state/territory eviction law explicitly regulate residential landlords generally?", "answer": "Yes"}
+{"idx": 2466, "state": "Maine", "question": "Can a landlord evict a tenant for material falsification on the rental application?", "answer": "No"}
+{"idx": 2467, "state": "Maine", "question": "Can a landlord evict a tenant for material breach? The law should explicitly mention \"material breach\", or allow for eviction if there is a substantial violation of the lease, material noncompliance with the lease, or when the breach is one that materially affects health, safety or welfare", "answer": "No"}
+{"idx": 2469, "state": "Maine", "question": "Can a landlord evict a tenant for commiting substantial damage to the property?", "answer": "Yes"}
+{"idx": 2473, "state": "Maine", "question": "Can a landlord evict a tenant for refusal to allow the landlord lawful access to the unit?", "answer": "Yes"}
+{"idx": 2477, "state": "Maine", "question": "Can a landlord evict a tenant for criminal activity? This includes: criminal or illegal activity generally; committing a specific crime or illegal act; the use, possession, or sale of controlled substances; an unlawful action causing serious physical harm to another person; or criminal nuisance.", "answer": "Yes"}
+{"idx": 2479, "state": "Maine", "question": "Can a landlord evict a tenant if the property is made uninhabitable?", "answer": "No"}
+{"idx": 2480, "state": "Maine", "question": "Can a landlord evict a tenant for endangering another person? This includes instances when the law allows for eviction of a tenant if: their behavior or the behavior of members of their family adversely affects the health or safety of other tenants, or the landlord or their representatives; the tenant or a guest are a perpetrator of violence; or the presence of a domestic violence offender at the tenant’s premises results in violent disturbances that pose a threat to the safety of other residents.", "answer": "Yes"}
+{"idx": 2484, "state": "Maine", "question": "Can a landlord evict a tenant for nonpayment of rent?", "answer": "Yes"}
+{"idx": 2501, "state": "Maine", "question": "Is it unlawful to evict a tenant based on military or veteran status?", "answer": "No"}
+{"idx": 2503, "state": "Maine", "question": "Is it unlawful to evict a tenant based on their political affiliations?", "answer": "No"}
+{"idx": 2521, "state": "Maine", "question": "Does the law require landlords to provide information on rights when giving tenants notice to vacate the property?", "answer": "Yes"}
+{"idx": 2522, "state": "Maine", "question": "Does the law require landlords to provide a reason for eviction when giving tenants notice to vacate the property?", "answer": "Yes"}
+{"idx": 2540, "state": "Maine", "question": "Are eviction cases first heard in superior court?", "answer": "No"}
+{"idx": 2541, "state": "Maine", "question": "Are eviction cases first heard in district court?", "answer": "Yes"}
+{"idx": 2551, "state": "Maine", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is personal service to a suitable person other than defendant and mail a permitted secondary method of service for an eviction action?", "answer": "No"}
+{"idx": 2556, "state": "Maine", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is personal service a permitted secondary method of service permitted for an eviction action?", "answer": "No"}
+{"idx": 2578, "state": "Maine", "question": "Is the term 'Warrant for removal' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 2587, "state": "Maine", "question": "Is the term 'Writ of eviction' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 2590, "state": "Maine", "question": "Is the term 'Execution for possession' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 2597, "state": "Maine", "question": "Is the term 'Restitution of premises' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 2607, "state": "Maryland", "question": "In eviction proceedings, does the filing of an appeal stay the execution of a writ?", "answer": "Yes"}
+{"idx": 2621, "state": "Maryland", "question": "Can a landlord evict a tenant for criminal activity? This includes: criminal or illegal activity generally; committing a specific crime or illegal act; the use, possession, or sale of controlled substances; an unlawful action causing serious physical harm to another person; or criminal nuisance.", "answer": "No"}
+{"idx": 2626, "state": "Maryland", "question": "Can a landlord evict a tenant for committing or failing to dispose of waste?", "answer": "No"}
+{"idx": 2636, "state": "Maryland", "question": "Is it unlawful to evict a tenant based on military or veteran status?", "answer": "No"}
+{"idx": 2641, "state": "Maryland", "question": "Is it unlawful to evict a tenant because they are part of two or more of the federally protected classes under the Fair Housing Act (race, color, religion, national origin, sex, disability, and familial status)?", "answer": "Yes"}
+{"idx": 2653, "state": "Maryland", "question": "For tenants residing in properties that go into foreclosure, does the law require longer-than-usual notice?", "answer": "Yes"}
+{"idx": 2656, "state": "Maryland", "question": "Does the law require landlords to provide information on rights when giving tenants notice to vacate the property?", "answer": "No"}
+{"idx": 2658, "state": "Maryland", "question": "Does the law require landlords to provide the date the rental agreement will terminate when giving tenants notice to vacate the property?", "answer": "No"}
+{"idx": 2664, "state": "Maryland", "question": "Does the law require the landlord to give the tenant notice to vacate the property prior to terminating a tenancy?", "answer": "Yes"}
+{"idx": 2670, "state": "Maryland", "question": "Are eviction cases first heard in circuit court?", "answer": "No"}
+{"idx": 2678, "state": "Maryland", "question": "Are the primary methods of service permitted for an eviction action specified?", "answer": "Yes"}
+{"idx": 2691, "state": "Maryland", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is certified mail a permitted secondary method of service for an eviction action?", "answer": "No"}
+{"idx": 2704, "state": "Maryland", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Are publication and certified mail permitted secondary methods of service for an eviction action?", "answer": "No"}
+{"idx": 2708, "state": "Maryland", "question": "Is it required that the evictions summons served to tenants describe list the reason for eviction?", "answer": "No"}
+{"idx": 2724, "state": "Maryland", "question": "Can a tenant request that the issuance of a writ be stayed for good cause (e.g., in the interest of justice, or because of substantial/extreme hardship)?", "answer": "No"}
+{"idx": 2725, "state": "Maryland", "question": "When a tenant appeals, is the execution of eviction stayed for the duration of the pending appeal?", "answer": "Yes"}
+{"idx": 2729, "state": "Maryland", "question": "Is the term 'Warrant for removal' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 2731, "state": "Maryland", "question": "Is the term 'Warrant for possession' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 2736, "state": "Maryland", "question": "Is the term 'Writ of possession' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 2739, "state": "Maryland", "question": "Is the term 'Execution' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 2744, "state": "Maryland", "question": "Is the term 'Writ of habere facias possessionem' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 2746, "state": "Maryland", "question": "Is the term 'Writ of restitution' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 2751, "state": "Maryland", "question": "Does the completion of a drug treatment program require postponement of the execution of a writ of eviction?", "answer": "No"}
+{"idx": 2761, "state": "Maryland", "question": "Is the bailiff an individual empowered by law to execute a writ of eviction?", "answer": "No"}
+{"idx": 2764, "state": "Maryland", "question": "Is a private company an entity empowered by law to execute a writ of eviction?", "answer": "No"}
+{"idx": 2767, "state": "Massachusetts", "question": "Is there a state/territory law regulating residential evictions?", "answer": "Yes"}
+{"idx": 2770, "state": "Massachusetts", "question": "Does the law specify a minimum number of days a tenant can be late on rent before the landlord can file an eviction action for nonpayment?", "answer": "Yes"}
+{"idx": 2784, "state": "Massachusetts", "question": "Can a landlord evict a tenant for removal of unit from market? This includes when the law allows a tenant to be evicted based on: the landlord selling the property; demolition, rehabilitation, or a change in use of the premises; repairs that would require the tenant to lose access to the property; a change to a policy of excluding children; or conversion of a rental property to a condominium, cooperative, or other form of ownership arrangement.", "answer": "No"}
+{"idx": 2787, "state": "Massachusetts", "question": "Can a landlord evict a tenant for endangering property? This includes where the law refers to situations that could result in damage to the property; or a pet capable of causing damage to persons or property.", "answer": "No"}
+{"idx": 2788, "state": "Massachusetts", "question": "Can a landlord evict a tenant for remaining on property after expiration of the lease?", "answer": "No"}
+{"idx": 2804, "state": "Massachusetts", "question": "Must a landlord accept a tenant's attempt to cure for material breach?", "answer": "Yes"}
+{"idx": 2815, "state": "Massachusetts", "question": "Are attorney fees available to a tenant who is unlawfully evicted?", "answer": "Yes"}
+{"idx": 2821, "state": "Massachusetts", "question": "Does the law prohibit rental agreements from including a provision allowing a landlord to evict a tenant because they contacted law enforcement services, health services, or safety services?", "answer": "No"}
+{"idx": 2829, "state": "Massachusetts", "question": "Is it unlawful to evict a tenant because of the type of income they receive, their status with regard to public assistance, or because they have a housing voucher?", "answer": "No"}
+{"idx": 2839, "state": "Massachusetts", "question": "Does the law require landlords to provide the date the rental agreement will terminate when giving tenants notice to vacate the property?", "answer": "No"}
+{"idx": 2843, "state": "Massachusetts", "question": "Does the law require landlords to state the amount owed when giving tenants notice to vacate the property?", "answer": "No"}
+{"idx": 2849, "state": "Massachusetts", "question": "Are eviction cases first heard in county court?", "answer": "No"}
+{"idx": 2869, "state": "Massachusetts", "question": "In an eviction action, can a tenant rebut/raise the defense that criminal activity was committed by someone else, and they reported the criminal activity to law enforcement?", "answer": "No"}
+{"idx": 2885, "state": "Massachusetts", "question": "Is the term 'Warrant for possession' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 2887, "state": "Massachusetts", "question": "Is the term 'Order of restitution' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 2889, "state": "Massachusetts", "question": "Is the term 'Writ for removal' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 2898, "state": "Massachusetts", "question": "Is the term 'Writ of habere facias possessionem' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 2900, "state": "Massachusetts", "question": "Is the term 'Writ of restitution' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 2904, "state": "Massachusetts", "question": "Does a public emergency require postponement of the execution of a write of eviction?", "answer": "No"}
+{"idx": 2911, "state": "Massachusetts", "question": "Does the law require that writs of execution be postponed for good cause? This includes when the law states that the court shall specify the time when the tenant must vacate the property, taking into consideration the possibility of harm to the parties and other material facts; or when the court can postpone execution if it deemed additional time was appropriate.", "answer": "No"}
+{"idx": 2920, "state": "Michigan", "question": "Can a landlord evict a tenant for material falsification on the rental application?", "answer": "No"}
+{"idx": 2925, "state": "Michigan", "question": "Can a landlord evict a tenant for endangering property? This includes where the law refers to situations that could result in damage to the property; or a pet capable of causing damage to persons or property.", "answer": "No"}
+{"idx": 2927, "state": "Michigan", "question": "Can a landlord evict a tenant for refusal to allow the landlord lawful access to the unit?", "answer": "No"}
+{"idx": 2933, "state": "Michigan", "question": "Can a landlord evict a tenant if the property is made uninhabitable?", "answer": "No"}
+{"idx": 2936, "state": "Michigan", "question": "Can a landlord evict a tenant for committing or failing to dispose of waste?", "answer": "No"}
+{"idx": 2937, "state": "Michigan", "question": "Can a landlord evict a tenant because they seek to use the property for personal use?", "answer": "No"}
+{"idx": 2942, "state": "Michigan", "question": "Must a landlord accept a tenant's attempt to cure for material breach?", "answer": "Yes"}
+{"idx": 2943, "state": "Michigan", "question": "Must a landlord accept a tenant's attempt to cure for substantial damage to property?", "answer": "No"}
+{"idx": 2956, "state": "Michigan", "question": "Is it unlawful to evict a tenant based on their ancestry?", "answer": "No"}
+{"idx": 2962, "state": "Michigan", "question": "Is it unlawful to evict a tenant based on \"creed\" or \"religious creed\"?", "answer": "No"}
+{"idx": 2967, "state": "Michigan", "question": "Is it unlawful to evict a tenant because of the type of income they receive, their status with regard to public assistance, or because they have a housing voucher?", "answer": "No"}
+{"idx": 2996, "state": "Michigan", "question": "In an eviction action, can a tenant rebut/raise the defense that they lawfully deducted repair costs from the rent? This is when the law allows them to make repairs and deduct the cost of the repairs from the rent, or when the law allows a tenant to pay for utility services the landlord failed to pay, then deduct the cost from rent.", "answer": "No"}
+{"idx": 3005, "state": "Michigan", "question": "In an eviction action, can a tenant use landlord noncompliance with a statutory duty as a rebuttal/defense?", "answer": "Yes"}
+{"idx": 3008, "state": "Michigan", "question": "Is it specified what term is used to refer to the order from the court to the authorities to remove a tenant?", "answer": "Yes"}
+{"idx": 3017, "state": "Michigan", "question": "Is the term 'Writ of possession' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 3023, "state": "Michigan", "question": "Is the term 'Writ of assistance' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 3024, "state": "Michigan", "question": "Is the term 'Warrant of restitution' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 3032, "state": "Mississippi", "question": "In eviction proceedings, does the filing of an appeal stay the execution of a writ?", "answer": "Yes"}
+{"idx": 3041, "state": "Mississippi", "question": "Can a landlord evict a tenant for committing domestic violence? This includes when the a tenant can be evicted if they are a domestic violence offender, or if they endanger another tenant and are subject to a protective order or criminal complaint for domestic abuse.", "answer": "No"}
+{"idx": 3043, "state": "Mississippi", "question": "Can a landlord evict a tenant for remaining on property after expiration of the lease?", "answer": "Yes"}
+{"idx": 3044, "state": "Mississippi", "question": "Can a landlord evict a tenant for refusal to allow the landlord lawful access to the unit?", "answer": "No"}
+{"idx": 3045, "state": "Mississippi", "question": "Can a landlord evict a tenant for nuisance activity? This includes: maintaining, committing, or permitting the maintenance or commission of a nuisance; conduct that disturbs a neighbor’s or another tenant’s peaceful enjoyment of their premises; causing a serious health hazard to exist on the property; or for misuse of property.", "answer": "Yes"}
+{"idx": 3047, "state": "Mississippi", "question": "Can a landlord evict a tenant for violating statutory tenant obligations?", "answer": "Yes"}
+{"idx": 3051, "state": "Mississippi", "question": "Can a landlord evict a tenant for endangering another person? This includes instances when the law allows for eviction of a tenant if: their behavior or the behavior of members of their family adversely affects the health or safety of other tenants, or the landlord or their representatives; the tenant or a guest are a perpetrator of violence; or the presence of a domestic violence offender at the tenant’s premises results in violent disturbances that pose a threat to the safety of other residents.", "answer": "No"}
+{"idx": 3076, "state": "Mississippi", "question": "Are eviction cases first heard in housing court?", "answer": "No"}
+{"idx": 3083, "state": "Mississippi", "question": "Are eviction cases first heard in justice of the peace court?", "answer": "No"}
+{"idx": 3085, "state": "Mississippi", "question": "Are eviction cases first heard in superior court?", "answer": "No"}
+{"idx": 3096, "state": "Mississippi", "question": "Is it required that the evictions summons served to tenants state the retaliatory eviction is unlawful?", "answer": "No"}
+{"idx": 3101, "state": "Mississippi", "question": "Can a tenant request that the issuance of a writ be stayed because they are a service member?", "answer": "No"}
+{"idx": 3104, "state": "Mississippi", "question": "Is it specified what term is used to refer to the order from the court to the authorities to remove a tenant?", "answer": "Yes"}
+{"idx": 3124, "state": "Mississippi", "question": "Is the term 'Writ of execution' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 3131, "state": "Mississippi", "question": "Is a private company an entity empowered by law to execute a writ of eviction?", "answer": "No"}
+{"idx": 3140, "state": "Missouri", "question": "Does state/territory eviction law explicitly regulate residential landlords generally?", "answer": "Yes"}
+{"idx": 3143, "state": "Missouri", "question": "Does state/territory eviction law explicitly regulate floating home landlords?", "answer": "No"}
+{"idx": 3147, "state": "Missouri", "question": "Can a landlord evict a tenant for removal of unit from market? This includes when the law allows a tenant to be evicted based on: the landlord selling the property; demolition, rehabilitation, or a change in use of the premises; repairs that would require the tenant to lose access to the property; a change to a policy of excluding children; or conversion of a rental property to a condominium, cooperative, or other form of ownership arrangement.", "answer": "No"}
+{"idx": 3152, "state": "Missouri", "question": "Can a landlord evict a tenant for refusal to allow the landlord lawful access to the unit?", "answer": "No"}
+{"idx": 3153, "state": "Missouri", "question": "Can a landlord evict a tenant for nuisance activity? This includes: maintaining, committing, or permitting the maintenance or commission of a nuisance; conduct that disturbs a neighbor’s or another tenant’s peaceful enjoyment of their premises; causing a serious health hazard to exist on the property; or for misuse of property.", "answer": "No"}
+{"idx": 3155, "state": "Missouri", "question": "Can a landlord evict a tenant for violating statutory tenant obligations?", "answer": "No"}
+{"idx": 3167, "state": "Missouri", "question": "Must a landlord accept a tenant's attempt to cure for material breach?", "answer": "No"}
+{"idx": 3175, "state": "Missouri", "question": "Is it unlawful to evict a tenant based on their ancestry?", "answer": "Yes"}
+{"idx": 3178, "state": "Missouri", "question": "Does the law prohibit rental agreements from including a provision allowing a landlord to evict a tenant because they contacted law enforcement services, health services, or safety services?", "answer": "No"}
+{"idx": 3183, "state": "Missouri", "question": "Is it unlawful to evict a tenant because of their physical appearance?", "answer": "No"}
+{"idx": 3202, "state": "Missouri", "question": "Are the primary methods of service permitted for an eviction action specified?", "answer": "Yes"}
+{"idx": 3204, "state": "Missouri", "question": "Primary methods of service are defined as those methods that must be attempted before a secondary method is permitted. Is delivery by commercial carrier a primary method of service for eviction actions?", "answer": "No"}
+{"idx": 3205, "state": "Missouri", "question": "Primary methods of service are defined as those methods that must be attempted before a secondary method is permitted. Is posting and mail a primary method of service for eviction actions?", "answer": "No"}
+{"idx": 3211, "state": "Missouri", "question": "Primary methods of service are defined as those methods that must be attempted before a secondary method is permitted. Is personal service to a suitable person other than the defendant a primary method of service for eviction actions?", "answer": "Yes"}
+{"idx": 3226, "state": "Missouri", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is personal service to suitable person other than defendant a permitted secondary method of service for an eviction action?", "answer": "No"}
+{"idx": 3234, "state": "Missouri", "question": "Is it required that the evictions summons served to tenants state the amount owed by the tenant?", "answer": "No"}
+{"idx": 3236, "state": "Missouri", "question": "Is it required that the evictions summons served to tenants describe repercussions for failing to appear in court?", "answer": "No"}
+{"idx": 3245, "state": "Missouri", "question": "In an eviction action, can a tenant rebut/raise the defense that the property is uninhabitable?", "answer": "No"}
+{"idx": 3249, "state": "Missouri", "question": "In an eviction action, can a tenant raise \"any equitable defense\" available to them? This is true when the relevant law refers broadly to all equitable defenses that might be raised.", "answer": "No"}
+{"idx": 3260, "state": "Missouri", "question": "Is it specified what term is used to refer to the order from the court to the authorities to remove a tenant?", "answer": "Yes"}
+{"idx": 3263, "state": "Missouri", "question": "Is the term 'Summary order for removal' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 3266, "state": "Missouri", "question": "Is the term 'Order of restitution' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 3267, "state": "Missouri", "question": "Is the term 'Warrant of eviction' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 3286, "state": "Missouri", "question": "Does inclement weather postpone the execution of a writ of eviction?", "answer": "No"}
+{"idx": 3291, "state": "Missouri", "question": "Does the law require that writs of execution not be executed on weekends?", "answer": "No"}
+{"idx": 3295, "state": "Missouri", "question": "Is the county sheriff’s office an entity empowered by law to execute a writ of eviction?", "answer": "Yes"}
+{"idx": 3302, "state": "Montana", "question": "Does the law regulating residential evictions specify the type(s) of landlord(s) regulated?", "answer": "Yes"}
+{"idx": 3304, "state": "Montana", "question": "Does the law specify rebuttals available to tenants subject to eviction proceedings?", "answer": "Yes"}
+{"idx": 3317, "state": "Montana", "question": "Can a landlord evict a tenant for material falsification on the rental application?", "answer": "No"}
+{"idx": 3320, "state": "Montana", "question": "Can a landlord evict a tenant for commiting substantial damage to the property?", "answer": "Yes"}
+{"idx": 3325, "state": "Montana", "question": "Can a landlord evict a tenant for nuisance activity? This includes: maintaining, committing, or permitting the maintenance or commission of a nuisance; conduct that disturbs a neighbor’s or another tenant’s peaceful enjoyment of their premises; causing a serious health hazard to exist on the property; or for misuse of property.", "answer": "Yes"}
+{"idx": 3342, "state": "Montana", "question": "Must a landlord accept a tenant's attempt to cure for nuisance activities?", "answer": "No"}
+{"idx": 3347, "state": "Montana", "question": "Are criminal charges brought against landlords for unlawfully evicting a tenant?", "answer": "No"}
+{"idx": 3357, "state": "Montana", "question": "Is it unlawful to evict a tenant because they are part of two or more of the federally protected classes under the Fair Housing Act (race, color, religion, national origin, sex, disability, and familial status)?", "answer": "Yes"}
+{"idx": 3365, "state": "Montana", "question": "Is it unlawful to evict a tenant because of their immigration status?", "answer": "No"}
+{"idx": 3368, "state": "Montana", "question": "Does the law require landlords to provide a reason for eviction when giving tenants notice to vacate the property?", "answer": "Yes"}
+{"idx": 3394, "state": "Montana", "question": "In an eviction action, can a tenant rebut/raise the defense that eviction is unlawful because they excercised a legally protected to right to call for emergency assistance?", "answer": "No"}
+{"idx": 3397, "state": "Montana", "question": "In an eviction action, can a tenant rebut/raise the defense that the landlord refused to complete repairs?", "answer": "Yes"}
+{"idx": 3398, "state": "Montana", "question": "In an eviction action, can a tenant rebut/raise the defense that unpaid rent was lawfully withheld? This includes where the law allows a tenant to procure reasonable alternative housing due to lack of repairs or services, and was excused from paying rent, or where the law allows a tenant to abate rent either in part or in full due to lack of repairs.", "answer": "No"}
+{"idx": 3400, "state": "Montana", "question": "In an eviction action, can a tenant rebut/raise the defense that eviction was retaliatory?", "answer": "Yes"}
+{"idx": 3401, "state": "Montana", "question": "In an eviction action, can a tenant use their status as a victim of domestic violence as a rebuttal/defense?", "answer": "No"}
+{"idx": 3404, "state": "Montana", "question": "For eviction proceedings, does a tenant have to request a stay of execution for an appeal?", "answer": "Yes"}
+{"idx": 3414, "state": "Montana", "question": "Is the term 'Writ of possession' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "Yes"}
+{"idx": 3416, "state": "Montana", "question": "Is the term 'Writ of eviction' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 3417, "state": "Montana", "question": "Is the term 'Execution' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 3420, "state": "Montana", "question": "Is the term 'Writ of assistance' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 3422, "state": "Montana", "question": "Is the term 'Writ of habere facias possessionem' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 3423, "state": "Montana", "question": "Is the term 'Writ of recovery of premises and order to vacate' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 3426, "state": "Montana", "question": "Is the term 'Restitution of premises' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 3435, "state": "Nebraska", "question": "Is it specified whether the law allows a landlord to include a lease provision whereby a tenant waives their right to notice?", "answer": "Yes"}
+{"idx": 3438, "state": "Nebraska", "question": "Does the law require a tenant to pay a bond in order to appeal an eviction judgment?", "answer": "Yes"}
+{"idx": 3441, "state": "Nebraska", "question": "Does state/territory eviction law explicitly regulate corporate landlords?", "answer": "No"}
+{"idx": 3442, "state": "Nebraska", "question": "Does state/territory eviction law explicitly regulate floating home landlords?", "answer": "No"}
+{"idx": 3445, "state": "Nebraska", "question": "Can a landlord evict a tenant for material breach? The law should explicitly mention \"material breach\", or allow for eviction if there is a substantial violation of the lease, material noncompliance with the lease, or when the breach is one that materially affects health, safety or welfare", "answer": "Yes"}
+{"idx": 3454, "state": "Nebraska", "question": "Can a landlord evict a tenant for violating statutory tenant obligations?", "answer": "Yes"}
+{"idx": 3457, "state": "Nebraska", "question": "Can a landlord evict a tenant if the property is made uninhabitable?", "answer": "Yes"}
+{"idx": 3458, "state": "Nebraska", "question": "Can a landlord evict a tenant for endangering another person? This includes instances when the law allows for eviction of a tenant if: their behavior or the behavior of members of their family adversely affects the health or safety of other tenants, or the landlord or their representatives; the tenant or a guest are a perpetrator of violence; or the presence of a domestic violence offender at the tenant’s premises results in violent disturbances that pose a threat to the safety of other residents.", "answer": "Yes"}
+{"idx": 3465, "state": "Nebraska", "question": "Must a landlord accept a tenant's attempt to cure for waste?", "answer": "No"}
+{"idx": 3467, "state": "Nebraska", "question": "Must a landlord accept a tenant's attempt to cure for substantial damage to property?", "answer": "No"}
+{"idx": 3475, "state": "Nebraska", "question": "Is injunctive relief available to a tenant who is unlawfully evicted?", "answer": "Yes"}
+{"idx": 3486, "state": "Nebraska", "question": "Is it unlawful to evict a tenant based on \"creed\" or \"religious creed\"?", "answer": "No"}
+{"idx": 3489, "state": "Nebraska", "question": "Is it unlawful to evict a tenant because they experienced domestic violence?", "answer": "No"}
+{"idx": 3490, "state": "Nebraska", "question": "Is it unlawful to evict a tenant because of their age?", "answer": "No"}
+{"idx": 3492, "state": "Nebraska", "question": "Is it unlawful to evict a tenant because of their immigration status?", "answer": "No"}
+{"idx": 3494, "state": "Nebraska", "question": "Does the law require landlords to provide information on rights when giving tenants notice to vacate the property?", "answer": "No"}
+{"idx": 3531, "state": "Nebraska", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is posting and mail a permitted secondary method of service for an eviction action?", "answer": "Yes"}
+{"idx": 3532, "state": "Nebraska", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is mail a permitted secondary method of service for an eviction action?", "answer": "No"}
+{"idx": 3536, "state": "Nebraska", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is personal service to a suitable person other than defendant and mail a permitted secondary method of service for an eviction action?", "answer": "No"}
+{"idx": 3556, "state": "Nebraska", "question": "In an eviction action, can a tenant rebut/raise the defense that the landlord breached the lease?", "answer": "Yes"}
+{"idx": 3567, "state": "Nebraska", "question": "In an eviction action, can a tenant rebut/raise the defense that the landlord refused a voucher?", "answer": "No"}
+{"idx": 3572, "state": "Nebraska", "question": "Is the term 'Warrant for removal' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 3615, "state": "Nevada", "question": "Does state/territory eviction law explicitly regulate landlords with minimal rental properties? This includes includes: landlords who own five or fewer single family homes; landlords who own three or less homes or rental properties; and owners of three or less condominium or cooperative units.", "answer": "No"}
+{"idx": 3623, "state": "Nevada", "question": "Can a landlord evict a tenant for refusal to allow the landlord lawful access to the unit?", "answer": "No"}
+{"idx": 3626, "state": "Nevada", "question": "Can a landlord evict a tenant for violating statutory tenant obligations?", "answer": "Yes"}
+{"idx": 3637, "state": "Nevada", "question": "Must a landlord accept a tenant's attempt to cure for waste?", "answer": "No"}
+{"idx": 3641, "state": "Nevada", "question": "Must a landlord accept a tenant's attempt to cure for nuisance activities?", "answer": "No"}
+{"idx": 3642, "state": "Nevada", "question": "Must a landlord accept a tenant's attempt to cure for statutory tenant obligations?", "answer": "No"}
+{"idx": 3643, "state": "Nevada", "question": "Must a landlord accept a tenant's attempt to cure for nonpayment of rent?", "answer": "Yes"}
+{"idx": 3645, "state": "Nevada", "question": "Does the law require landlords to provide information on rights when giving tenants notice to vacate the property?", "answer": "Yes"}
+{"idx": 3648, "state": "Nevada", "question": "Does the law require landlords to describe repercussions for failure to cure when giving tenants notice to vacate the property?", "answer": "Yes"}
+{"idx": 3654, "state": "Nevada", "question": "Is it specified in which court eviction cases are first heard?", "answer": "Yes"}
+{"idx": 3656, "state": "Nevada", "question": "Are eviction cases first heard in municipal court?", "answer": "No"}
+{"idx": 3659, "state": "Nevada", "question": "Are eviction cases first heard in circuit court?", "answer": "No"}
+{"idx": 3669, "state": "Nevada", "question": "Primary methods of service are defined as those methods that must be attempted before a secondary method is permitted. Is delivery by commercial carrier a primary method of service for eviction actions?", "answer": "No"}
+{"idx": 3671, "state": "Nevada", "question": "Primary methods of service are defined as those methods that must be attempted before a secondary method is permitted. Is mail a primary method of service for eviction actions?", "answer": "No"}
+{"idx": 3674, "state": "Nevada", "question": "Primary methods of service are defined as those methods that must be attempted before a secondary method is permitted. Is personal service to a suitable person other than the defendant and mail a primary method of service for eviction actions?", "answer": "No"}
+{"idx": 3678, "state": "Nevada", "question": "Primary methods of service are defined as those methods that must be attempted before a secondary method is permitted. Is personal service and mail a primary method of service for eviction actions?", "answer": "No"}
+{"idx": 3691, "state": "Nevada", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is personal service to suitable person other than defendant a permitted secondary method of service for an eviction action?", "answer": "No"}
+{"idx": 3699, "state": "Nevada", "question": "Is the term 'Warrant for possession' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 3710, "state": "Nevada", "question": "Is the term 'Writ of assistance' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 3714, "state": "Nevada", "question": "Is the term 'Writ of restitution' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "Yes"}
+{"idx": 3719, "state": "Nevada", "question": "Is the bailiff an individual empowered by law to execute a writ of eviction?", "answer": "No"}
+{"idx": 3731, "state": "Nevada", "question": "Are court records for eviction cases automatically made inaccessible for cases after certain time period?", "answer": "No"}
+{"idx": 3751, "state": "New Hampshire", "question": "Does state/territory eviction law explicitly regulate mobile/manufactured home landlords?", "answer": "Yes"}
+{"idx": 3755, "state": "New Hampshire", "question": "Can a landlord evict a tenant for material falsification on the rental application?", "answer": "No"}
+{"idx": 3757, "state": "New Hampshire", "question": "Can a landlord evict a tenant for removal of unit from market? This includes when the law allows a tenant to be evicted based on: the landlord selling the property; demolition, rehabilitation, or a change in use of the premises; repairs that would require the tenant to lose access to the property; a change to a policy of excluding children; or conversion of a rental property to a condominium, cooperative, or other form of ownership arrangement.", "answer": "Yes"}
+{"idx": 3759, "state": "New Hampshire", "question": "Can a landlord evict a tenant for committing domestic violence? This includes when the a tenant can be evicted if they are a domestic violence offender, or if they endanger another tenant and are subject to a protective order or criminal complaint for domestic abuse.", "answer": "Yes"}
+{"idx": 3774, "state": "New Hampshire", "question": "Is it specified for which cause a landlord must accept a tenant's attempt to cure?", "answer": "Yes"}
+{"idx": 3784, "state": "New Hampshire", "question": "Are fines assessed to landlords for unlawfully evicting a tenant?", "answer": "No"}
+{"idx": 3788, "state": "New Hampshire", "question": "Are attorney fees available to a tenant who is unlawfully evicted?", "answer": "Yes"}
+{"idx": 3819, "state": "New Hampshire", "question": "Does the law require landlords to describe repercussions for failure to vacate when giving tenants notice to vacate the property?", "answer": "No"}
+{"idx": 3824, "state": "New Hampshire", "question": "Are eviction cases first heard in county court?", "answer": "No"}
+{"idx": 3826, "state": "New Hampshire", "question": "Are eviction cases first heard in circuit court?", "answer": "No"}
+{"idx": 3827, "state": "New Hampshire", "question": "Are eviction cases first heard in state court?", "answer": "No"}
+{"idx": 3833, "state": "New Hampshire", "question": "Are eviction cases first heard in justice court?", "answer": "No"}
+{"idx": 3852, "state": "New Hampshire", "question": "Is it required that the evictions summons served to tenants provide information on appeal process?", "answer": "Yes"}
+{"idx": 3853, "state": "New Hampshire", "question": "Is it required that the evictions summons served to tenants describe repercussions for failing to appear in court?", "answer": "Yes"}
+{"idx": 3857, "state": "New Hampshire", "question": "In an eviction action, can a tenant rebut/raise the defense that the landlord accepted partial payment of rent?", "answer": "No"}
+{"idx": 3861, "state": "New Hampshire", "question": "In an eviction action, can a tenant rebut/raise the defense that eviction is unlawful because they excercised a legally protected to right to call for emergency assistance?", "answer": "No"}
+{"idx": 3862, "state": "New Hampshire", "question": "In an eviction action, can a tenant raise \"any equitable defense\" available to them? This is true when the relevant law refers broadly to all equitable defenses that might be raised.", "answer": "No"}
+{"idx": 3863, "state": "New Hampshire", "question": "In an eviction action, can a tenant rebut/raise the defense that eviction is unlawful because it was motivated by a legally recognized form of discrimination?", "answer": "No"}
+{"idx": 3867, "state": "New Hampshire", "question": "In an eviction action, can a tenant rebut/raise the defense that eviction was retaliatory?", "answer": "Yes"}
+{"idx": 3872, "state": "New Hampshire", "question": "Can a tenant request that the issuance of a writ be stayed due to illness?", "answer": "No"}
+{"idx": 3877, "state": "New Hampshire", "question": "When a tenant appeals, is the execution of eviction stayed for the duration of the pending appeal?", "answer": "Yes"}
+{"idx": 3883, "state": "New Hampshire", "question": "Is the term 'Order of possession' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 3896, "state": "New Hampshire", "question": "Is the term 'Writ of recovery of premises and order to vacate' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 3903, "state": "New Hampshire", "question": "Is the county sheriff’s office an entity empowered by law to execute a writ of eviction?", "answer": "Yes"}
+{"idx": 3904, "state": "New Hampshire", "question": "Is the constable an individual empowered by law to execute a writ of eviction?", "answer": "No"}
+{"idx": 3905, "state": "New Hampshire", "question": "Is a private company an entity empowered by law to execute a writ of eviction?", "answer": "No"}
+{"idx": 3907, "state": "New Hampshire", "question": "Is the municipal police department an entity empowered by law to execute a writ of eviction?", "answer": "No"}
+{"idx": 3916, "state": "New Jersey", "question": "Must a landlord accept a tenant's attempt to cure for material breach?", "answer": "Yes"}
+{"idx": 3924, "state": "New Jersey", "question": "Are criminal charges brought against landlords for unlawfully evicting a tenant?", "answer": "No"}
+{"idx": 3925, "state": "New Jersey", "question": "Is injunctive relief available to a tenant who is unlawfully evicted?", "answer": "No"}
+{"idx": 3941, "state": "New Jersey", "question": "Is it unlawful to evict a tenant because of the type of income they receive, their status with regard to public assistance, or because they have a housing voucher?", "answer": "Yes"}
+{"idx": 3943, "state": "New Jersey", "question": "Is it specified what protection, if any, the law offers for tenants residing in property that goes into foreclosure?", "answer": "Yes"}
+{"idx": 3947, "state": "New Jersey", "question": "For tenants evicted because the property went into foreclosure, does the law require the court records pertaining to the eviction to be sealed?", "answer": "No"}
+{"idx": 3950, "state": "New Jersey", "question": "Does the law require landlords to provide a reason for eviction when giving tenants notice to vacate the property?", "answer": "Yes"}
+{"idx": 3959, "state": "New Jersey", "question": "Are eviction cases first heard in housing court?", "answer": "Yes"}
+{"idx": 3980, "state": "New Jersey", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Are certified mail and regular mail a permitted  secondary methods of service for an eviction action?", "answer": "Yes"}
+{"idx": 3982, "state": "New Jersey", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Are posting and certified mail permitted secondary methods of service for an eviction action?", "answer": "No"}
+{"idx": 3984, "state": "New Jersey", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is personal service a permitted secondary method of service permitted for an eviction action?", "answer": "No"}
+{"idx": 3991, "state": "New Jersey", "question": "In an eviction action, can a tenant rebut/raise the defense that the landlord accepted partial payment of rent?", "answer": "No"}
+{"idx": 3996, "state": "New Jersey", "question": "In an eviction action, can a tenant raise \"any equitable defense\" available to them? This is true when the relevant law refers broadly to all equitable defenses that might be raised.", "answer": "No"}
+{"idx": 4002, "state": "New Jersey", "question": "In an eviction action, can a tenant use their status as a victim of domestic violence as a rebuttal/defense?", "answer": "No"}
+{"idx": 4004, "state": "New Jersey", "question": "In an eviction action, can a tenant rebut/raise the defense that the landlord refused a voucher?", "answer": "No"}
+{"idx": 4008, "state": "New Jersey", "question": "Can a tenant request that the issuance of a writ be stayed because they are a service member?", "answer": "No"}
+{"idx": 4016, "state": "New Jersey", "question": "Is the term 'Order of possession' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 4029, "state": "New Jersey", "question": "Is the term 'Writ of recovery of premises and order to vacate' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 4035, "state": "New Jersey", "question": "Does the completion of a drug treatment program require postponement of the execution of a writ of eviction?", "answer": "No"}
+{"idx": 4036, "state": "New Jersey", "question": "Does a tenant's financial insolvency require postponement of the execution of a writ of eviction?", "answer": "No"}
+{"idx": 4042, "state": "New Jersey", "question": "Does the law require that writs of execution not be executed on weekends?", "answer": "Yes"}
+{"idx": 4043, "state": "New Jersey", "question": "Is it specified which entity is responsible for executing the writ?", "answer": "Yes"}
+{"idx": 4050, "state": "New Jersey", "question": "Is the municipal police department an entity empowered by law to execute a writ of eviction?", "answer": "No"}
+{"idx": 4051, "state": "New Mexico", "question": "Is there a state/territory law regulating residential evictions?", "answer": "Yes"}
+{"idx": 4058, "state": "New Mexico", "question": "Does the law allow a landlord to include a lease provision whereby a tenant waives their right to notice?", "answer": "No"}
+{"idx": 4059, "state": "New Mexico", "question": "Does state/territory eviction law explicitly regulate residential landlords generally?", "answer": "Yes"}
+{"idx": 4068, "state": "New Mexico", "question": "Are damages available to a tenant who is unlawfully evicted?", "answer": "Yes"}
+{"idx": 4072, "state": "New Mexico", "question": "Is it unlawful to evict a tenant based on their ancestry?", "answer": "Yes"}
+{"idx": 4076, "state": "New Mexico", "question": "Is it unlawful to evict a tenant because they are part of two or more of the federally protected classes under the Fair Housing Act (race, color, religion, national origin, sex, disability, and familial status)?", "answer": "Yes"}
+{"idx": 4077, "state": "New Mexico", "question": "Is it unlawful to evict a tenant because of their sexual orientation?", "answer": "Yes"}
+{"idx": 4083, "state": "New Mexico", "question": "Is it unlawful to evict a tenant because of the type of income they receive, their status with regard to public assistance, or because they have a housing voucher?", "answer": "No"}
+{"idx": 4084, "state": "New Mexico", "question": "Is it unlawful to evict a tenant because of their immigration status?", "answer": "No"}
+{"idx": 4108, "state": "New Mexico", "question": "Are eviction cases first heard in district court?", "answer": "Yes"}
+{"idx": 4115, "state": "New Mexico", "question": "In an eviction action, can a tenant rebut/raise the defense that eviction is unlawful because they excercised a legally protected to right to call for emergency assistance?", "answer": "No"}
+{"idx": 4125, "state": "New Mexico", "question": "For eviction proceedings, does a tenant have to request a stay of execution for an appeal?", "answer": "Yes"}
+{"idx": 4134, "state": "New Mexico", "question": "Is the term 'Writ for removal' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 4136, "state": "New Mexico", "question": "Is the term 'Warrant of ejectment' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 4152, "state": "New Mexico", "question": "Is the constable an individual empowered by law to execute a writ of eviction?", "answer": "No"}
+{"idx": 4154, "state": "New Mexico", "question": "Is an officer of the court an individual empowered by law to execute a writ of eviction?", "answer": "No"}
+{"idx": 4161, "state": "New York", "question": "Does the law require the tenant to respond to an eviction action before a hearing?", "answer": "Yes"}
+{"idx": 4164, "state": "New York", "question": "Is it specified whether a tenant forfeits the right to an eviction hearing by failing to respond to the court summons?", "answer": "Yes"}
+{"idx": 4166, "state": "New York", "question": "Does state/territory eviction law explicitly regulate residential landlords generally?", "answer": "Yes"}
+{"idx": 4188, "state": "New York", "question": "Can a landlord evict a tenant because they seek to use the property for personal use?", "answer": "No"}
+{"idx": 4231, "state": "New York", "question": "Are eviction cases first heard in circuit court?", "answer": "No"}
+{"idx": 4243, "state": "New York", "question": "Primary methods of service are defined as those methods that must be attempted before a secondary method is permitted. Is mail a primary method of service for eviction actions?", "answer": "No"}
+{"idx": 4251, "state": "New York", "question": "Are the secondary methods of service permitted for an eviction action specified?", "answer": "Yes"}
+{"idx": 4258, "state": "New York", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is publication a permitted secondary method of service for an eviction action?", "answer": "No"}
+{"idx": 4260, "state": "New York", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Are certified mail and regular mail a permitted  secondary methods of service for an eviction action?", "answer": "No"}
+{"idx": 4266, "state": "New York", "question": "Is it specified what must be included on the summons?", "answer": "Yes"}
+{"idx": 4269, "state": "New York", "question": "Is it required that the evictions summons served to tenants describe list the reason for eviction?", "answer": "Yes"}
+{"idx": 4270, "state": "New York", "question": "Is it required that the evictions summons served to tenants mention information on legal services the tenant could leverage (e.g., legal aid or legal services that a tenant could contact to request assistance)?", "answer": "No"}
+{"idx": 4274, "state": "New York", "question": "Is it required that the evictions summons served to tenants state the retaliatory eviction is unlawful?", "answer": "No"}
+{"idx": 4284, "state": "New York", "question": "In an eviction action, can a tenant rebut/raise the defense that they lawfully deducted repair costs from the rent? This is when the law allows them to make repairs and deduct the cost of the repairs from the rent, or when the law allows a tenant to pay for utility services the landlord failed to pay, then deduct the cost from rent.", "answer": "Yes"}
+{"idx": 4287, "state": "New York", "question": "In an eviction action, can a tenant rebut/raise the defense that eviction is unlawful because it was motivated by a legally recognized form of discrimination?", "answer": "No"}
+{"idx": 4290, "state": "New York", "question": "In an eviction action, can a tenant rebut/raise the defense that criminal activity was committed by someone else, and they reported the criminal activity to law enforcement?", "answer": "No"}
+{"idx": 4297, "state": "New York", "question": "Can a tenant request that the issuance of a writ be stayed to request more time to relocate?", "answer": "Yes"}
+{"idx": 4301, "state": "New York", "question": "Is it specified what term is used to refer to the order from the court to the authorities to remove a tenant?", "answer": "Yes"}
+{"idx": 4307, "state": "New York", "question": "Is the term 'Order of restitution' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 4309, "state": "New York", "question": "Is the term 'Writ for removal' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 4315, "state": "New York", "question": "Is the term 'Execution for possession' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 4321, "state": "New York", "question": "Is the term 'Writ of execution' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 4328, "state": "New York", "question": "Can a writ of eviction only be executed during the daytime?", "answer": "Yes"}
+{"idx": 4335, "state": "New York", "question": "Is the bailiff an individual empowered by law to execute a writ of eviction?", "answer": "No"}
+{"idx": 4337, "state": "New York", "question": "Is the constable an individual empowered by law to execute a writ of eviction?", "answer": "Yes"}
+{"idx": 4340, "state": "New York", "question": "Is the municipal police department an entity empowered by law to execute a writ of eviction?", "answer": "No"}
+{"idx": 4343, "state": "New York", "question": "Are court records for eviction cases automatically made inaccessible for cases after certain time period?", "answer": "No"}
+{"idx": 4353, "state": "North Carolina", "question": "Is it specified whether the law allows a landlord to include a lease provision whereby a tenant waives their right to notice?", "answer": "Yes"}
+{"idx": 4362, "state": "North Carolina", "question": "Can a landlord evict a tenant for material falsification on the rental application?", "answer": "No"}
+{"idx": 4368, "state": "North Carolina", "question": "Can a landlord evict a tenant for remaining on property after expiration of the lease?", "answer": "Yes"}
+{"idx": 4371, "state": "North Carolina", "question": "Can a landlord evict a tenant for having unauthorized occupants?", "answer": "No"}
+{"idx": 4376, "state": "North Carolina", "question": "Can a landlord evict a tenant for endangering another person? This includes instances when the law allows for eviction of a tenant if: their behavior or the behavior of members of their family adversely affects the health or safety of other tenants, or the landlord or their representatives; the tenant or a guest are a perpetrator of violence; or the presence of a domestic violence offender at the tenant’s premises results in violent disturbances that pose a threat to the safety of other residents.", "answer": "No"}
+{"idx": 4386, "state": "North Carolina", "question": "Must a landlord accept a tenant's attempt to cure for criminal activities?", "answer": "No"}
+{"idx": 4406, "state": "North Carolina", "question": "Is it unlawful to evict a tenant because of their physical appearance?", "answer": "No"}
+{"idx": 4426, "state": "North Carolina", "question": "Are eviction cases first heard in magistrates court?", "answer": "No"}
+{"idx": 4428, "state": "North Carolina", "question": "Are eviction cases first heard in district court?", "answer": "Yes"}
+{"idx": 4446, "state": "North Carolina", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is mail a permitted secondary method of service for an eviction action?", "answer": "No"}
+{"idx": 4448, "state": "North Carolina", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is publication and mail used a permitted secondary method of service for an eviction action?", "answer": "No"}
+{"idx": 4452, "state": "North Carolina", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Are posting and personal service to suitable person other than defendant and mail permitted secondary methods of service for an eviction action?", "answer": "No"}
+{"idx": 4454, "state": "North Carolina", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is personal service to suitable person other than defendant a permitted secondary method of service for an eviction action?", "answer": "No"}
+{"idx": 4458, "state": "North Carolina", "question": "Is it required that the evictions summons served to tenants mention the tenant's right to a jury trial?", "answer": "No"}
+{"idx": 4459, "state": "North Carolina", "question": "Is it required that the evictions summons served to tenants describe what the tenant must do? This includes: a direction that the defendant file a pleading in response to the complaint; a direction that the defendant respond either orally or in writing; instructions on what a tenant had to do to respond to the summons; a requirement that the defendant appear in court; or a requirement that the defendant file an appearance.", "answer": "Yes"}
+{"idx": 4466, "state": "North Carolina", "question": "Is it required that the evictions summons served to tenants describe what rights the landlord has to dispose of the tenant’s property?", "answer": "No"}
+{"idx": 4476, "state": "North Carolina", "question": "In an eviction action, can a tenant rebut/raise the defense that eviction is unlawful because they excercised a legally protected to right to call for emergency assistance?", "answer": "No"}
+{"idx": 4482, "state": "North Carolina", "question": "In an eviction action, can a tenant rebut/raise the defense that eviction was retaliatory?", "answer": "Yes"}
+{"idx": 4484, "state": "North Carolina", "question": "In an eviction action, can a tenant use landlord noncompliance with a statutory duty as a rebuttal/defense?", "answer": "No"}
+{"idx": 4493, "state": "North Carolina", "question": "Is the term 'Warrant for removal' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 4494, "state": "North Carolina", "question": "Is the term 'Summary order for removal' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 4498, "state": "North Carolina", "question": "Is the term 'Warrant of eviction' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 4511, "state": "North Carolina", "question": "Is the term 'Writ of execution' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 4515, "state": "North Carolina", "question": "Is the bailiff an individual empowered by law to execute a writ of eviction?", "answer": "No"}
+{"idx": 4526, "state": "Ohio", "question": "In eviction proceedings, does the filing of an appeal stay the execution of a writ?", "answer": "Yes"}
+{"idx": 4531, "state": "Ohio", "question": "Does state/territory eviction law explicitly regulate corporate landlords?", "answer": "No"}
+{"idx": 4558, "state": "Ohio", "question": "Must a landlord accept a tenant's attempt to cure for criminal activities?", "answer": "No"}
+{"idx": 4572, "state": "Ohio", "question": "Is it unlawful to evict a tenant because of their gender identity?", "answer": "No"}
+{"idx": 4574, "state": "Ohio", "question": "Is it unlawful to evict a tenant because they are part of two or more of the federally protected classes under the Fair Housing Act (race, color, religion, national origin, sex, disability, and familial status)?", "answer": "Yes"}
+{"idx": 4584, "state": "Ohio", "question": "Does the law require landlords to provide information on rights when giving tenants notice to vacate the property?", "answer": "No"}
+{"idx": 4585, "state": "Ohio", "question": "Does the law require landlords to provide a reason for eviction when giving tenants notice to vacate the property?", "answer": "Yes"}
+{"idx": 4592, "state": "Ohio", "question": "Does the law require the landlord to give the tenant notice to vacate the property prior to terminating a tenancy?", "answer": "Yes"}
+{"idx": 4594, "state": "Ohio", "question": "Are eviction cases first heard in housing court?", "answer": "No"}
+{"idx": 4599, "state": "Ohio", "question": "Are eviction cases first heard in state court?", "answer": "No"}
+{"idx": 4619, "state": "Ohio", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is certified mail a permitted secondary method of service for an eviction action?", "answer": "No"}
+{"idx": 4624, "state": "Ohio", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is publication and mail used a permitted secondary method of service for an eviction action?", "answer": "No"}
+{"idx": 4636, "state": "Ohio", "question": "Is it required that the evictions summons served to tenants describe list the reason for eviction?", "answer": "Yes"}
+{"idx": 4648, "state": "Ohio", "question": "In an eviction action, can a tenant rebut/raise the defense that eviction is unlawful because they excercised a legally protected to right to call for emergency assistance?", "answer": "No"}
+{"idx": 4649, "state": "Ohio", "question": "In an eviction action, can a tenant raise \"any equitable defense\" available to them? This is true when the relevant law refers broadly to all equitable defenses that might be raised.", "answer": "No"}
+{"idx": 4654, "state": "Ohio", "question": "In an eviction action, can a tenant rebut/raise the defense that eviction was retaliatory?", "answer": "Yes"}
+{"idx": 4662, "state": "Ohio", "question": "Is the term 'Warrant for removal' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 4663, "state": "Ohio", "question": "Is the term 'Summary order for removal' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 4667, "state": "Ohio", "question": "Is the term 'Warrant of eviction' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 4671, "state": "Ohio", "question": "Is the term 'Writ of eviction' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 4684, "state": "Ohio", "question": "Is the bailiff an individual empowered by law to execute a writ of eviction?", "answer": "Yes"}
+{"idx": 4701, "state": "Oklahoma", "question": "Does state/territory eviction law explicitly regulate mobile/manufactured home landlords?", "answer": "Yes"}
+{"idx": 4702, "state": "Oklahoma", "question": "Does state/territory eviction law explicitly regulate corporate landlords?", "answer": "No"}
+{"idx": 4715, "state": "Oklahoma", "question": "Can a landlord evict a tenant for violating statutory tenant obligations?", "answer": "Yes"}
+{"idx": 4718, "state": "Oklahoma", "question": "Can a landlord evict a tenant if the property is made uninhabitable?", "answer": "No"}
+{"idx": 4748, "state": "Oklahoma", "question": "Is it unlawful to evict a tenant based on their marital status?", "answer": "No"}
+{"idx": 4758, "state": "Oklahoma", "question": "Are eviction cases first heard in county court?", "answer": "No"}
+{"idx": 4764, "state": "Oklahoma", "question": "Are eviction cases first heard in magistrates court?", "answer": "No"}
+{"idx": 4775, "state": "Oklahoma", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is publication a permitted secondary method of service for an eviction action?", "answer": "No"}
+{"idx": 4779, "state": "Oklahoma", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Are posting and certified mail permitted secondary methods of service for an eviction action?", "answer": "No"}
+{"idx": 4791, "state": "Oklahoma", "question": "Is it required that the evictions summons served to tenants state the retaliatory eviction is unlawful?", "answer": "No"}
+{"idx": 4794, "state": "Oklahoma", "question": "In an eviction action, can a tenant rebut/raise the defense that the landlord accepted partial payment of rent?", "answer": "No"}
+{"idx": 4803, "state": "Oklahoma", "question": "In an eviction action, can a tenant rebut/raise the defense that criminal activity was committed by someone else, and they reported the criminal activity to law enforcement?", "answer": "No"}
+{"idx": 4809, "state": "Oklahoma", "question": "For eviction proceedings, does a tenant have to request a stay of execution for an appeal?", "answer": "Yes"}
+{"idx": 4813, "state": "Oklahoma", "question": "Is the term 'Summary order for removal' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 4831, "state": "Oklahoma", "question": "Is the term 'Restitution of premises' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 4835, "state": "Oklahoma", "question": "Is the county sheriff’s office an entity empowered by law to execute a writ of eviction?", "answer": "Yes"}
+{"idx": 4841, "state": "Oregon", "question": "Does the law regulating residential evictions specify the type(s) of landlord(s) regulated?", "answer": "Yes"}
+{"idx": 4842, "state": "Oregon", "question": "Does the law directly regulate the amount a landlord can charge as a fee for late rent?", "answer": "Yes"}
+{"idx": 4858, "state": "Oregon", "question": "Does state/territory eviction law explicitly regulate corporate landlords?", "answer": "No"}
+{"idx": 4870, "state": "Oregon", "question": "Is it specified what remedies are available to a tenant who is unlawfully evicted?", "answer": "Yes"}
+{"idx": 4877, "state": "Oregon", "question": "When a landlord wants to sell a property occupied by a tenant, does the law require they provide local government with notice?", "answer": "No"}
+{"idx": 4884, "state": "Oregon", "question": "For tenants residing in properties that go into foreclosure, does the law require a continuation of the landlord's lease obligations?", "answer": "No"}
+{"idx": 4886, "state": "Oregon", "question": "For tenants residing in properties that go into foreclosure, does the law require longer-than-usual notice?", "answer": "Yes"}
+{"idx": 4887, "state": "Oregon", "question": "For tenants evicted because the property went into foreclosure, does the law require the court records pertaining to the eviction to be sealed?", "answer": "No"}
+{"idx": 4888, "state": "Oregon", "question": "Is it specified what is required to be in the notice?", "answer": "Yes"}
+{"idx": 4901, "state": "Oregon", "question": "Are eviction cases first heard in county court?", "answer": "No"}
+{"idx": 4903, "state": "Oregon", "question": "Are eviction cases first heard in circuit court?", "answer": "Yes"}
+{"idx": 4916, "state": "Oregon", "question": "Primary methods of service are defined as those methods that must be attempted before a secondary method is permitted. Is posting a primary method of service for eviction actions?", "answer": "No"}
+{"idx": 4925, "state": "Oregon", "question": "In an eviction action, can a tenant rebut/raise the defense that the property is uninhabitable?", "answer": "No"}
+{"idx": 4930, "state": "Oregon", "question": "In an eviction action, can a tenant rebut/raise the defense that eviction is unlawful because it was motivated by a legally recognized form of discrimination?", "answer": "Yes"}
+{"idx": 4931, "state": "Oregon", "question": "In an eviction action, can a tenant rebut/raise the defense that the landlord refused to complete repairs?", "answer": "No"}
+{"idx": 4932, "state": "Oregon", "question": "In an eviction action, can a tenant rebut/raise the defense that unpaid rent was lawfully withheld? This includes where the law allows a tenant to procure reasonable alternative housing due to lack of repairs or services, and was excused from paying rent, or where the law allows a tenant to abate rent either in part or in full due to lack of repairs.", "answer": "No"}
+{"idx": 4936, "state": "Oregon", "question": "In an eviction action, can a tenant use landlord noncompliance with a statutory duty as a rebuttal/defense?", "answer": "No"}
+{"idx": 4941, "state": "Oregon", "question": "Can a tenant request that the issuance of a writ be stayed because they are a service member?", "answer": "Yes"}
+{"idx": 4947, "state": "Oregon", "question": "Is the term 'Warrant for removal' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 4954, "state": "Oregon", "question": "Is the term 'Writ of possession' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 4960, "state": "Oregon", "question": "Is the term 'Writ of assistance' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 4967, "state": "Oregon", "question": "Are the circumstances that postpone the execution of a writ of eviction specified?", "answer": "Yes"}
+{"idx": 4976, "state": "Oregon", "question": "Does the law require that writs of execution not be executed on weekends?", "answer": "Yes"}
+{"idx": 4977, "state": "Oregon", "question": "Is it specified which entity is responsible for executing the writ?", "answer": "Yes"}
+{"idx": 4983, "state": "Oregon", "question": "Is an officer of the court an individual empowered by law to execute a writ of eviction?", "answer": "No"}
+{"idx": 4990, "state": "Oregon", "question": "Are court records for cases dismissed automatically made inaccessible for the public?", "answer": "No"}
+{"idx": 4995, "state": "Puerto Rico", "question": "Is it specified whether the law requires a tenant to pay a bond in order to appeal an eviction judgment?", "answer": "Yes"}
+{"idx": 4998, "state": "Puerto Rico", "question": "Is it unlawful to evict a tenant based on military or veteran status?", "answer": "No"}
+{"idx": 5004, "state": "Puerto Rico", "question": "Is it unlawful to evict a tenant because of their sexual orientation?", "answer": "No"}
+{"idx": 5011, "state": "Puerto Rico", "question": "Is it unlawful to evict a tenant because of their immigration status?", "answer": "No"}
+{"idx": 5012, "state": "Puerto Rico", "question": "Is it specified in which court eviction cases are first heard?", "answer": "Yes"}
+{"idx": 5014, "state": "Puerto Rico", "question": "Are eviction cases first heard in municipal court?", "answer": "Yes"}
+{"idx": 5019, "state": "Puerto Rico", "question": "Are eviction cases first heard in court of common pleas?", "answer": "No"}
+{"idx": 5032, "state": "Puerto Rico", "question": "Primary methods of service are defined as those methods that must be attempted before a secondary method is permitted. Is personal service to a suitable person other than the defendant and mail a primary method of service for eviction actions?", "answer": "No"}
+{"idx": 5057, "state": "Puerto Rico", "question": "Is it required that the evictions summons served to tenants state the amount owed by the tenant?", "answer": "No"}
+{"idx": 5065, "state": "Puerto Rico", "question": "Is the term 'Summary order for removal' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 5068, "state": "Puerto Rico", "question": "Is the term 'Order of restitution' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 5083, "state": "Puerto Rico", "question": "Is the term 'Restitution of premises' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 5087, "state": "Puerto Rico", "question": "Does a tenant's financial insolvency require postponement of the execution of a writ of eviction?", "answer": "Yes"}
+{"idx": 5088, "state": "Puerto Rico", "question": "Does inclement weather postpone the execution of a writ of eviction?", "answer": "No"}
+{"idx": 5095, "state": "Puerto Rico", "question": "Is the marshal an individual empowered by law to execute a writ of eviction?", "answer": "Yes"}
+{"idx": 5107, "state": "Rhode Island", "question": "Does the law specify rebuttals available to tenants subject to eviction proceedings?", "answer": "Yes"}
+{"idx": 5122, "state": "Rhode Island", "question": "Can a landlord evict a tenant for material breach? The law should explicitly mention \"material breach\", or allow for eviction if there is a substantial violation of the lease, material noncompliance with the lease, or when the breach is one that materially affects health, safety or welfare", "answer": "Yes"}
+{"idx": 5134, "state": "Rhode Island", "question": "Can a landlord evict a tenant if the property is made uninhabitable?", "answer": "Yes"}
+{"idx": 5137, "state": "Rhode Island", "question": "Can a landlord evict a tenant for committing or failing to dispose of waste?", "answer": "No"}
+{"idx": 5139, "state": "Rhode Island", "question": "Can a landlord evict a tenant for nonpayment of rent?", "answer": "Yes"}
+{"idx": 5141, "state": "Rhode Island", "question": "Must a landlord accept a tenant's attempt to cure for breach?", "answer": "No"}
+{"idx": 5151, "state": "Rhode Island", "question": "Are criminal charges brought against landlords for unlawfully evicting a tenant?", "answer": "No"}
+{"idx": 5152, "state": "Rhode Island", "question": "Is injunctive relief available to a tenant who is unlawfully evicted?", "answer": "Yes"}
+{"idx": 5160, "state": "Rhode Island", "question": "Does the law prohibit rental agreements from including a provision allowing a landlord to evict a tenant because they contacted law enforcement services, health services, or safety services?", "answer": "No"}
+{"idx": 5162, "state": "Rhode Island", "question": "Is it unlawful to evict a tenant because of their sexual orientation?", "answer": "Yes"}
+{"idx": 5173, "state": "Rhode Island", "question": "For tenants residing in properties that go into foreclosure, does the law require longer-than-usual notice?", "answer": "Yes"}
+{"idx": 5177, "state": "Rhode Island", "question": "Does the law require landlords to provide a reason for eviction when giving tenants notice to vacate the property?", "answer": "Yes"}
+{"idx": 5178, "state": "Rhode Island", "question": "Does the law require landlords to provide the date the rental agreement will terminate when giving tenants notice to vacate the property?", "answer": "No"}
+{"idx": 5179, "state": "Rhode Island", "question": "Does the law require landlords to describe repercussions for failure to cure when giving tenants notice to vacate the property?", "answer": "Yes"}
+{"idx": 5183, "state": "Rhode Island", "question": "Does the law require landlords to describe repercussions for failure to vacate when giving tenants notice to vacate the property?", "answer": "Yes"}
+{"idx": 5186, "state": "Rhode Island", "question": "Are eviction cases first heard in housing court?", "answer": "Yes"}
+{"idx": 5191, "state": "Rhode Island", "question": "Are eviction cases first heard in state court?", "answer": "No"}
+{"idx": 5195, "state": "Rhode Island", "question": "Are eviction cases first heard in superior court?", "answer": "No"}
+{"idx": 5198, "state": "Rhode Island", "question": "Are the secondary methods of service permitted for an eviction action specified?", "answer": "Yes"}
+{"idx": 5201, "state": "Rhode Island", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is posting and mail a permitted secondary method of service for an eviction action?", "answer": "Yes"}
+{"idx": 5202, "state": "Rhode Island", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is mail a permitted secondary method of service for an eviction action?", "answer": "No"}
+{"idx": 5209, "state": "Rhode Island", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Are posting and certified mail permitted secondary methods of service for an eviction action?", "answer": "No"}
+{"idx": 5218, "state": "Rhode Island", "question": "Is it required that the evictions summons served to tenants state the amount owed by the tenant?", "answer": "Yes"}
+{"idx": 5220, "state": "Rhode Island", "question": "Is it required that the evictions summons served to tenants describe repercussions for failing to appear in court?", "answer": "No"}
+{"idx": 5221, "state": "Rhode Island", "question": "Is it required that the evictions summons served to tenants state the retaliatory eviction is unlawful?", "answer": "No"}
+{"idx": 5229, "state": "Rhode Island", "question": "In an eviction action, can a tenant rebut/raise the defense that the property is uninhabitable?", "answer": "Yes"}
+{"idx": 5233, "state": "Rhode Island", "question": "In an eviction action, can a tenant raise \"any equitable defense\" available to them? This is true when the relevant law refers broadly to all equitable defenses that might be raised.", "answer": "No"}
+{"idx": 5244, "state": "Rhode Island", "question": "Is the term 'Warrant for removal' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 5246, "state": "Rhode Island", "question": "Is the term 'Warrant for possession' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 5250, "state": "Rhode Island", "question": "Is the term 'Writ for removal' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 5251, "state": "Rhode Island", "question": "Is the term 'Writ of possession' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 5252, "state": "Rhode Island", "question": "Is the term 'Warrant of ejectment' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 5276, "state": "South Carolina", "question": "Does the law specify rebuttals available to tenants subject to eviction proceedings?", "answer": "Yes"}
+{"idx": 5283, "state": "South Carolina", "question": "Does the law require a tenant to pay a bond in order to appeal an eviction judgment?", "answer": "Yes"}
+{"idx": 5299, "state": "South Carolina", "question": "Can a landlord evict a tenant for violating statutory tenant obligations?", "answer": "Yes"}
+{"idx": 5316, "state": "South Carolina", "question": "Must a landlord accept a tenant's attempt to cure for nonpayment of rent?", "answer": "Yes"}
+{"idx": 5318, "state": "South Carolina", "question": "Are fines assessed to landlords for unlawfully evicting a tenant?", "answer": "No"}
+{"idx": 5328, "state": "South Carolina", "question": "Does the law require landlords to provide information on how to cure when giving tenants notice to vacate the property?", "answer": "No"}
+{"idx": 5331, "state": "South Carolina", "question": "Does the law require landlords to describe repercussions for failure to vacate when giving tenants notice to vacate the property?", "answer": "No"}
+{"idx": 5341, "state": "South Carolina", "question": "Are eviction cases first heard in justice of the peace court?", "answer": "No"}
+{"idx": 5354, "state": "South Carolina", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is personal service to a suitable person other than defendant and mail a permitted secondary method of service for an eviction action?", "answer": "No"}
+{"idx": 5368, "state": "South Carolina", "question": "In an eviction action, can a tenant rebut/raise the defense that eviction is unlawful because it was motivated by a legally recognized form of discrimination?", "answer": "No"}
+{"idx": 5374, "state": "South Carolina", "question": "In an eviction action, can a tenant use landlord noncompliance with a statutory duty as a rebuttal/defense?", "answer": "Yes"}
+{"idx": 5379, "state": "South Carolina", "question": "Is the term 'Writ of ejectment' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "Yes"}
+{"idx": 5382, "state": "South Carolina", "question": "Is the term 'Warrant for possession' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 5387, "state": "South Carolina", "question": "Is the term 'Writ of possession' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 5398, "state": "South Carolina", "question": "Is the term 'Writ of execution' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 5408, "state": "South Dakota", "question": "Is there a state/territory law regulating residential evictions?", "answer": "Yes"}
+{"idx": 5424, "state": "South Dakota", "question": "Can a landlord evict a tenant for commiting substantial damage to the property?", "answer": "No"}
+{"idx": 5432, "state": "South Dakota", "question": "Can a landlord evict a tenant for criminal activity? This includes: criminal or illegal activity generally; committing a specific crime or illegal act; the use, possession, or sale of controlled substances; an unlawful action causing serious physical harm to another person; or criminal nuisance.", "answer": "No"}
+{"idx": 5452, "state": "South Dakota", "question": "Is it unlawful to evict a tenant because they are part of two or more of the federally protected classes under the Fair Housing Act (race, color, religion, national origin, sex, disability, and familial status)?", "answer": "Yes"}
+{"idx": 5460, "state": "South Dakota", "question": "Is it unlawful to evict a tenant because of their immigration status?", "answer": "No"}
+{"idx": 5473, "state": "South Dakota", "question": "Are eviction cases first heard in district court?", "answer": "No"}
+{"idx": 5474, "state": "South Dakota", "question": "Are eviction cases first heard in justice court?", "answer": "No"}
+{"idx": 5476, "state": "South Dakota", "question": "Primary methods of service are defined as those methods that must be attempted before a secondary method is permitted. Is certified mail a primary method of service for eviction actions?", "answer": "No"}
+{"idx": 5480, "state": "South Dakota", "question": "Primary methods of service are defined as those methods that must be attempted before a secondary method is permitted. Is posting a primary method of service for eviction actions?", "answer": "No"}
+{"idx": 5489, "state": "South Dakota", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is delivery by commercial carrier a permitted secondary method of service for an eviction action?", "answer": "No"}
+{"idx": 5509, "state": "South Dakota", "question": "Is it required that the evictions summons served to tenants describe repercussions for failing to appear in court?", "answer": "Yes"}
+{"idx": 5510, "state": "South Dakota", "question": "Is it required that the evictions summons served to tenants state the retaliatory eviction is unlawful?", "answer": "No"}
+{"idx": 5516, "state": "South Dakota", "question": "In an eviction action, can a tenant rebut/raise the defense that they lawfully deducted repair costs from the rent? This is when the law allows them to make repairs and deduct the cost of the repairs from the rent, or when the law allows a tenant to pay for utility services the landlord failed to pay, then deduct the cost from rent.", "answer": "No"}
+{"idx": 5517, "state": "South Dakota", "question": "In an eviction action, can a tenant rebut/raise the defense that eviction is unlawful because they excercised a legally protected to right to call for emergency assistance?", "answer": "No"}
+{"idx": 5519, "state": "South Dakota", "question": "In an eviction action, can a tenant rebut/raise the defense that eviction is unlawful because it was motivated by a legally recognized form of discrimination?", "answer": "No"}
+{"idx": 5535, "state": "South Dakota", "question": "Is the term 'Writ for removal' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 5539, "state": "South Dakota", "question": "Is the term 'Execution' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 5545, "state": "South Dakota", "question": "Is the term 'Writ of recovery of premises and order to vacate' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 5555, "state": "South Dakota", "question": "Does a tenant's ongoing military service require the postponement of the execution of a writ of eviction?", "answer": "No"}
+{"idx": 5558, "state": "South Dakota", "question": "Does the law require that writs of execution not be executed on weekends?", "answer": "No"}
+{"idx": 5560, "state": "Tennessee", "question": "Does the law directly regulate the amount a landlord can charge as a fee for late rent?", "answer": "Yes"}
+{"idx": 5564, "state": "Tennessee", "question": "Does a landlord waive their right to evict for nonpayment of rent by accepting partial payment of rent?", "answer": "No"}
+{"idx": 5565, "state": "Tennessee", "question": "Is it specified whether the law allows a landlord to include a lease provision whereby a tenant waives their right to notice?", "answer": "Yes"}
+{"idx": 5566, "state": "Tennessee", "question": "Does the law allow a landlord to include a lease provision whereby a tenant waives their right to notice?", "answer": "Yes"}
+{"idx": 5569, "state": "Tennessee", "question": "Can a landlord evict a tenant for removal of unit from market? This includes when the law allows a tenant to be evicted based on: the landlord selling the property; demolition, rehabilitation, or a change in use of the premises; repairs that would require the tenant to lose access to the property; a change to a policy of excluding children; or conversion of a rental property to a condominium, cooperative, or other form of ownership arrangement.", "answer": "No"}
+{"idx": 5575, "state": "Tennessee", "question": "Can a landlord evict a tenant for nuisance activity? This includes: maintaining, committing, or permitting the maintenance or commission of a nuisance; conduct that disturbs a neighbor’s or another tenant’s peaceful enjoyment of their premises; causing a serious health hazard to exist on the property; or for misuse of property.", "answer": "No"}
+{"idx": 5578, "state": "Tennessee", "question": "Can a landlord evict a tenant for criminal activity? This includes: criminal or illegal activity generally; committing a specific crime or illegal act; the use, possession, or sale of controlled substances; an unlawful action causing serious physical harm to another person; or criminal nuisance.", "answer": "Yes"}
+{"idx": 5581, "state": "Tennessee", "question": "Can a landlord evict a tenant for endangering another person? This includes instances when the law allows for eviction of a tenant if: their behavior or the behavior of members of their family adversely affects the health or safety of other tenants, or the landlord or their representatives; the tenant or a guest are a perpetrator of violence; or the presence of a domestic violence offender at the tenant’s premises results in violent disturbances that pose a threat to the safety of other residents.", "answer": "Yes"}
+{"idx": 5591, "state": "Tennessee", "question": "Must a landlord accept a tenant's attempt to cure for criminal activities?", "answer": "No"}
+{"idx": 5599, "state": "Tennessee", "question": "Are damages available to a tenant who is unlawfully evicted?", "answer": "Yes"}
+{"idx": 5603, "state": "Tennessee", "question": "Is it unlawful to evict a tenant based on their ancestry?", "answer": "No"}
+{"idx": 5622, "state": "Tennessee", "question": "Does the law require landlords to provide information on legal services when giving tenants notice to vacate the property?", "answer": "No"}
+{"idx": 5623, "state": "Tennessee", "question": "Does the law require landlords to state the amount owed when giving tenants notice to vacate the property?", "answer": "No"}
+{"idx": 5627, "state": "Tennessee", "question": "Are eviction cases first heard in housing court?", "answer": "No"}
+{"idx": 5628, "state": "Tennessee", "question": "Are eviction cases first heard in municipal court?", "answer": "No"}
+{"idx": 5637, "state": "Tennessee", "question": "Are eviction cases first heard in district court?", "answer": "No"}
+{"idx": 5640, "state": "Tennessee", "question": "Primary methods of service are defined as those methods that must be attempted before a secondary method is permitted. Is certified mail a primary method of service for eviction actions?", "answer": "Yes"}
+{"idx": 5648, "state": "Tennessee", "question": "Primary methods of service are defined as those methods that must be attempted before a secondary method is permitted. Is personal service to a suitable person other than the defendant a primary method of service for eviction actions?", "answer": "Yes"}
+{"idx": 5659, "state": "Tennessee", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is personal service to a suitable person other than defendant and mail a permitted secondary method of service for an eviction action?", "answer": "No"}
+{"idx": 5667, "state": "Tennessee", "question": "Is it required that the evictions summons served to tenants mention the tenant's right to a jury trial?", "answer": "No"}
+{"idx": 5690, "state": "Tennessee", "question": "In an eviction action, can a tenant rebut/raise the defense that the landlord refused a voucher?", "answer": "No"}
+{"idx": 5710, "state": "Tennessee", "question": "Is the term 'Writ of restitution' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 5715, "state": "Tennessee", "question": "Is the bailiff an individual empowered by law to execute a writ of eviction?", "answer": "No"}
+{"idx": 5722, "state": "Texas", "question": "With regards to eviction law, does the jurisdiction have separate legal provisions for different types of landlords?", "answer": "Yes"}
+{"idx": 5723, "state": "Texas", "question": "Does the law regulating residential evictions specify the type(s) of landlord(s) regulated?", "answer": "Yes"}
+{"idx": 5726, "state": "Texas", "question": "Does the law specify rebuttals available to tenants subject to eviction proceedings?", "answer": "Yes"}
+{"idx": 5728, "state": "Texas", "question": "Is it specified whether the law allows a landlord to include a lease provision whereby a tenant waives their right to notice?", "answer": "Yes"}
+{"idx": 5731, "state": "Texas", "question": "Does state/territory eviction law explicitly regulate mobile/manufactured home landlords?", "answer": "Yes"}
+{"idx": 5735, "state": "Texas", "question": "Can a landlord evict a tenant for material falsification on the rental application?", "answer": "No"}
+{"idx": 5736, "state": "Texas", "question": "Can a landlord evict a tenant for material breach? The law should explicitly mention \"material breach\", or allow for eviction if there is a substantial violation of the lease, material noncompliance with the lease, or when the breach is one that materially affects health, safety or welfare", "answer": "Yes"}
+{"idx": 5741, "state": "Texas", "question": "Can a landlord evict a tenant for remaining on property after expiration of the lease?", "answer": "Yes"}
+{"idx": 5745, "state": "Texas", "question": "Can a landlord evict a tenant for violating statutory tenant obligations?", "answer": "No"}
+{"idx": 5746, "state": "Texas", "question": "Can a landlord evict a tenant for criminal activity? This includes: criminal or illegal activity generally; committing a specific crime or illegal act; the use, possession, or sale of controlled substances; an unlawful action causing serious physical harm to another person; or criminal nuisance.", "answer": "Yes"}
+{"idx": 5749, "state": "Texas", "question": "Can a landlord evict a tenant for endangering another person? This includes instances when the law allows for eviction of a tenant if: their behavior or the behavior of members of their family adversely affects the health or safety of other tenants, or the landlord or their representatives; the tenant or a guest are a perpetrator of violence; or the presence of a domestic violence offender at the tenant’s premises results in violent disturbances that pose a threat to the safety of other residents.", "answer": "Yes"}
+{"idx": 5750, "state": "Texas", "question": "Can a landlord evict a tenant for refusal of new lease terms? This includes when the law allows for eviction if the tenant refused to sign a lease extension; refused to agree to a fair rent increase; or refused to agree to lease changes at the time of renewal", "answer": "No"}
+{"idx": 5752, "state": "Texas", "question": "Can a landlord evict a tenant because they seek to use the property for personal use?", "answer": "No"}
+{"idx": 5755, "state": "Texas", "question": "Must a landlord accept a tenant's attempt to cure for breach?", "answer": "No"}
+{"idx": 5764, "state": "Texas", "question": "Are fines assessed to landlords for unlawfully evicting a tenant?", "answer": "No"}
+{"idx": 5776, "state": "Texas", "question": "Is it unlawful to evict a tenant because of their sexual orientation?", "answer": "No"}
+{"idx": 5777, "state": "Texas", "question": "Is it unlawful to evict a tenant based on \"creed\" or \"religious creed\"?", "answer": "No"}
+{"idx": 5778, "state": "Texas", "question": "Is it unlawful to evict a tenant based on their marital status?", "answer": "No"}
+{"idx": 5780, "state": "Texas", "question": "Is it unlawful to evict a tenant because they experienced domestic violence?", "answer": "No"}
+{"idx": 5785, "state": "Texas", "question": "For tenants residing in properties that go into foreclosure, does the law require a continuation of the landlord's lease obligations?", "answer": "No"}
+{"idx": 5786, "state": "Texas", "question": "For tenants residing in properties that go into foreclosure, does the law restrict the landlord's ability to evict a tenant without just cause?", "answer": "No"}
+{"idx": 5788, "state": "Texas", "question": "For tenants evicted because the property went into foreclosure, does the law require the court records pertaining to the eviction to be sealed?", "answer": "No"}
+{"idx": 5795, "state": "Texas", "question": "Are eviction cases first heard in circuit court?", "answer": "No"}
+{"idx": 5808, "state": "Texas", "question": "In an eviction action, can a tenant rebut/raise the defense that eviction is unlawful because they excercised a legally protected to right to call for emergency assistance?", "answer": "No"}
+{"idx": 5816, "state": "Texas", "question": "In an eviction action, can a tenant use landlord noncompliance with a statutory duty as a rebuttal/defense?", "answer": "No"}
+{"idx": 5818, "state": "Texas", "question": "For eviction proceedings, does a tenant have to request a stay of execution for an appeal?", "answer": "Yes"}
+{"idx": 5819, "state": "Texas", "question": "Is it specified what term is used to refer to the order from the court to the authorities to remove a tenant?", "answer": "Yes"}
+{"idx": 5835, "state": "Texas", "question": "Is the term 'Warrant of restitution' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 5845, "state": "Texas", "question": "Is the constable an individual empowered by law to execute a writ of eviction?", "answer": "Yes"}
+{"idx": 5852, "state": "Utah", "question": "Does the law specify a minimum number of days a tenant can be late on rent before the landlord can file an eviction action for nonpayment?", "answer": "Yes"}
+{"idx": 5862, "state": "Utah", "question": "Can a landlord evict a tenant for material breach? The law should explicitly mention \"material breach\", or allow for eviction if there is a substantial violation of the lease, material noncompliance with the lease, or when the breach is one that materially affects health, safety or welfare", "answer": "No"}
+{"idx": 5875, "state": "Utah", "question": "Can a landlord evict a tenant for endangering another person? This includes instances when the law allows for eviction of a tenant if: their behavior or the behavior of members of their family adversely affects the health or safety of other tenants, or the landlord or their representatives; the tenant or a guest are a perpetrator of violence; or the presence of a domestic violence offender at the tenant’s premises results in violent disturbances that pose a threat to the safety of other residents.", "answer": "No"}
+{"idx": 5876, "state": "Utah", "question": "Can a landlord evict a tenant for refusal of new lease terms? This includes when the law allows for eviction if the tenant refused to sign a lease extension; refused to agree to a fair rent increase; or refused to agree to lease changes at the time of renewal", "answer": "No"}
+{"idx": 5882, "state": "Utah", "question": "Must a landlord accept a tenant's attempt to cure for waste?", "answer": "No"}
+{"idx": 5885, "state": "Utah", "question": "Must a landlord accept a tenant's attempt to cure for criminal activities?", "answer": "No"}
+{"idx": 5895, "state": "Utah", "question": "Is it unlawful to evict a tenant because they are part of two or more of the federally protected classes under the Fair Housing Act (race, color, religion, national origin, sex, disability, and familial status)?", "answer": "Yes"}
+{"idx": 5919, "state": "Utah", "question": "Is it specified what term is used to refer to the order from the court to the authorities to remove a tenant?", "answer": "Yes"}
+{"idx": 5943, "state": "Utah", "question": "Does the completion of a drug treatment program require postponement of the execution of a writ of eviction?", "answer": "No"}
+{"idx": 5956, "state": "Utah", "question": "Is a private company an entity empowered by law to execute a writ of eviction?", "answer": "No"}
+{"idx": 5965, "state": "Vermont", "question": "Is it specified whether the law allows a landlord to include a lease provision whereby a tenant waives their right to notice?", "answer": "Yes"}
+{"idx": 5969, "state": "Vermont", "question": "Does state/territory eviction law explicitly regulate corporate landlords?", "answer": "No"}
+{"idx": 5975, "state": "Vermont", "question": "Can a landlord evict a tenant for commiting substantial damage to the property?", "answer": "Yes"}
+{"idx": 5978, "state": "Vermont", "question": "Can a landlord evict a tenant for remaining on property after expiration of the lease?", "answer": "Yes"}
+{"idx": 5982, "state": "Vermont", "question": "Can a landlord evict a tenant for violating statutory tenant obligations?", "answer": "Yes"}
+{"idx": 5984, "state": "Vermont", "question": "Can a landlord evict a tenant for breach/breaking the lease, the rental agreement, or a landlord’s rule?", "answer": "No"}
+{"idx": 5992, "state": "Vermont", "question": "Must a landlord accept a tenant's attempt to cure for breach?", "answer": "No"}
+{"idx": 5993, "state": "Vermont", "question": "Must a landlord accept a tenant's attempt to cure for waste?", "answer": "No"}
+{"idx": 5997, "state": "Vermont", "question": "Must a landlord accept a tenant's attempt to cure for nuisance activities?", "answer": "No"}
+{"idx": 6015, "state": "Vermont", "question": "Is it unlawful to evict a tenant based on their marital status?", "answer": "Yes"}
+{"idx": 6019, "state": "Vermont", "question": "Is it unlawful to evict a tenant because of the type of income they receive, their status with regard to public assistance, or because they have a housing voucher?", "answer": "Yes"}
+{"idx": 6054, "state": "Vermont", "question": "Must a landlord halt the eviction process after filing but prior to the judgment if the tenant offers to pay back part or all of the rent prior to the judgment?", "answer": "Yes"}
+{"idx": 6068, "state": "Vermont", "question": "In an eviction action, can a tenant use landlord noncompliance with a statutory duty as a rebuttal/defense?", "answer": "No"}
+{"idx": 6069, "state": "Vermont", "question": "In an eviction action, can a tenant rebut/raise the defense that the landlord refused a voucher?", "answer": "No"}
+{"idx": 6073, "state": "Vermont", "question": "Can a tenant request that the issuance of a writ be stayed because they are a service member?", "answer": "No"}
+{"idx": 6074, "state": "Vermont", "question": "Can a tenant request that the issuance of a writ be stayed so that they have more time to pay rent?", "answer": "No"}
+{"idx": 6078, "state": "Vermont", "question": "Is the term 'Warrant for removal' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 6081, "state": "Vermont", "question": "Is the term 'Order of possession' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 6104, "state": "Vermont", "question": "Is an officer of the court an individual empowered by law to execute a writ of eviction?", "answer": "No"}
+{"idx": 6109, "state": "Virginia", "question": "Does the law directly regulate the amount a landlord can charge as a fee for late rent?", "answer": "Yes"}
+{"idx": 6115, "state": "Virginia", "question": "Is it specified whether the law allows a landlord to include a lease provision whereby a tenant waives their right to notice?", "answer": "Yes"}
+{"idx": 6119, "state": "Virginia", "question": "Does state/territory eviction law explicitly regulate residential landlords generally?", "answer": "Yes"}
+{"idx": 6127, "state": "Virginia", "question": "Can a landlord evict a tenant for commiting substantial damage to the property?", "answer": "No"}
+{"idx": 6131, "state": "Virginia", "question": "Can a landlord evict a tenant for refusal to allow the landlord lawful access to the unit?", "answer": "No"}
+{"idx": 6136, "state": "Virginia", "question": "Can a landlord evict a tenant for breach/breaking the lease, the rental agreement, or a landlord’s rule?", "answer": "No"}
+{"idx": 6142, "state": "Virginia", "question": "Can a landlord evict a tenant for nonpayment of rent?", "answer": "Yes"}
+{"idx": 6155, "state": "Virginia", "question": "Is injunctive relief available to a tenant who is unlawfully evicted?", "answer": "Yes"}
+{"idx": 6163, "state": "Virginia", "question": "Does the law prohibit rental agreements from including a provision allowing a landlord to evict a tenant because they contacted law enforcement services, health services, or safety services?", "answer": "No"}
+{"idx": 6181, "state": "Virginia", "question": "Does the law require landlords to describe repercussions for failure to vacate when giving tenants notice to vacate the property?", "answer": "No"}
+{"idx": 6182, "state": "Virginia", "question": "Does the law require the landlord to give the tenant notice to vacate the property prior to terminating a tenancy?", "answer": "Yes"}
+{"idx": 6183, "state": "Virginia", "question": "Is it specified in which court eviction cases are first heard?", "answer": "Yes"}
+{"idx": 6185, "state": "Virginia", "question": "Are eviction cases first heard in municipal court?", "answer": "No"}
+{"idx": 6186, "state": "Virginia", "question": "Are eviction cases first heard in county court?", "answer": "No"}
+{"idx": 6188, "state": "Virginia", "question": "Are eviction cases first heard in circuit court?", "answer": "No"}
+{"idx": 6191, "state": "Virginia", "question": "Are eviction cases first heard in justice of the peace court?", "answer": "No"}
+{"idx": 6198, "state": "Virginia", "question": "Primary methods of service are defined as those methods that must be attempted before a secondary method is permitted. Is delivery by commercial carrier a primary method of service for eviction actions?", "answer": "No"}
+{"idx": 6206, "state": "Virginia", "question": "Primary methods of service are defined as those methods that must be attempted before a secondary method is permitted. Is personal service a primary method of service for eviction actions?", "answer": "Yes"}
+{"idx": 6208, "state": "Virginia", "question": "Are the secondary methods of service permitted for an eviction action specified?", "answer": "Yes"}
+{"idx": 6209, "state": "Virginia", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is certified mail a permitted secondary method of service for an eviction action?", "answer": "No"}
+{"idx": 6216, "state": "Virginia", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is personal service to a suitable person other than defendant and mail a permitted secondary method of service for an eviction action?", "answer": "No"}
+{"idx": 6226, "state": "Virginia", "question": "Is it required that the evictions summons served to tenants describe list the reason for eviction?", "answer": "No"}
+{"idx": 6242, "state": "Virginia", "question": "In an eviction action, can a tenant rebut/raise the defense that unpaid rent was lawfully withheld? This includes where the law allows a tenant to procure reasonable alternative housing due to lack of repairs or services, and was excused from paying rent, or where the law allows a tenant to abate rent either in part or in full due to lack of repairs.", "answer": "No"}
+{"idx": 6243, "state": "Virginia", "question": "In an eviction action, can a tenant rebut/raise the defense that criminal activity was committed by someone else, and they reported the criminal activity to law enforcement?", "answer": "No"}
+{"idx": 6286, "state": "Washington", "question": "In eviction proceedings, does the filing of an appeal stay the execution of a writ?", "answer": "Yes"}
+{"idx": 6288, "state": "Washington", "question": "Is it specified whether the law allows a landlord to include a lease provision whereby a tenant waives their right to notice?", "answer": "Yes"}
+{"idx": 6296, "state": "Washington", "question": "Does state/territory eviction law explicitly regulate landlords with minimal rental properties? This includes includes: landlords who own five or fewer single family homes; landlords who own three or less homes or rental properties; and owners of three or less condominium or cooperative units.", "answer": "No"}
+{"idx": 6325, "state": "Washington", "question": "Is it specified what remedies are available to a tenant who is unlawfully evicted?", "answer": "Yes"}
+{"idx": 6328, "state": "Washington", "question": "Is injunctive relief available to a tenant who is unlawfully evicted?", "answer": "Yes"}
+{"idx": 6339, "state": "Washington", "question": "Is it unlawful to evict a tenant based on \"creed\" or \"religious creed\"?", "answer": "Yes"}
+{"idx": 6359, "state": "Washington", "question": "Are eviction cases first heard in county court?", "answer": "No"}
+{"idx": 6360, "state": "Washington", "question": "Are eviction cases first heard in high court?", "answer": "No"}
+{"idx": 6366, "state": "Washington", "question": "Are eviction cases first heard in superior court?", "answer": "Yes"}
+{"idx": 6368, "state": "Washington", "question": "Are eviction cases first heard in justice court?", "answer": "No"}
+{"idx": 6374, "state": "Washington", "question": "Primary methods of service are defined as those methods that must be attempted before a secondary method is permitted. Is posting a primary method of service for eviction actions?", "answer": "No"}
+{"idx": 6377, "state": "Washington", "question": "Primary methods of service are defined as those methods that must be attempted before a secondary method is permitted. Under eviction law, are certified mail and regular a primary method of service for eviction actions?", "answer": "No"}
+{"idx": 6384, "state": "Washington", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Is posting and mail a permitted secondary method of service for an eviction action?", "answer": "Yes"}
+{"idx": 6407, "state": "Washington", "question": "In an eviction action, can a tenant rebut/raise the defense that the landlord accepted partial payment of rent?", "answer": "No"}
+{"idx": 6415, "state": "Washington", "question": "In an eviction action, can a tenant rebut/raise the defense that unpaid rent was lawfully withheld? This includes where the law allows a tenant to procure reasonable alternative housing due to lack of repairs or services, and was excused from paying rent, or where the law allows a tenant to abate rent either in part or in full due to lack of repairs.", "answer": "No"}
+{"idx": 6417, "state": "Washington", "question": "In an eviction action, can a tenant rebut/raise the defense that eviction was retaliatory?", "answer": "Yes"}
+{"idx": 6420, "state": "Washington", "question": "In an eviction action, can a tenant rebut/raise the defense that the landlord refused a voucher?", "answer": "No"}
+{"idx": 6423, "state": "Washington", "question": "Can a tenant request that the issuance of a writ be stayed to request more time to relocate?", "answer": "No"}
+{"idx": 6431, "state": "Washington", "question": "Is the term 'Warrant for removal' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 6434, "state": "Washington", "question": "Is the term 'Order of possession' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 6456, "state": "Washington", "question": "Can a writ of eviction only be executed during the daytime?", "answer": "No"}
+{"idx": 6457, "state": "Washington", "question": "Does a tenant's ongoing military service require the postponement of the execution of a writ of eviction?", "answer": "No"}
+{"idx": 6459, "state": "Washington", "question": "Does the law require that writs of execution be postponed for good cause? This includes when the law states that the court shall specify the time when the tenant must vacate the property, taking into consideration the possibility of harm to the parties and other material facts; or when the court can postpone execution if it deemed additional time was appropriate.", "answer": "Yes"}
+{"idx": 6460, "state": "Washington", "question": "Does the law require that writs of execution not be executed on weekends?", "answer": "No"}
+{"idx": 6468, "state": "Washington", "question": "Is the municipal police department an entity empowered by law to execute a writ of eviction?", "answer": "No"}
+{"idx": 6480, "state": "Washington", "question": "Are court records for eviction cases by default publicly available?", "answer": "Yes"}
+{"idx": 6482, "state": "West Virginia", "question": "With regards to eviction law, does the jurisdiction have separate legal provisions for different types of landlords?", "answer": "Yes"}
+{"idx": 6490, "state": "West Virginia", "question": "Does a tenant forfeit the right to an eviction hearing by failing to respond to the court summons?", "answer": "Yes"}
+{"idx": 6498, "state": "West Virginia", "question": "Can a landlord evict a tenant for material falsification on the rental application?", "answer": "No"}
+{"idx": 6505, "state": "West Virginia", "question": "Can a landlord evict a tenant for refusal to allow the landlord lawful access to the unit?", "answer": "No"}
+{"idx": 6509, "state": "West Virginia", "question": "Can a landlord evict a tenant for criminal activity? This includes: criminal or illegal activity generally; committing a specific crime or illegal act; the use, possession, or sale of controlled substances; an unlawful action causing serious physical harm to another person; or criminal nuisance.", "answer": "Yes"}
+{"idx": 6518, "state": "West Virginia", "question": "Is it specified in which court eviction cases are first heard?", "answer": "Yes"}
+{"idx": 6525, "state": "West Virginia", "question": "Are eviction cases first heard in court of common pleas?", "answer": "No"}
+{"idx": 6532, "state": "West Virginia", "question": "Is it required that the evictions summons served to tenants mention the tenant's right to a jury trial?", "answer": "No"}
+{"idx": 6536, "state": "West Virginia", "question": "Is it required that the evictions summons served to tenants state the amount owed by the tenant?", "answer": "No"}
+{"idx": 6537, "state": "West Virginia", "question": "Is it required that the evictions summons served to tenants provide information on appeal process?", "answer": "No"}
+{"idx": 6548, "state": "West Virginia", "question": "In an eviction action, can a tenant rebut/raise the defense that the landlord breached the lease?", "answer": "Yes"}
+{"idx": 6552, "state": "West Virginia", "question": "In an eviction action, can a tenant rebut/raise the defense that eviction is unlawful because it was motivated by a legally recognized form of discrimination?", "answer": "No"}
+{"idx": 6553, "state": "West Virginia", "question": "In an eviction action, can a tenant rebut/raise the defense that the landlord refused to complete repairs?", "answer": "No"}
+{"idx": 6558, "state": "West Virginia", "question": "In an eviction action, can a tenant use landlord noncompliance with a statutory duty as a rebuttal/defense?", "answer": "No"}
+{"idx": 6559, "state": "West Virginia", "question": "In an eviction action, can a tenant rebut/raise the defense that the landlord refused a voucher?", "answer": "No"}
+{"idx": 6579, "state": "Wisconsin", "question": "With regards to eviction law, does the jurisdiction have separate legal provisions for different types of landlords?", "answer": "Yes"}
+{"idx": 6581, "state": "Wisconsin", "question": "Does the law specify a minimum number of days a tenant can be late on rent before the landlord can file an eviction action for nonpayment?", "answer": "Yes"}
+{"idx": 6589, "state": "Wisconsin", "question": "Is it specified whether a tenant forfeits the right to an eviction hearing by failing to respond to the court summons?", "answer": "Yes"}
+{"idx": 6594, "state": "Wisconsin", "question": "Does state/territory eviction law explicitly regulate floating home landlords?", "answer": "No"}
+{"idx": 6595, "state": "Wisconsin", "question": "Does state/territory eviction law explicitly regulate landlords with minimal rental properties? This includes includes: landlords who own five or fewer single family homes; landlords who own three or less homes or rental properties; and owners of three or less condominium or cooperative units.", "answer": "No"}
+{"idx": 6603, "state": "Wisconsin", "question": "Can a landlord evict a tenant for refusal to allow the landlord lawful access to the unit?", "answer": "No"}
+{"idx": 6611, "state": "Wisconsin", "question": "Can a landlord evict a tenant for refusal of new lease terms? This includes when the law allows for eviction if the tenant refused to sign a lease extension; refused to agree to a fair rent increase; or refused to agree to lease changes at the time of renewal", "answer": "No"}
+{"idx": 6617, "state": "Wisconsin", "question": "Must a landlord accept a tenant's attempt to cure for waste?", "answer": "Yes"}
+{"idx": 6627, "state": "Wisconsin", "question": "Is injunctive relief available to a tenant who is unlawfully evicted?", "answer": "Yes"}
+{"idx": 6635, "state": "Wisconsin", "question": "When a landlord wants to sell a property occupied by a tenant, does the law require longer than the standard notice period?", "answer": "Yes"}
+{"idx": 6637, "state": "Wisconsin", "question": "Is it specified what is required to be in the notice?", "answer": "Yes"}
+{"idx": 6648, "state": "Wisconsin", "question": "Are eviction cases first heard in housing court?", "answer": "No"}
+{"idx": 6654, "state": "Wisconsin", "question": "Are eviction cases first heard in court of common pleas?", "answer": "No"}
+{"idx": 6655, "state": "Wisconsin", "question": "Are eviction cases first heard in justice of the peace court?", "answer": "No"}
+{"idx": 6672, "state": "Wisconsin", "question": "Are the secondary methods of service permitted for an eviction action specified?", "answer": "Yes"}
+{"idx": 6683, "state": "Wisconsin", "question": "Secondary methods of service are defined as those methods that may be used if the primary method is unsuccessful. Are posting and certified mail permitted secondary methods of service for an eviction action?", "answer": "No"}
+{"idx": 6693, "state": "Wisconsin", "question": "Is it required that the evictions summons served to tenants provide information on appeal process?", "answer": "No"}
+{"idx": 6695, "state": "Wisconsin", "question": "Is it required that the evictions summons served to tenants state the retaliatory eviction is unlawful?", "answer": "No"}
+{"idx": 6702, "state": "Wisconsin", "question": "In an eviction action, can a tenant rebut/raise the defense that the landlord accepted partial payment of rent?", "answer": "No"}
+{"idx": 6709, "state": "Wisconsin", "question": "In an eviction action, can a tenant rebut/raise the defense that the landlord refused to complete repairs?", "answer": "No"}
+{"idx": 6712, "state": "Wisconsin", "question": "In an eviction action, can a tenant rebut/raise the defense that eviction was retaliatory?", "answer": "Yes"}
+{"idx": 6729, "state": "Wisconsin", "question": "Is the term 'Order of possession' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 6733, "state": "Wisconsin", "question": "Is the term 'Writ of possession' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 6739, "state": "Wisconsin", "question": "Is the term 'Writ of assistance' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 6757, "state": "Wyoming", "question": "In eviction proceedings, does the filing of an appeal stay the execution of a writ?", "answer": "Yes"}
+{"idx": 6758, "state": "Wyoming", "question": "Is it specified whether the law requires a tenant to pay a bond in order to appeal an eviction judgment?", "answer": "Yes"}
+{"idx": 6760, "state": "Wyoming", "question": "Can a landlord evict a tenant for material falsification on the rental application?", "answer": "No"}
+{"idx": 6764, "state": "Wyoming", "question": "Can a landlord evict a tenant for committing domestic violence? This includes when the a tenant can be evicted if they are a domestic violence offender, or if they endanger another tenant and are subject to a protective order or criminal complaint for domestic abuse.", "answer": "No"}
+{"idx": 6774, "state": "Wyoming", "question": "Can a landlord evict a tenant for endangering another person? This includes instances when the law allows for eviction of a tenant if: their behavior or the behavior of members of their family adversely affects the health or safety of other tenants, or the landlord or their representatives; the tenant or a guest are a perpetrator of violence; or the presence of a domestic violence offender at the tenant’s premises results in violent disturbances that pose a threat to the safety of other residents.", "answer": "No"}
+{"idx": 6783, "state": "Wyoming", "question": "Is it unlawful to evict a tenant because of their gender identity?", "answer": "No"}
+{"idx": 6790, "state": "Wyoming", "question": "Is it unlawful to evict a tenant because they experienced domestic violence?", "answer": "Yes"}
+{"idx": 6794, "state": "Wyoming", "question": "Does the law require the landlord to give the tenant notice to vacate the property prior to terminating a tenancy?", "answer": "Yes"}
+{"idx": 6798, "state": "Wyoming", "question": "Are eviction cases first heard in county court?", "answer": "No"}
+{"idx": 6800, "state": "Wyoming", "question": "Are eviction cases first heard in circuit court?", "answer": "Yes"}
+{"idx": 6801, "state": "Wyoming", "question": "Are eviction cases first heard in state court?", "answer": "No"}
+{"idx": 6828, "state": "Wyoming", "question": "Is the term 'Warrant of eviction' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 6830, "state": "Wyoming", "question": "Is the term 'Writ of possession' used to refer to the order from the court to the authorities to remove a tenant?", "answer": "No"}
+{"idx": 6844, "state": "Wyoming", "question": "Does a public emergency require postponement of the execution of a write of eviction?", "answer": "No"}
+{"idx": 6847, "state": "Wyoming", "question": "Does inclement weather postpone the execution of a writ of eviction?", "answer": "No"}

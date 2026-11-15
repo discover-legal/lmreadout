@@ -1,0 +1,4 @@
+Does the scientific evidence support this claim about the climate? Answer Supported, Refuted, Disputed (the evidence points both ways) or Not enough information.
+
+Claim: {{claim}}
+Label:

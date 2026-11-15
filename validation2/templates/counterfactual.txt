@@ -1,0 +1,4 @@
+Does this sentence from a product review describe something that did not happen or cannot happen (a counterfactual)? Answer Yes or No.
+
+Sentence: {{text}}
+Label:

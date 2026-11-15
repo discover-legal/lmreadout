@@ -1,0 +1,5 @@
+Answer this question about the housing law of the given US state or territory. Answer Yes or No.
+
+State: {{state}}
+Question: {{question}}
+Label:

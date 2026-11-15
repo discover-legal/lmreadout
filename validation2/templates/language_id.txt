@@ -1,0 +1,4 @@
+Which language is this text written in? Answer Arabic, Bulgarian, Chinese, Dutch, English, French, German, Greek, Hindi, Italian, Japanese, Polish, Portuguese, Russian, Spanish, Swahili, Thai, Turkish, Urdu or Vietnamese.
+
+Text: {{text}}
+Label:

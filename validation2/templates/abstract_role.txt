@@ -1,0 +1,4 @@
+Which part of the abstract of a medical research paper is this sentence from? Answer Background, Objective, Methods, Results or Conclusions.
+
+Sentence: {{text}}
+Label:
