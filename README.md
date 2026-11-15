@@ -259,26 +259,48 @@ model has read your examples. The exact arithmetic is in the comment at the top 
 Three settings decide how the correction behaves:
 
 - **Lean:** how much of the model's bias to remove. None, half or all.
-- **Strength:** how hard the read-out overrides the model's own answer. 0, 0.5, 1, 2 or 4. The fixed default is 2.
+- **Strength:** how hard the read-out overrides the model's own answer. 0, 0.25, 0.5, 1, 2 or 4. The fixed default
+  is 2.
 - **Ridge:** how much the read-out is smoothed. n/4, n or 4n, where n is the number of examples.
 
-`fit --auto` tries every combination. It scores each one on your examples by cross-validation: hold some examples
-back, fit on the rest, score the ones held back, and repeat. (Up to 50 examples it holds back one at a time; above
-that, a tenth at a time.) It keeps the combination with the best balanced accuracy.
+`fit --auto` scores every combination on your examples by cross-validation: hold some examples back, fit on the
+rest, score the ones held back, and repeat. (Up to 50 examples it holds back one at a time; above that, a tenth at
+a time.) The score is balanced accuracy.
 
-Three rules sit on top:
+With few examples those scores are noisy, so it does not simply take the highest. It starts from a sensible
+setting and moves only on clear evidence:
 
-- **It leaves the model alone unless a correction scores strictly higher,** and tells you when it does.
-- **Ties go to a gentler strength on bigger models:** 2 below 3B parameters, 1 below 7B, 0.5 from 7B up. A bigger
-  model's own answer deserves more trust.
-- **If some answer has fewer than two examples,** nothing can be cross-validated. It then removes the lean only,
-  which needs no labels, and tells you which answers need more examples.
+1. **Where it starts.** If the untouched model is clearly better than guessing on your examples, it starts from
+   the untouched model. If not, there is nothing to protect, and it starts from the **standard correction**: all
+   the lean removed, ridge n, and a strength that grows with the number of examples.
+2. **From the untouched model** it moves to the standard correction only if that scores clearly higher.
+3. **From there** it moves to the best-scoring combination of all only if that scores clearly higher. Ties for
+   best go to the combination that gives the right answers the higher probability.
+
+"Clearly" means by more than the noise in the comparison: one standard error of the difference, worked out from
+the examples the two settings answer differently.
+
+The standard correction's strength is the full strength for the model's size from 120 examples up, and
+proportionally less with fewer, because a read-out from a handful of examples is mostly noise. The full strength
+is gentler on bigger models, whose own answer deserves more trust: 2 below 3B parameters, 1 below 7B, 0.5 from 7B
+up. For a model under 3B that gives 0.25 with 15 examples, 0.5 with 30, 1 with 60 and 2 from 120.
+
+It tells you what it did: where it started, whether it moved, and when it leaves the model alone. If some answer
+has fewer than two examples it says which; it still chooses, but the correction can learn little about that
+answer. (Up to 0.5.0 it switched the read-out off in that case.) If your examples hold only one answer, nothing
+can be scored, so it removes the lean only, which needs no labels.
 
 `sweep --auto` adds an "auto" column, with the settings chosen afresh from each random set of N examples.
 
 Why we added it: in the Handi runs the fixed strength was too strong for bigger models. With 15 examples, the fixed
 correction made Qwen3.5-9B worse than the untouched model on LegalBench's two-answer tasks. At half strength it
 would have helped.
+
+Why it changed in 0.6.0: up to 0.5.0, `--auto` took the highest score among 39 combinations, and switched the
+read-out off whenever one answer had fewer than two examples. The held-out test of 0.5.0 (below) showed that with
+15 examples the highest score says little about which combination is really best, and that switching the read-out
+off cost up to 0.17 on tasks with many answers. The results below were made with 0.5.0 or earlier unless a section
+says otherwise.
 
 ## Does it work? Results
 
@@ -532,9 +554,10 @@ only, which is what `eval`, `predict` and `Classifier` do, or restrict generatio
   often too much. `--auto` chooses it from your examples, which with 15 of them is itself noisy.
 - **`--auto`'s rule for model size was set on Qwen3.5 from 0.8B to 9B.** Phi-4-mini has been run on four tasks;
   other model families are untested.
-- **`--auto`'s fallback is not checked against your examples.** When some answer has fewer than two examples it
-  removes the lean without cross-validating. In the held-out test on Qwen3.5-0.8B that gained 0.31 to 0.39 on
-  three tasks and cost 0.025 on one.
+- **An answer with fewer than two examples is barely learned.** `--auto` still chooses its settings and names
+  the answers that are short, but the read-out has almost nothing to go on for them. (Up to 0.5.0 it removed the
+  lean without checking in that case; in the held-out test of 0.5.0 on Qwen3.5-0.8B that gained 0.31 to 0.39 on
+  three tasks and cost 0.025 on one.)
 - **Prompts get no beginning-of-sequence token.** Qwen uses none. Models that expect one, like Llama 3 and Gemma,
   may score lower than they should.
 - **It reads the model's last layer only.** Classifiers fitted a few layers earlier are usually a little better
@@ -560,8 +583,10 @@ cover:
 - **The 0.3.1 fix:** the constant is removed without changing any answer.
 - **Files:** save and load, including files from version 0.1.
 - **Patching:** only the answer rows change, on float32 and bfloat16 models.
-- **`--auto`:** the combinations tried, the tie order and the size rule; it uses a planted signal; it leaves alone
-  a model that is already right; it falls back when an answer is short of examples.
+- **`--auto`:** the combinations tried, the size rule and how the standard strength grows with the examples; it
+  uses a planted signal; it leaves alone a model that is already right, or one that works when nothing is clearly
+  better; it starts from the standard correction when the model gives one answer to everything; it still chooses
+  when an answer is short of examples, and removes the lean only when the examples hold a single answer.
 - **`sweep`** and the word-count check.
 - **Refusals and warnings:** prompts that get cut; a fit with only one answer; sweep sizes under two or no draws;
   predictions that would overwrite a field; fixed settings given together with auto.

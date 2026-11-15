@@ -287,12 +287,19 @@ def test_preferred_strength_steps_down_with_size():
     assert preferred_strength(4.7e9) == 1.0 and preferred_strength(9.6e9) == 0.5
 
 
-def test_candidates_grid_and_tie_order():
-    for npar, s in ((1e9, 2.0), (4e9, 1.0), (9e9, 0.5)):
+def test_candidates_grid():
+    for npar in (1e9, 4e9, 9e9, None):
         c = candidates(npar)
-        assert len(c) == 3 + 4 * 3 * 3                          # strength 0: ridge does not matter
-        assert c[0] == dict(lean=1.0, strength=s, lam_factor=1.0)
+        assert len(c) == 3 + 5 * 3 * 3                          # strength 0: ridge does not matter
         assert sum(x["lean"] == 0 and x["strength"] == 0 for x in c) == 1
+        assert len({tuple(x.values()) for x in c}) == len(c)
+
+
+def test_standard_strength_grows_with_the_examples_up_to_the_preferred():
+    from lmreadout.core import standard_strength
+    assert [standard_strength(1e9, n) for n in (8, 15, 30, 60, 120, 500)] == [0.25, 0.25, 0.5, 1.0, 2.0, 2.0]
+    assert [standard_strength(4e9, n) for n in (15, 30, 60, 120, 500)] == [0.25, 0.25, 0.5, 1.0, 1.0]
+    assert [standard_strength(9e9, n) for n in (15, 60, 120, 500)] == [0.25, 0.25, 0.5, 0.5]
 
 
 def test_lean_scales_the_calibration():
@@ -322,14 +329,37 @@ def test_tune_leaves_a_model_that_is_already_right():
     assert r is None and t["unchanged"] and t["cv_unchanged"] == 1.0
 
 
-def test_tune_falls_back_to_the_lean_when_an_answer_is_short():
+def test_tune_still_chooses_when_an_answer_is_short():
     H, LAB, LSE, gold, _ = synthetic(n=30)
-    gold = np.zeros(30, int); gold[0] = 1
-    r, t = fit_auto(H, LAB, LSE, gold)
-    assert t["fallback"] == [1] and t["lean"] == 1.0 and t["alpha_mult"] == 0.0 and not t["unchanged"]
-    assert np.allclose(r.scores(H, LAB), r.calibrated(H, LAB))   # lean removed, no read-out
-    r1, t1 = fit_auto(H, LAB, LSE, np.zeros(30, int))              # one answer only: still the lean, no read-out
-    assert t1["fallback"] == [1] and np.allclose(r1.scores(H, LAB), r1.calibrated(H, LAB))
+    g = gold.copy(); g[np.flatnonzero(g == 1)[1:]] = 0           # one item of answer 1
+    r, t = fit_auto(H, LAB, LSE, g)
+    assert t["short"] == [1] and t["fallback"] == [] and t["folds"] == 30 and len(t["table"]) == len(candidates())
+    assert t["start"] in ("unchanged", "standard") and set(t["steps"]) <= {"standard", "best"}
+
+
+def test_tune_falls_back_to_the_lean_with_one_answer_only():
+    H, LAB, LSE, gold, _ = synthetic(n=30)
+    r1, t1 = fit_auto(H, LAB, LSE, np.zeros(30, int))              # one answer only: the lean, no read-out
+    assert t1["fallback"] == [1] and t1["lean"] == 1.0 and t1["alpha_mult"] == 0.0 and not t1["unchanged"]
+    assert np.allclose(r1.scores(H, LAB), r1.calibrated(H, LAB))
+
+
+def test_tune_starts_from_the_standard_edit_when_the_model_says_one_thing():
+    H, _, LSE, gold, _ = synthetic(n=40)
+    LAB = np.column_stack([np.full(40, 3.0), np.zeros(40)])       # always answer 0: guessing, nothing to protect
+    t = tune(H, LAB, LSE, gold)
+    assert t["start"] == "standard" and not t["unchanged"] and t["cv_unchanged"] == 0.5
+
+
+def test_tune_needs_clear_evidence_to_leave_a_working_model():
+    rng = np.random.default_rng(0)
+    H, _, LSE, gold, _ = synthetic(n=40)
+    H = rng.normal(size=H.shape) + 3.0                            # nothing to read in the state
+    wrong = np.arange(40) % 5 == 0                                # the model itself is right on four items in five
+    sign = np.where(wrong, -1, 1) * (2 * gold - 1)
+    LAB = np.column_stack([-2.0 * sign, 2.0 * sign]).astype(float)
+    t = tune(H, LAB, LSE, gold)
+    assert t["start"] == "unchanged" and t["unchanged"] and t["steps"] == []
 
 
 def test_tune_uses_folds_above_fifty_items():
@@ -340,10 +370,11 @@ def test_tune_uses_folds_above_fifty_items():
 def test_sweep_and_twofold_with_auto():
     H, LAB, LSE, gold, _ = synthetic(n=200)
     res = sweep(H, LAB, LSE, gold, sizes=(15, 40), draws=3, auto=True, n_params=int(1e9))
-    assert all("bal_auto" in r and "auto_fallback_draws" in r and r["auto_choices"] for r in res)
+    assert all("bal_auto" in r and "auto_short_draws" in r and r["auto_choices"] for r in res)
     gold2 = gold.copy(); gold2[np.flatnonzero(gold2 == 1)[2:]] = 0              # two items of answer 1 in all
     r2 = sweep(H, LAB, LSE, gold2, sizes=(15,), draws=3, auto=True)[0]
-    assert r2["auto_fallback_draws"] == 3 and r2["auto_choices"] == "fallback (lean only): 3"
+    assert r2["auto_short_draws"] == 3 and r2["auto_fallback_draws"] == 0       # still tuned, not a fallback
+    assert "fallback" not in r2["auto_choices"]
     tf = twofold(H, LAB, LSE, gold, auto=True)
     assert tf["bal_edited"] > tf["bal_shipped"]
 

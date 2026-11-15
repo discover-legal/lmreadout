@@ -19,12 +19,18 @@ Your files:
 Answers: without --labels, every distinct "answer" in the data is used. Each answer is recognised by its first
 token, so answers of several words are fine as long as they start differently.
 
---auto picks the settings from your examples and may decide to leave the model alone. It tries each combination of:
+--auto picks the settings from your examples and may decide to leave the model alone. The settings are:
   lean      how much of the model's bias towards one answer to remove: none, half or all
-  strength  how hard the correction overrides the model's own answer: 0, 0.5, 1, 2 or 4
+  strength  how hard the correction overrides the model's own answer: 0, 0.25, 0.5, 1, 2 or 4
   ridge     how much the correction is smoothed: n/4, n or 4n, for n examples
-and keeps the one that scores best on examples held back from the fit. Ties go to a gentler strength on bigger
-models. If some answer has fewer than two examples it cannot choose, so it only removes the bias.
+It scores every combination on examples held back from the fit, then moves only on clear evidence:
+  1. if the untouched model is clearly better than guessing on your examples it starts from the untouched model,
+     otherwise from the standard correction (all the bias removed, a strength that grows with the number of
+     examples and is gentler on bigger models)
+  2. from the untouched model it moves to the standard correction only if that scores clearly higher
+  3. from there it moves to the best-scoring combination only if that scores clearly higher
+"Clearly" means by more than the noise in the comparison. An answer with fewer than two examples is reported;
+the settings are still chosen, but the correction can learn little about that answer.
 """
 from __future__ import annotations
 
@@ -157,16 +163,29 @@ def cmd_fit(a):
     if a.auto:
         r, t = fit_auto(H, LAB, LSE, gold, n_params=npar, **common)
         if t["fallback"]:
-            print(f"--auto: fewer than two labelled items of {[labels[k] for k in t['fallback']]}, so no settings can "
-                  "be chosen: removing the lean only (needs no labels), no read-out. Label more items of those answers "
-                  "to let --auto choose.", flush=True)
+            print(f"--auto: the labelled items hold only one answer, so no settings can be chosen: removing the lean "
+                  "only (needs no labels), no read-out. Label items of the other answers to let --auto choose.",
+                  flush=True)
         else:
-            print(f"--auto on all {len(gold)} items ({t['folds']} folds; model {npar / 1e9:.2f}B parameters, ties go "
-                  f"to strength {t['preferred_strength']}): lean {t['lean']}, strength {t['alpha_mult']}, ridge "
-                  f"{t['lam_factor']} x n; cross-validated balanced accuracy {t['cv_bal']:.3f} "
-                  f"(model unchanged {t['cv_unchanged']:.3f})", flush=True)
+            if t["short"]:
+                print(f"--auto: fewer than two labelled items of {[labels[k] for k in t['short']]}; the settings are "
+                      "still chosen, but the read-out can learn little about those answers. Label more of them if you "
+                      "can.", flush=True)
+            how = {"unchanged": "started from the model unchanged (it is clearly above guessing on these items)",
+                   "standard": "started from the standard edit (the model unchanged is not clearly above guessing "
+                               "on these items)"}[t["start"]]
+            moved = {(): "and stayed there", ("standard",): "then moved to the standard edit (clearly better)",
+                     ("best",): "then moved to the best-scoring setting (clearly better)",
+                     ("standard", "best"): "then moved to the standard edit and on to the best-scoring setting (each "
+                                           "clearly better)"}[tuple(t["steps"])]
+            print(f"--auto on all {len(gold)} items ({t['folds']} folds; model {npar / 1e9:.2f}B parameters, standard "
+                  f"edit: all the lean, strength {t['standard_strength']:g}, ridge n): {how}, {moved}.\n"
+                  f"  chosen: lean {t['lean']:g}, strength {t['alpha_mult']:g}, ridge {t['lam_factor']:g} x n; "
+                  f"cross-validated balanced accuracy {t['cv_bal']:.3f} (model unchanged {t['cv_unchanged']:.3f})",
+                  flush=True)
         if r is None:
-            print("no setting beat the model unchanged on the labelled items: leave the model as it is. "
+            print("no setting was clearly better than the model unchanged on the labelled items: leave the model as "
+                  "it is. "
                   f"Nothing written to {a.out}.", flush=True)
             return
     else:
@@ -186,15 +205,15 @@ def cmd_sweep(a):
     print(f"each size N: {a.draws} random draws of N labelled items, every other item scored, mean over draws\n"
           f"balanced accuracy (guessing = {1 / K:.3f}), accuracy in brackets", flush=True)
     head = f"{'N':>6} {'as shipped':>16} {'calibrated':>16} {'word counts':>16} {'edited':>16}"
-    print(head + (f" {'auto':>16}  fallback draws" if a.auto else ""))
+    print(head + (f" {'auto':>16}  draws with a short answer" if a.auto else ""))
     for r in res:
         cell = lambda k: f"{r['bal_' + k]:.3f} ({r[k]:.3f})"
         line = f"{r['n_fit']:>6} {cell('shipped'):>16} {cell('calibrated'):>16} {cell('wordcount'):>16} {cell('edited'):>16}"
-        print(line + (f" {cell('auto'):>16}  {r['auto_fallback_draws']}" if a.auto else ""))
+        print(line + (f" {cell('auto'):>16}  {r['auto_short_draws']}" if a.auto else ""))
     if a.auto:
         print("edited = the fixed settings (all the lean, strength --alpha-mult, ridge --lam); auto = settings chosen "
-              "from the N items alone. Fallback draws (an answer with under two of the N items): lean removed only, "
-              "no read-out.\nsettings auto chose (lean / strength / ridge), count over the draws:", flush=True)
+              "from the N items alone. Draws with a short answer: some answer had under two of the N items.\n"
+              "settings auto chose (lean / strength / ridge), count over the draws:", flush=True)
         for r in res:
             print(f"{r['n_fit']:>6}  {r['auto_choices']}")
     if a.csv and res:

@@ -265,26 +265,31 @@ def fit(H: np.ndarray, LAB: np.ndarray, LSE: np.ndarray, gold: np.ndarray, *, mo
 # ----------------------------------------------------------------------------------------------- choosing the settings
 
 LEANS = (0.0, 0.5, 1.0)
-STRENGTHS = (0.0, 0.5, 1.0, 2.0, 4.0)
+STRENGTHS = (0.0, 0.25, 0.5, 1.0, 2.0, 4.0)
 LAM_FACTORS = (0.25, 1.0, 4.0)                                  # ridge strength = factor x number of fit items
+FULL_AT = 120                                                   # labelled items at which the standard edit is at full strength
 
 
 def preferred_strength(n_params: int | None) -> float:
-    """The strength ties go to, stepping down with model size (owner's rule): 2 up to the 2B class, 1 around 4B, 0.5
-    from 9B. Cuts between the measured sizes: below 3B parameters, below 7B, 7B and up. Unknown size: 2."""
+    """The full strength for a model of this size, stepping down with size (owner's rule): 2 up to the 2B class, 1
+    around 4B, 0.5 from 9B. Cuts between the measured sizes: below 3B parameters, below 7B, 7B and up. Unknown
+    size: 2."""
     return 2.0 if n_params is None or n_params < 3e9 else 1.0 if n_params < 7e9 else 0.5
 
 
+def standard_strength(n_params: int | None, n: int) -> float:
+    """The strength of the standard edit with n labelled items: the preferred strength from FULL_AT items, less in
+    proportion with fewer (a read-out from few items is mostly noise), rounded down to a strength tune tries and
+    never below the gentlest of them."""
+    s = preferred_strength(n_params) * min(1.0, n / FULL_AT)
+    return max([x for x in STRENGTHS if 0 < x <= s * (1 + 1e-9)] or [min(x for x in STRENGTHS if x > 0)])
+
+
 def candidates(n_params: int | None = None) -> list[dict]:
-    """Every setting tried, in tie order: the preferred setting (all the lean, the preferred strength, ridge = n)
-    first, then by distance from it: strength steps first (lower first at equal distance), then lean, then ridge.
-    Strength 0 has no read-out, so the ridge does not matter there; lean 0 with strength 0 is the model unchanged."""
-    pref = STRENGTHS.index(preferred_strength(n_params))
-    out = [dict(lean=lean, strength=s, lam_factor=f)
-           for s in STRENGTHS for lean in LEANS for f in (LAM_FACTORS if s > 0 else (1.0,))]
-    lam_rank = {1.0: 0, 0.25: 1, 4.0: 1}
-    return sorted(out, key=lambda c: (abs(STRENGTHS.index(c["strength"]) - pref), c["strength"], 1.0 - c["lean"],
-                                      lam_rank[c["lam_factor"]], c["lam_factor"]))
+    """Every setting tried. Strength 0 has no read-out, so the ridge does not matter there; lean 0 with strength 0
+    is the model unchanged. (n_params is accepted for compatibility; the settings are the same for every size.)"""
+    return [dict(lean=lean, strength=s, lam_factor=f)
+            for s in STRENGTHS for lean in LEANS for f in (LAM_FACTORS if s > 0 else (1.0,))]
 
 
 def _folds(gold, k, seed):
@@ -307,40 +312,73 @@ def _rates(preds: dict, gold: np.ndarray) -> dict:
 
 
 def tune(H, LAB, LSE, gold, *, n_params: int | None = None, seed: int = 0) -> dict:
-    """Choose lean, strength and ridge from the labelled items alone. Each setting is scored by cross-validation on
+    """Choose lean, strength and ridge from the labelled items alone. Every setting is scored by cross-validation on
     those items (leave one out up to 50 items, ten folds split within each answer above that), by balanced accuracy.
-    The model is left unchanged unless some edit scores strictly above it; among edits the best wins and ties go to
-    the setting nearest the preferred one (see candidates). Returns the chosen setting
-    (lean, alpha_mult, lam for all n items), whether that is the model unchanged, and every setting's score.
-    Fallback: when some answer has fewer than two labelled items nothing can be cross-validated, so the lean is
-    removed (it needs no labels) and no read-out is added; fallback names the answers short of items."""
+    The choice is then made in three steps, each needing clear evidence: a difference in balanced accuracy larger
+    than its own noise (one standard error, from the items the two settings answer differently).
+      1. Start from the model unchanged if it is clearly above guessing on the labelled items; otherwise there is
+         nothing to protect and the start is the standard edit (all the lean, standard_strength, ridge = n).
+      2. From the model unchanged, move to the standard edit only if that is clearly better.
+      3. From there, move to the best-scoring setting of all only if that is clearly better (ties for best go to
+         the setting that gives the right answers the higher probability).
+    Answers with fewer than two labelled items are listed in "short"; cross-validation still runs (a fold whose
+    remaining items hold one answer is scored without the read-out). Fallback: with only one answer among the
+    labelled items nothing can be cross-validated, so the lean is removed (it needs no labels) and no read-out is
+    added. Returns the chosen setting (lean, alpha_mult, lam for all n items), whether that is the model unchanged,
+    how it got there (start, steps) and every setting's score."""
     n, K = len(gold), LAB.shape[1]
-    short = [k for k in range(K) if np.sum(gold == k) < 2]
-    if short:
+    counts = np.bincount(gold, minlength=K)
+    short = [k for k in range(K) if counts[k] < 2]
+    pref, std = preferred_strength(n_params), standard_strength(n_params, n)
+    if np.count_nonzero(counts) < 2:
         return dict(lean=1.0, alpha_mult=0.0, lam=float(n), lam_factor=1.0, unchanged=False, cv_bal=None,
-                    cv_unchanged=None, preferred_strength=preferred_strength(n_params), folds=0, table=[],
-                    fallback=short)
+                    cv_unchanged=None, preferred_strength=pref, standard_strength=std, start=None, steps=[], folds=0,
+                    table=[], short=short, fallback=short)
     cands = candidates(n_params)
     fold = np.arange(n) if n <= 50 else _folds(gold, 10, seed)
-    pred = np.zeros((len(cands), n), int)
+    pred, logp = np.zeros((len(cands), n), int), np.zeros((len(cands), n))
     for f in np.unique(fold):
         tr, ev = fold != f, fold == f
         nt = int(tr.sum())
-        Ps = {lf: _parts(H[tr], LAB[tr], LSE[tr], gold[tr], lf * nt) for lf in LAM_FACTORS}
+        one = len(np.unique(gold[tr])) < 2                      # the rest holds one answer: no read-out to fit
+        Ps = {lf: _parts(H[tr], LAB[tr], LSE[tr], gold[tr], lf * nt) for lf in ((1.0,) if one else LAM_FACTORS)}
         for i, c in enumerate(cands):
-            P = Ps[c["lam_factor"]]                             # scored exactly as the fitted Readout would
-            D = _deltas(P["mu_hat"], P["p_mean"], c["lean"] * P["shift"], P["W"], P["B"], _alpha(P, c["strength"]))
-            pred[i, ev] = (LAB[ev] + H[ev] @ D.T).argmax(1)
-    cv = [balanced_accuracy(p, gold) for p in pred]
+            P = Ps[1.0 if one else c["lam_factor"]]             # scored exactly as the fitted Readout would
+            alpha = 0.0 if one else _alpha(P, c["strength"])
+            S = LAB[ev] + H[ev] @ _deltas(P["mu_hat"], P["p_mean"], c["lean"] * P["shift"], P["W"], P["B"], alpha).T
+            S = S - S.max(1, keepdims=True)
+            pred[i, ev] = S.argmax(1)
+            logp[i, ev] = (S - np.log(np.exp(S).sum(1, keepdims=True)))[np.arange(S.shape[0]), gold[ev]]
+    present = np.flatnonzero(counts)
+    w = 1.0 / (len(present) * counts[gold])                     # each item's weight in balanced accuracy
+    right = pred == gold[None, :]
+    cv, cv_logp = right @ w, logp @ w
+
+    def clearly_better(a, b):
+        x = right[a].astype(float) - right[b]
+        return cv[a] - cv[b] > np.sqrt(np.sum((w * x) ** 2)) + 1e-12
+
+    def clearly_above_guessing(i):
+        rate = np.array([right[i][gold == k].mean() for k in present])
+        nk = counts[present]
+        se = np.sqrt(np.sum(np.maximum(rate * (1 - rate), 0.25 / nk) / nk)) / len(present)
+        return cv[i] - 1.0 / len(present) > se
+
     i0 = next(i for i, c in enumerate(cands) if c["lean"] == 0 and c["strength"] == 0)   # the model unchanged
-    best = max((i for i in range(len(cands)) if i != i0), key=lambda i: (round(cv[i], 9), -i))  # ties: preferred
-    if round(cv[best], 9) <= round(cv[i0], 9):                  # no edit beats the model unchanged: leave it
-        best = i0
-    c = cands[best]
+    i_std = next(i for i, c in enumerate(cands) if c == dict(lean=1.0, strength=std, lam_factor=1.0))
+    best = max(range(len(cands)), key=lambda i: (round(cv[i], 9), cv_logp[i]))
+    start = "unchanged" if clearly_above_guessing(i0) else "standard"
+    cur, steps = (i0, []) if start == "unchanged" else (i_std, [])
+    if cur == i0 and clearly_better(i_std, i0):
+        cur = i_std; steps.append("standard")
+    if best != cur and clearly_better(best, cur):
+        cur = best; steps.append("best")
+    c = cands[cur]
     return dict(lean=c["lean"], alpha_mult=c["strength"], lam=float(c["lam_factor"] * n), lam_factor=c["lam_factor"],
-                unchanged=best == i0, cv_bal=float(cv[best]), cv_unchanged=float(cv[i0]),
-                preferred_strength=preferred_strength(n_params), folds=int(len(np.unique(fold))),
-                table=[dict(**c, cv_bal=float(v)) for c, v in zip(cands, cv)], fallback=[])
+                unchanged=cur == i0, cv_bal=float(cv[cur]), cv_unchanged=float(cv[i0]), preferred_strength=pref,
+                standard_strength=std, start=start, steps=steps, folds=int(len(np.unique(fold))),
+                table=[dict(**c, cv_bal=float(v), cv_logp=float(q)) for c, v, q in zip(cands, cv, cv_logp)],
+                short=short, fallback=[])
 
 
 def fit_auto(H, LAB, LSE, gold, *, n_params: int | None = None, seed: int = 0, **kw):
@@ -407,9 +445,9 @@ def sweep(H, LAB, LSE, gold, texts: list[str] | None = None, sizes=(15, 30, 60, 
     """For each size N: `draws` times, fit on N items drawn at random (not balanced by answer) and score every other
     item. Returns one dict per size with the mean (and sd over draws) of accuracy and balanced accuracy for the
     model as shipped, calibrated only, edited, and, when texts are given, word counts fitted on the same N items.
-    auto=True adds "auto": lean, strength and ridge chosen by tune from the N items alone (n_params sets the tie
-    preference); a draw where some answer has fewer than two of the N items cannot be tuned, so only the lean is
-    removed (counted in auto_fallback_draws). auto_choices counts the settings chosen over the draws."""
+    auto=True adds "auto": lean, strength and ridge chosen by tune from the N items alone (n_params sets the
+    standard strength). auto_short_draws counts the draws where some answer had fewer than two of the N items;
+    auto_choices counts the settings chosen over the draws."""
     n, K = len(gold), LAB.shape[1]
     if len(np.unique(gold)) < 2:
         raise ValueError("the items hold only one answer; a read-out needs examples of at least two")
@@ -421,7 +459,7 @@ def sweep(H, LAB, LSE, gold, texts: list[str] | None = None, sizes=(15, 30, 60, 
         if N >= n:
             continue
         acc_: dict[str, list] = {}
-        fallback, chosen = 0, Counter()
+        fallback, short, chosen = 0, 0, Counter()
         for _ in range(draws):
             tr = np.zeros(n, bool)
             while len(np.unique(gold[tr])) < 2:                  # a fit set needs two answers; rare, redraw
@@ -433,7 +471,7 @@ def sweep(H, LAB, LSE, gold, texts: list[str] | None = None, sizes=(15, 30, 60, 
             if auto:                                             # settings chosen from the N items alone
                 ra, t = fit_auto(H[tr], LAB[tr], LSE[tr], gold[tr], n_params=n_params, seed=seed)
                 preds["auto"] = LAB[ev].argmax(1) if ra is None else ra.predict(H[ev], LAB[ev])
-                fallback += bool(t["fallback"])
+                fallback += bool(t["fallback"]); short += bool(t["short"])
                 chosen["fallback (lean only)" if t["fallback"] else "unchanged" if t["unchanged"]
                        else f"lean {t['lean']:g}, no read-out" if t["alpha_mult"] == 0
                        else f"lean {t['lean']:g} strength {t['alpha_mult']:g} ridge {t['lam_factor']:g}n"] += 1
@@ -443,8 +481,9 @@ def sweep(H, LAB, LSE, gold, texts: list[str] | None = None, sizes=(15, 30, 60, 
             for k, v in _rates(preds, gold[ev]).items():
                 acc_.setdefault(k, []).append(v)
         row = dict(n_fit=int(N), n_scored=int(n - N), draws=int(draws))
-        if auto:                                                 # draws where an answer had under two of the N
-            row["auto_fallback_draws"] = int(fallback)           # items: lean removed, no read-out
+        if auto:
+            row["auto_short_draws"] = int(short)                 # draws where an answer had under two of the N items
+            row["auto_fallback_draws"] = int(fallback)           # draws that could not be tuned (kept for old readers)
             row["auto_choices"] = "; ".join(f"{k}: {v}" for k, v in chosen.most_common())
         for k, v in acc_.items():
             row[k] = float(np.mean(v)); row[k + "_sd"] = float(np.std(v))
