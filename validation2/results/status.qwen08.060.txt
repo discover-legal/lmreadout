@@ -1,0 +1,26 @@
+lmreadout 0.6.0 ~/Documents/GitHub/lmreadout/lmreadout/__init__.py
+2026-11-15T18:44:44-05:00 start unfair_clause.qwen08
+2026-11-15T18:45:47-05:00 exit=0 unfair_clause.qwen08
+2026-11-15T18:45:47-05:00 start housing_law.qwen08
+2026-11-15T18:46:42-05:00 exit=0 housing_law.qwen08
+2026-11-15T18:46:42-05:00 start contract_type.qwen08
+2026-11-15T18:48:47-05:00 exit=0 contract_type.qwen08
+2026-11-15T18:48:47-05:00 start language_id.qwen08
+2026-11-15T18:50:31-05:00 exit=0 language_id.qwen08
+2026-11-15T18:50:31-05:00 start patent_section.qwen08
+2026-11-15T18:52:23-05:00 exit=0 patent_section.qwen08
+2026-11-15T18:52:23-05:00 start abstract_role.qwen08
+2026-11-15T18:53:32-05:00 exit=0 abstract_role.qwen08
+2026-11-15T18:53:33-05:00 start fed_stance.qwen08
+2026-11-15T18:54:19-05:00 exit=0 fed_stance.qwen08
+2026-11-15T18:54:19-05:00 start climate_claim.qwen08
+2026-11-15T18:55:34-05:00 exit=0 climate_claim.qwen08
+2026-11-15T18:55:34-05:00 start hate_speech.qwen08
+2026-11-15T18:56:33-05:00 exit=0 hate_speech.qwen08
+2026-11-15T18:56:33-05:00 start counterfactual.qwen08
+2026-11-15T18:57:25-05:00 exit=0 counterfactual.qwen08
+2026-11-15T18:57:25-05:00 start appeal_outcome.qwen08
+2026-11-15T18:59:00-05:00 exit=0 appeal_outcome.qwen08
+2026-11-15T18:59:00-05:00 start fair_reason.qwen08
+2026-11-15T19:00:08-05:00 exit=0 fair_reason.qwen08
+2026-11-15T19:00:08-05:00 ALL DONE qwen08 060

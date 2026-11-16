@@ -1,0 +1,10 @@
+lmreadout 0.6.0 ~/Documents/GitHub/lmreadout/lmreadout/__init__.py
+2026-11-15T18:44:44-05:00 start housing_law.phi4mini.v050
+2026-11-15T19:15:13-05:00 exit=0 housing_law.phi4mini.v050
+2026-11-15T19:15:13-05:00 start contract_type.phi4mini.v050
+2026-11-15T20:08:54-05:00 exit=0 contract_type.phi4mini.v050
+2026-11-15T20:08:54-05:00 start hate_speech.phi4mini.v050
+2026-11-15T20:24:43-05:00 exit=0 hate_speech.phi4mini.v050
+2026-11-15T20:24:43-05:00 start climate_claim.phi4mini.v050
+2026-11-15T20:44:12-05:00 exit=0 climate_claim.phi4mini.v050
+2026-11-15T20:44:12-05:00 ALL DONE phi4mini 050
