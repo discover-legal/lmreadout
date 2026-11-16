@@ -1,0 +1,4 @@
+Is this text hateful towards a group of people? Answer Hateful or Non-hateful.
+
+Text: {{text}}
+Label:

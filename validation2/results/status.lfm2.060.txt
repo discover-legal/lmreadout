@@ -1,0 +1,26 @@
+lmreadout 0.6.0 ~/.cache/lmreadout-dev/val060/lib/python3.12/site-packages/lmreadout/__init__.py
+2026-11-16T09:04:53-05:00 start unfair_clause.lfm2
+2026-11-16T09:05:49-05:00 exit=0 unfair_clause.lfm2
+2026-11-16T09:05:49-05:00 start housing_law.lfm2
+2026-11-16T09:06:28-05:00 exit=0 housing_law.lfm2
+2026-11-16T09:06:28-05:00 start contract_type.lfm2
+2026-11-16T09:08:19-05:00 exit=0 contract_type.lfm2
+2026-11-16T09:08:19-05:00 start language_id.lfm2
+2026-11-16T09:09:52-05:00 exit=0 language_id.lfm2
+2026-11-16T09:09:52-05:00 start patent_section.lfm2
+2026-11-16T09:11:27-05:00 exit=0 patent_section.lfm2
+2026-11-16T09:11:27-05:00 start abstract_role.lfm2
+2026-11-16T09:12:19-05:00 exit=0 abstract_role.lfm2
+2026-11-16T09:12:19-05:00 start fed_stance.lfm2
+2026-11-16T09:12:52-05:00 exit=0 fed_stance.lfm2
+2026-11-16T09:12:52-05:00 start climate_claim.lfm2
+2026-11-16T09:13:41-05:00 exit=0 climate_claim.lfm2
+2026-11-16T09:13:41-05:00 start hate_speech.lfm2
+2026-11-16T09:14:21-05:00 exit=0 hate_speech.lfm2
+2026-11-16T09:14:21-05:00 start counterfactual.lfm2
+2026-11-16T09:14:52-05:00 exit=0 counterfactual.lfm2
+2026-11-16T09:14:52-05:00 start appeal_outcome.lfm2
+2026-11-16T09:16:13-05:00 exit=0 appeal_outcome.lfm2
+2026-11-16T09:16:13-05:00 start fair_reason.lfm2
+2026-11-16T09:16:52-05:00 exit=0 fair_reason.lfm2
+2026-11-16T09:16:52-05:00 ALL DONE lfm2 060

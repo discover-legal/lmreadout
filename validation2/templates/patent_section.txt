@@ -1,0 +1,4 @@
+Which section of the patent classification does this patent abstract belong to? Answer Human necessities, Performing operations (or transporting), Chemistry (or metallurgy), Textiles (or paper), Fixed constructions, Mechanical engineering (or lighting, heating, weapons), Physics, Electricity or General tagging (of new technology).
+
+Abstract: {{text}}
+Label:

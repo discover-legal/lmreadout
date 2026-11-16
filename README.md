@@ -8,9 +8,9 @@ answers your task with its normal inference code: no wrapper, no prompt trick, n
 two answers or more.
 
 It does not always help. With fixed settings it improves some tasks and hurts others. With `--auto` it picks the
-settings from your examples, and may decide to leave the model alone; in the task-by-task tests below, the worst
-that did was 0.025 below the untouched model. Either way, measure it on your own task before you rely on it. The
-`sweep` command does that.
+settings from your examples, and may decide to leave the model alone; in the held-out tests below, with 15
+examples the worst that did was 0.026 below the untouched model. Either way, measure it on your own task before
+you rely on it. The `sweep` command does that.
 
 Neither half of the method is new. Correcting a model's bias towards one answer is known (Zhao et al. 2021; Zhou et
 al. 2024), and so is fitting a linear classifier on a model's internal state (Alain & Bengio 2016; Buckmann & Hill
@@ -34,9 +34,9 @@ pip install torch --index-url https://download.pytorch.org/whl/cpu
 
 What to expect:
 
-- This package has been run on real tasks with Qwen3.5 and, on four tasks, Phi-4-mini. Other model families pass
-  the unit tests but are untested on real tasks. If it cannot work with a model's architecture it says so and
-  stops.
+- This package has been run on real tasks with Qwen3.5, with LFM2-1.2B on twelve tasks and with Phi-4-mini on
+  eight. Other model families pass the unit tests but are untested on real tasks. If it cannot work with a model's
+  architecture it says so and stops.
 - An 8 GB GPU is enough for models around 1B parameters.
 - On CPU, Qwen3.5-0.8B takes under a second per short item. `transformers` will warn about slower kernels; that is
   expected.
@@ -259,26 +259,48 @@ model has read your examples. The exact arithmetic is in the comment at the top 
 Three settings decide how the correction behaves:
 
 - **Lean:** how much of the model's bias to remove. None, half or all.
-- **Strength:** how hard the read-out overrides the model's own answer. 0, 0.5, 1, 2 or 4. The fixed default is 2.
+- **Strength:** how hard the read-out overrides the model's own answer. 0, 0.25, 0.5, 1, 2 or 4. The fixed default
+  is 2.
 - **Ridge:** how much the read-out is smoothed. n/4, n or 4n, where n is the number of examples.
 
-`fit --auto` tries every combination. It scores each one on your examples by cross-validation: hold some examples
-back, fit on the rest, score the ones held back, and repeat. (Up to 50 examples it holds back one at a time; above
-that, a tenth at a time.) It keeps the combination with the best balanced accuracy.
+`fit --auto` scores every combination on your examples by cross-validation: hold some examples back, fit on the
+rest, score the ones held back, and repeat. (Up to 50 examples it holds back one at a time; above that, a tenth at
+a time.) The score is balanced accuracy.
 
-Three rules sit on top:
+With few examples those scores are noisy, so it does not simply take the highest. It starts from a sensible
+setting and moves only on clear evidence:
 
-- **It leaves the model alone unless a correction scores strictly higher,** and tells you when it does.
-- **Ties go to a gentler strength on bigger models:** 2 below 3B parameters, 1 below 7B, 0.5 from 7B up. A bigger
-  model's own answer deserves more trust.
-- **If some answer has fewer than two examples,** nothing can be cross-validated. It then removes the lean only,
-  which needs no labels, and tells you which answers need more examples.
+1. **Where it starts.** If the untouched model is clearly better than guessing on your examples, it starts from
+   the untouched model. If not, there is nothing to protect, and it starts from the **standard correction**: all
+   the lean removed, ridge n, and a strength that grows with the number of examples.
+2. **From the untouched model** it moves to the standard correction only if that scores clearly higher.
+3. **From there** it moves to the best-scoring combination of all only if that scores clearly higher. Ties for
+   best go to the combination that gives the right answers the higher probability.
+
+"Clearly" means by more than the noise in the comparison: one standard error of the difference, worked out from
+the examples the two settings answer differently.
+
+The standard correction's strength is the full strength for the model's size from 120 examples up, and
+proportionally less with fewer, because a read-out from a handful of examples is mostly noise. The full strength
+is gentler on bigger models, whose own answer deserves more trust: 2 below 3B parameters, 1 below 7B, 0.5 from 7B
+up. For a model under 3B that gives 0.25 with 15 examples, 0.5 with 30, 1 with 60 and 2 from 120.
+
+It tells you what it did: where it started, whether it moved, and when it leaves the model alone. If some answer
+has fewer than two examples it says which; it still chooses, but the correction can learn little about that
+answer. (Up to 0.5.0 it switched the read-out off in that case.) If your examples hold only one answer, nothing
+can be scored, so it removes the lean only, which needs no labels.
 
 `sweep --auto` adds an "auto" column, with the settings chosen afresh from each random set of N examples.
 
 Why we added it: in the Handi runs the fixed strength was too strong for bigger models. With 15 examples, the fixed
 correction made Qwen3.5-9B worse than the untouched model on LegalBench's two-answer tasks. At half strength it
 would have helped.
+
+Why it changed in 0.6.0: up to 0.5.0, `--auto` took the highest score among 39 combinations, and switched the
+read-out off whenever one answer had fewer than two examples. The held-out test of 0.5.0 (below) showed that with
+15 examples the highest score says little about which combination is really best, and that switching the read-out
+off cost up to 0.17 on tasks with many answers. The results below were made with 0.5.0 or earlier unless a section
+says otherwise.
 
 ## Does it work? Results
 
@@ -376,7 +398,7 @@ On LegalBench with 15 examples, `--auto` gives 0.80 / 0.84 / 0.86 for Qwen3.5-2B
 0.81 / 0.82 / 0.83, and the untouched models 0.72 / 0.81 / 0.84. These are the 98 two-answer tasks from the Handi
 runs, which the method was developed on, so this is not a clean test.
 
-### Held-out test: twelve new tasks
+### Held-out test of 0.5.0: twelve new tasks
 
 The results above come from tasks we could see while building the package. To check them, version 0.5.0 was
 frozen and run on twelve tasks it had never been run on.
@@ -448,6 +470,119 @@ What this shows:
   untouched.
 - **A model that already answers well gains little.** Phi-4-mini's mean goes from 0.66 untouched to 0.67 with 15
   examples and 0.70 with 120. Four tasks is a thin sample.
+
+### Second held-out test: 0.6.0 beside 0.5.0 on twelve more tasks
+
+`--auto` was changed in 0.6.0 because of what the first held-out test showed. That made its twelve tasks
+development data, so 0.6.0 was frozen and run, beside 0.5.0, on twelve tasks neither had been run on.
+
+- **The tasks were chosen blind,** by a separate agent that had only this README and the first test's plan. It
+  found three legal tasks that fit, not the four the design asked for.
+- **The rules came first.** The same three rules as before, plus a fourth: at every number of examples, 0.6.0's
+  `--auto` must not be below 0.5.0's on average. The code, tasks, prompts, commands, rules and the script that
+  tabulates the results were committed before any model was run.
+- **Three models.** Qwen3.5-0.8B on all twelve tasks and Phi-4-mini on four, as in the first test. LFM2-1.2B, from
+  a different maker, was added on all twelve after the Qwen results were known. The code was already frozen and
+  the plan was amended before any of its scores existed, but it is the less clean of the three.
+- **Everything is kept.** The plan, the data, the raw results and the full tables are in `validation2/`.
+
+Scores are for 15 / 120 examples, 20 draws per size, up to 1,000 items per task. The first three tasks are legal.
+Word counts are left out here; they are in `validation2/RESULTS.md`.
+
+Qwen3.5-0.8B:
+
+| Task | Answers | Guessing | As shipped | Calibration only, 15 / 120 | Fixed edit, 15 / 120 | 0.5.0 `--auto`, 15 / 120 | 0.6.0 `--auto`, 15 / 120 |
+|---|---|---|---|---|---|---|---|
+| Is a contract clause unfair (Polish consumer contracts) | 2 | 0.50 | 0.50 | 0.55 / 0.54 | 0.61 / 0.72 | **0.62 / 0.75** | 0.61 / 0.74 |
+| Yes/no question on a state's housing law (HousingQA) | 2 | 0.50 | 0.50 | 0.45 / 0.46 | **0.52** / 0.61 | 0.51 / 0.61 | 0.49 / **0.62** |
+| Kind of agreement a contract is (LegalLAMA) | 15 | 0.07 | 0.18 | **0.46** / 0.46 | 0.28 / 0.54 | **0.46** / 0.50 | 0.45 / **0.58** |
+| Language a text is written in (20 languages) | 20 | 0.05 | 0.21 | 0.68 / 0.70 | 0.47 / **0.95** | 0.68 / 0.90 | **0.73 / 0.95** |
+| Technical field of a patent abstract | 9 | 0.11 | 0.11 | 0.23 / 0.23 | **0.27 / 0.39** | 0.23 / 0.31 | 0.25 / **0.39** |
+| Part of a medical abstract a sentence comes from (PubMed RCT) | 5 | 0.20 | 0.20 | 0.28 / 0.28 | **0.30 / 0.44** | 0.28 / **0.44** | **0.30 / 0.44** |
+| Leaning of a central-bank sentence (FOMC) | 3 | 0.33 | 0.33 | **0.40** / 0.41 | 0.38 / **0.43** | 0.38 / 0.42 | 0.39 / **0.43** |
+| Is a climate claim supported (Climate-FEVER) | 4 | 0.25 | 0.25 | **0.30 / 0.30** | 0.27 / **0.30** | 0.29 / **0.30** | 0.28 / **0.30** |
+| Hateful or not (HateCheck) | 2 | 0.50 | 0.53 | 0.53 / 0.53 | **0.56 / 0.79** | 0.55 / 0.78 | **0.56 / 0.79** |
+| Does a review sentence describe something that did not happen (Amazon) | 2 | 0.50 | 0.50 | 0.52 / 0.53 | **0.53** / 0.53 | 0.51 / **0.59** | 0.52 / 0.57 |
+| Outcome of a health-insurance appeal | 2 | 0.50 | 0.52 | 0.51 / 0.50 | 0.52 / **0.55** | **0.53** / 0.54 | 0.52 / 0.54 |
+| Is the reason given a fair one (ETHICS, justice) | 2 | 0.50 | 0.50 | **0.54 / 0.54** | 0.51 / 0.49 | 0.52 / 0.51 | 0.53 / 0.50 |
+| **Mean** | | | 0.36 | 0.45 / 0.46 | 0.44 / 0.56 | 0.46 / 0.55 | 0.47 / 0.57 |
+
+Phi-4-mini, on four of the twelve, named in the plan before any score:
+
+| Task | Answers | Guessing | As shipped | Calibration only, 15 / 120 | Fixed edit, 15 / 120 | 0.5.0 `--auto`, 15 / 120 | 0.6.0 `--auto`, 15 / 120 |
+|---|---|---|---|---|---|---|---|
+| Yes/no question on a state's housing law (HousingQA) | 2 | 0.50 | 0.52 | 0.54 / 0.53 | **0.59 / 0.69** | **0.59 / 0.69** | 0.58 / **0.69** |
+| Kind of agreement a contract is (LegalLAMA) | 15 | 0.07 | 0.20 | **0.35** / 0.36 | 0.25 / 0.54 | **0.35** / 0.43 | 0.33 / **0.57** |
+| Is a climate claim supported (Climate-FEVER) | 4 | 0.25 | **0.37** | 0.32 / 0.32 | 0.32 / 0.37 | 0.33 / **0.38** | 0.34 / **0.38** |
+| Hateful or not (HateCheck) | 2 | 0.50 | 0.83 | **0.84** / 0.86 | 0.82 / **0.93** | **0.84 / 0.93** | 0.83 / **0.93** |
+| **Mean** | | | 0.48 | 0.51 / 0.52 | 0.50 / 0.63 | 0.53 / 0.61 | 0.52 / 0.64 |
+
+LFM2-1.2B:
+
+| Task | Answers | Guessing | As shipped | Calibration only, 15 / 120 | Fixed edit, 15 / 120 | 0.5.0 `--auto`, 15 / 120 | 0.6.0 `--auto`, 15 / 120 |
+|---|---|---|---|---|---|---|---|
+| Is a contract clause unfair (Polish consumer contracts) | 2 | 0.50 | 0.50 | 0.51 / 0.50 | **0.56 / 0.67** | 0.55 / **0.67** | 0.54 / **0.67** |
+| Yes/no question on a state's housing law (HousingQA) | 2 | 0.50 | 0.49 | 0.44 / 0.43 | **0.52 / 0.64** | 0.50 / 0.63 | 0.49 / 0.62 |
+| Kind of agreement a contract is (LegalLAMA) | 15 | 0.07 | 0.18 | 0.24 / 0.25 | 0.23 / **0.41** | 0.24 / 0.30 | **0.27 / 0.41** |
+| Language a text is written in (20 languages) | 20 | 0.05 | 0.35 | 0.47 / 0.48 | 0.48 / **0.90** | 0.47 / 0.82 | **0.52 / 0.90** |
+| Technical field of a patent abstract | 9 | 0.11 | 0.11 | 0.18 / 0.18 | 0.18 / **0.26** | 0.18 / 0.21 | **0.19 / 0.26** |
+| Part of a medical abstract a sentence comes from (PubMed RCT) | 5 | 0.20 | 0.24 | 0.22 / 0.22 | **0.27 / 0.41** | 0.22 / 0.40 | 0.25 / **0.41** |
+| Leaning of a central-bank sentence (FOMC) | 3 | 0.33 | **0.33** | 0.30 / 0.30 | **0.33 / 0.39** | 0.32 / 0.38 | 0.32 / 0.38 |
+| Is a climate claim supported (Climate-FEVER) | 4 | 0.25 | 0.25 | 0.25 / 0.25 | **0.26 / 0.30** | 0.25 / **0.30** | 0.25 / **0.30** |
+| Hateful or not (HateCheck) | 2 | 0.50 | 0.54 | 0.51 / 0.51 | 0.54 / 0.73 | **0.55 / 0.74** | 0.54 / 0.72 |
+| Does a review sentence describe something that did not happen (Amazon) | 2 | 0.50 | 0.47 | 0.48 / 0.49 | **0.50 / 0.53** | 0.48 / 0.52 | **0.50 / 0.53** |
+| Outcome of a health-insurance appeal | 2 | 0.50 | 0.48 | 0.49 / 0.49 | **0.51 / 0.55** | 0.50 / 0.54 | 0.49 / 0.53 |
+| Is the reason given a fair one (ETHICS, justice) | 2 | 0.50 | **0.52** | 0.51 / 0.51 | 0.50 / 0.49 | 0.51 / 0.50 | 0.51 / 0.50 |
+| **Mean** | | | 0.37 | 0.38 / 0.38 | 0.41 / 0.52 | 0.40 / 0.50 | 0.41 / 0.52 |
+
+0.6.0's `--auto` minus 0.5.0's, mean over the tasks, by number of examples:
+
+| Model | Tasks | 15 | 30 | 60 | 120 |
+|---|---|---|---|---|---|
+| Qwen3.5-0.8B | 12 | +0.007 | +0.021 | +0.027 | +0.017 |
+| Phi-4-mini | 4 | -0.007 | +0.015 | +0.041 | +0.037 |
+| LFM2-1.2B | 12 | +0.009 | +0.024 | +0.036 | +0.020 |
+
+How the four rules did for 0.6.0:
+
+- **"With 15 examples, at most 0.02 below the untouched model" held on Qwen and LFM2-1.2B and failed on
+  Phi-4-mini.** The worst tasks are 0.009 and 0.010 below on Qwen and LFM2-1.2B. On Phi-4-mini the climate task
+  is 0.026 below (0.342 against 0.368); 0.5.0 is 0.034 below on the same task.
+- **"With 120 examples, at most 0.005 below the fixed edit" failed on all three, by less than before.** 0.6.0
+  misses on one Qwen task (0.009 below), one Phi-4-mini task (0.006) and four LFM2-1.2B tasks (0.009 to 0.017).
+  0.5.0 misses on five, two and eight tasks, by up to 0.077, 0.107 and 0.108.
+- **"With 15 examples, level on average with the better of the untouched model and calibration alone" held on all
+  three:** +0.010 on Qwen, -0.004 on Phi-4-mini, +0.011 on LFM2-1.2B, against a limit of -0.01.
+- **"Not below 0.5.0 on average at any number of examples" held on Qwen and LFM2-1.2B and failed on Phi-4-mini at
+  15 examples** (-0.007). At 30, 60 and 120 examples 0.6.0 is ahead on all three models.
+
+What this shows:
+
+- **The gain is on tasks with many answers.** There 0.5.0 switched the read-out off whenever one answer had fewer
+  than two examples. Language of a text on LFM2-1.2B with 60 examples: 0.48 with 0.5.0, 0.81 with 0.6.0. Kind of
+  agreement on Phi-4-mini with 60: 0.36 against 0.51.
+- **On tasks with two answers the two versions are close.** Averaged over the six two-answer tasks, 0.6.0 is
+  between level and 0.005 lower on Qwen and LFM2-1.2B; its largest loss on one task is 0.027.
+- **The method carried over to a third model family.** On LFM2-1.2B the mean goes from 0.37 untouched to 0.41
+  with 15 examples and 0.52 with 120, and the fixed edit does as well as `--auto` there.
+- **The limits are still not guarantees.** The 0.005 limit against the fixed edit is tighter than the noise of
+  choosing settings from examples, and a model that is already good can still lose a little with 15 examples.
+
+Where 0.6.0 is below 0.5.0, and why (from the settings each version chose; this is our reading, not a tested
+explanation):
+
+- **It stays with a working model when the evidence is thin.** If the untouched model is clearly better than
+  guessing, 0.6.0 moves away only on clear evidence. Kind of agreement on Phi-4-mini with 15 examples: the
+  untouched model scores 0.20, well above guessing at 0.07, and removing the lean gives 0.35. One example per
+  answer is not clear evidence, so in 4 of 20 draws 0.6.0 left the model alone, and it averages 0.33 where 0.5.0's
+  fallback gave 0.35. The same thing costs 0.020 on hate speech on LFM2-1.2B with 60 examples.
+- **It stays with the standard correction when another setting is better but not clearly.** On the review task,
+  where one answer is one item in ten, keeping the model's lean is better than removing it. 0.5.0 picked such
+  settings; 0.6.0 stayed with the standard correction in 13 of 20 draws with 60 examples and scores 0.546 against
+  0.573. Both are above the fixed edit (0.523).
+- **The standard correction is gentle with 15 examples.** On the housing-law task on Qwen removing the lean hurts
+  (0.45) and a strength of 0.25 does not make up for it: 0.49 against 0.51 for 0.5.0. Everything on that task is
+  near guessing with 15 examples.
 
 ### Where it came from: LegalBench
 
@@ -530,11 +665,12 @@ only, which is what `eval`, `predict` and `Classifier` do, or restrict generatio
   is already decent and examples are few, like tweets. Check with `sweep`.
 - **Without `--auto` the strength is fixed at 2,** whatever the quality of the read-out. With few examples that is
   often too much. `--auto` chooses it from your examples, which with 15 of them is itself noisy.
-- **`--auto`'s rule for model size was set on Qwen3.5 from 0.8B to 9B.** Phi-4-mini has been run on four tasks;
-  other model families are untested.
-- **`--auto`'s fallback is not checked against your examples.** When some answer has fewer than two examples it
-  removes the lean without cross-validating. In the held-out test on Qwen3.5-0.8B that gained 0.31 to 0.39 on
-  three tasks and cost 0.025 on one.
+- **`--auto`'s rule for model size was set on Qwen3.5 from 0.8B to 9B.** Phi-4-mini has been run on eight tasks
+  and LFM2-1.2B on twelve; other model families are untested.
+- **An answer with fewer than two examples is barely learned.** `--auto` still chooses its settings and names
+  the answers that are short, but the read-out has almost nothing to go on for them. (Up to 0.5.0 it removed the
+  lean without checking in that case; in the held-out test of 0.5.0 on Qwen3.5-0.8B that gained 0.31 to 0.39 on
+  three tasks and cost 0.025 on one.)
 - **Prompts get no beginning-of-sequence token.** Qwen uses none. Models that expect one, like Llama 3 and Gemma,
   may score lower than they should.
 - **It reads the model's last layer only.** Classifiers fitted a few layers earlier are usually a little better
@@ -560,8 +696,10 @@ cover:
 - **The 0.3.1 fix:** the constant is removed without changing any answer.
 - **Files:** save and load, including files from version 0.1.
 - **Patching:** only the answer rows change, on float32 and bfloat16 models.
-- **`--auto`:** the combinations tried, the tie order and the size rule; it uses a planted signal; it leaves alone
-  a model that is already right; it falls back when an answer is short of examples.
+- **`--auto`:** the combinations tried, the size rule and how the standard strength grows with the examples; it
+  uses a planted signal; it leaves alone a model that is already right, or one that works when nothing is clearly
+  better; it starts from the standard correction when the model gives one answer to everything; it still chooses
+  when an answer is short of examples, and removes the lean only when the examples hold a single answer.
 - **`sweep`** and the word-count check.
 - **Refusals and warnings:** prompts that get cut; a fit with only one answer; sweep sizes under two or no draws;
   predictions that would overwrite a field; fixed settings given together with auto.

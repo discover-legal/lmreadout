@@ -1,0 +1,10 @@
+Note on the first line of status.qwen08.060.txt, status.phi4mini.060.txt and status.phi4mini.050.txt.
+
+That line was meant to record which lmreadout the run uses. It was printed with `python -c` from the repository
+root, which imports the package from the working folder (0.6.0) whatever is installed, so it says 0.6.0 in all
+three files, including the 0.5.0 run. The commands themselves use the `lmreadout` command of each environment,
+which does not look in the working folder. Checked while the runs were going, from the repository root:
+  environment for 0.6.0: `lmreadout --help` lists strengths "0, 0.25, 0.5, 1, 2 or 4"; installed package 0.6.0
+  environment for 0.5.0: `lmreadout --help` lists strengths "0, 0.5, 1, 2 or 4";       installed package 0.5.0
+The results files also show it: 0.6.0's have a column `auto_short_draws`, 0.5.0's do not.
+The check was corrected (python -I) before the 0.5.0 Qwen runs started, so status.qwen08.050.txt is right.

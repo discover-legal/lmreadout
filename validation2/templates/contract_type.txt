@@ -1,0 +1,4 @@
+One word of this opening of a contract is hidden as <mask>. What kind of agreement is it? Answer Award, Consulting, Credit, Employment, Indemnity, Letter, License, Loan, Purchase, Security, Separation, Services, Settlement, Supply or Voting.
+
+Text: {{text}}
+Label:

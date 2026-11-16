@@ -1,0 +1,4 @@
+Is this clause from a Polish consumer contract abusive (unfair to the consumer) or safe? Answer Abusive or Safe.
+
+Clause: {{text}}
+Label:
