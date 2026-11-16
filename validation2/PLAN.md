@@ -298,3 +298,61 @@ of the twelve tasks when they were written.
 - **Order of the runs.** The Qwen3.5-0.8B commands run on the GPU, all of 0.6.0's and then all of 0.5.0's. The
   Phi-4-mini commands run on the CPU. The results are tabulated by `validation2/analyse.py`, committed with this
   plan before any result exists.
+
+## Addendum: a third model, added on the owner's request (15 November 2026)
+
+After the Qwen3.5-0.8B results of this test had been tabulated, and while the Phi-4-mini runs were finishing, the
+owner asked for the test to be run on a third model as well, and chose `LiquidAI/LFM2-1.2B`. It comes from a
+different maker and has a different architecture from Qwen and Phi, and it was never used with this package
+before. It is small enough for the GPU, so all twelve tasks are run.
+
+What is fixed and what is not:
+
+- The package versions are the same two commits as above (0.6.0 = `735bcc6`, 0.5.0 = `bb90606`); nothing in the
+  package was changed after the Qwen results were seen. The tasks, data, prompts and the four rules are unchanged.
+- This addendum is committed before any score exists for this model on any of the twelve tasks.
+- It is still not as clean as the first two models: the decision to add a model was made after the Qwen results
+  were known. The results for this model are reported separately, as a third block, judged by the same four rules.
+- Checked beforehand, without scoring any of the twelve tasks: under this model's tokenizer the answers of every
+  task start with different tokens and the longest prompt is 623 tokens (`patent_section`); and the package can
+  read this architecture (one short run on a development task that is not among the twelve).
+- This model's tokenizer has a beginning-of-sequence token, which the package does not add (a limit stated in the
+  README). That applies equally to both versions.
+
+The commands, run from the repository root, unchanged, on the GPU: all of 0.6.0's, then all of 0.5.0's.
+
+With 0.6.0 installed:
+
+```
+lmreadout sweep --model LiquidAI/LFM2-1.2B --data validation2/data/unfair_clause.jsonl --template validation2/templates/unfair_clause.txt --sizes 15 30 60 120 --draws 20 --auto --csv validation2/results/unfair_clause.lfm2.csv
+lmreadout sweep --model LiquidAI/LFM2-1.2B --data validation2/data/housing_law.jsonl --template validation2/templates/housing_law.txt --sizes 15 30 60 120 --draws 20 --auto --csv validation2/results/housing_law.lfm2.csv
+lmreadout sweep --model LiquidAI/LFM2-1.2B --data validation2/data/contract_type.jsonl --template validation2/templates/contract_type.txt --sizes 15 30 60 120 --draws 20 --auto --csv validation2/results/contract_type.lfm2.csv
+lmreadout sweep --model LiquidAI/LFM2-1.2B --data validation2/data/language_id.jsonl --template validation2/templates/language_id.txt --sizes 15 30 60 120 --draws 20 --auto --csv validation2/results/language_id.lfm2.csv
+lmreadout sweep --model LiquidAI/LFM2-1.2B --data validation2/data/patent_section.jsonl --template validation2/templates/patent_section.txt --sizes 15 30 60 120 --draws 20 --auto --csv validation2/results/patent_section.lfm2.csv
+lmreadout sweep --model LiquidAI/LFM2-1.2B --data validation2/data/abstract_role.jsonl --template validation2/templates/abstract_role.txt --sizes 15 30 60 120 --draws 20 --auto --csv validation2/results/abstract_role.lfm2.csv
+lmreadout sweep --model LiquidAI/LFM2-1.2B --data validation2/data/fed_stance.jsonl --template validation2/templates/fed_stance.txt --sizes 15 30 60 120 --draws 20 --auto --csv validation2/results/fed_stance.lfm2.csv
+lmreadout sweep --model LiquidAI/LFM2-1.2B --data validation2/data/climate_claim.jsonl --template validation2/templates/climate_claim.txt --sizes 15 30 60 120 --draws 20 --auto --csv validation2/results/climate_claim.lfm2.csv
+lmreadout sweep --model LiquidAI/LFM2-1.2B --data validation2/data/hate_speech.jsonl --template validation2/templates/hate_speech.txt --sizes 15 30 60 120 --draws 20 --auto --csv validation2/results/hate_speech.lfm2.csv
+lmreadout sweep --model LiquidAI/LFM2-1.2B --data validation2/data/counterfactual.jsonl --template validation2/templates/counterfactual.txt --sizes 15 30 60 120 --draws 20 --auto --csv validation2/results/counterfactual.lfm2.csv
+lmreadout sweep --model LiquidAI/LFM2-1.2B --data validation2/data/appeal_outcome.jsonl --template validation2/templates/appeal_outcome.txt --sizes 15 30 60 120 --draws 20 --auto --csv validation2/results/appeal_outcome.lfm2.csv
+lmreadout sweep --model LiquidAI/LFM2-1.2B --data validation2/data/fair_reason.jsonl --template validation2/templates/fair_reason.txt --sizes 15 30 60 120 --draws 20 --auto --csv validation2/results/fair_reason.lfm2.csv
+```
+
+With 0.5.0 installed:
+
+```
+lmreadout sweep --model LiquidAI/LFM2-1.2B --data validation2/data/unfair_clause.jsonl --template validation2/templates/unfair_clause.txt --sizes 15 30 60 120 --draws 20 --auto --csv validation2/results/unfair_clause.lfm2.v050.csv
+lmreadout sweep --model LiquidAI/LFM2-1.2B --data validation2/data/housing_law.jsonl --template validation2/templates/housing_law.txt --sizes 15 30 60 120 --draws 20 --auto --csv validation2/results/housing_law.lfm2.v050.csv
+lmreadout sweep --model LiquidAI/LFM2-1.2B --data validation2/data/contract_type.jsonl --template validation2/templates/contract_type.txt --sizes 15 30 60 120 --draws 20 --auto --csv validation2/results/contract_type.lfm2.v050.csv
+lmreadout sweep --model LiquidAI/LFM2-1.2B --data validation2/data/language_id.jsonl --template validation2/templates/language_id.txt --sizes 15 30 60 120 --draws 20 --auto --csv validation2/results/language_id.lfm2.v050.csv
+lmreadout sweep --model LiquidAI/LFM2-1.2B --data validation2/data/patent_section.jsonl --template validation2/templates/patent_section.txt --sizes 15 30 60 120 --draws 20 --auto --csv validation2/results/patent_section.lfm2.v050.csv
+lmreadout sweep --model LiquidAI/LFM2-1.2B --data validation2/data/abstract_role.jsonl --template validation2/templates/abstract_role.txt --sizes 15 30 60 120 --draws 20 --auto --csv validation2/results/abstract_role.lfm2.v050.csv
+lmreadout sweep --model LiquidAI/LFM2-1.2B --data validation2/data/fed_stance.jsonl --template validation2/templates/fed_stance.txt --sizes 15 30 60 120 --draws 20 --auto --csv validation2/results/fed_stance.lfm2.v050.csv
+lmreadout sweep --model LiquidAI/LFM2-1.2B --data validation2/data/climate_claim.jsonl --template validation2/templates/climate_claim.txt --sizes 15 30 60 120 --draws 20 --auto --csv validation2/results/climate_claim.lfm2.v050.csv
+lmreadout sweep --model LiquidAI/LFM2-1.2B --data validation2/data/hate_speech.jsonl --template validation2/templates/hate_speech.txt --sizes 15 30 60 120 --draws 20 --auto --csv validation2/results/hate_speech.lfm2.v050.csv
+lmreadout sweep --model LiquidAI/LFM2-1.2B --data validation2/data/counterfactual.jsonl --template validation2/templates/counterfactual.txt --sizes 15 30 60 120 --draws 20 --auto --csv validation2/results/counterfactual.lfm2.v050.csv
+lmreadout sweep --model LiquidAI/LFM2-1.2B --data validation2/data/appeal_outcome.jsonl --template validation2/templates/appeal_outcome.txt --sizes 15 30 60 120 --draws 20 --auto --csv validation2/results/appeal_outcome.lfm2.v050.csv
+lmreadout sweep --model LiquidAI/LFM2-1.2B --data validation2/data/fair_reason.jsonl --template validation2/templates/fair_reason.txt --sizes 15 30 60 120 --draws 20 --auto --csv validation2/results/fair_reason.lfm2.v050.csv
+```
+
+`validation2/analyse.py` is changed in one place only, to add this model to the list of models it tabulates.

@@ -17,7 +17,8 @@ SIZES = (15, 30, 60, 120)
 # checked against the 0.5.0 run below (same data, same draws: they should agree).
 COLS = [("new", "shipped", "As shipped"), ("new", "calibrated", "Calibration only"), ("new", "wordcount", "Word counts"),
         ("new", "edited", "Fixed edit"), ("old", "auto", "0.5.0 `--auto`"), ("new", "auto", "0.6.0 `--auto`")]
-MODELS = [("qwen08", "Qwen3.5-0.8B (primary, 12 tasks)"), ("phi4mini", "Phi-4-mini (secondary, 4 tasks)")]
+MODELS = [("qwen08", "Qwen3.5-0.8B (primary, 12 tasks)"), ("phi4mini", "Phi-4-mini (secondary, 4 tasks)"),
+          ("lfm2", "LFM2-1.2B (third model, added later on the owner's request, 12 tasks)")]
 
 
 def planned(model):
